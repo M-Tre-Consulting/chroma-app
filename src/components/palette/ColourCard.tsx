@@ -21,10 +21,11 @@ export function ColourCard({ colour, paletteId }: Props) {
     const [bg, setBg] = useState("#ffffff");
     const { removeColour, updateColour } = usePaletteStore();
 
-    const ratio = contrastRatio(colour.hex, bg);
-    const level = wcagLevel(ratio);
+    const isValidHex = /^#[0-9a-fA-F]{6}$/.test(bg);
+    const ratio = isValidHex ? contrastRatio(colour.hex, bg) : 0;
+    const level = isValidHex ? wcagLevel(ratio) : "Fail";
     const fix =
-        level === "Fail" || level === "AA Large"
+        isValidHex && (level === "Fail" || level === "AA Large")
             ? suggestFix(colour.hex, bg)
             : null;
     const ws = wcagStyles[level];
