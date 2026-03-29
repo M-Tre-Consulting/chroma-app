@@ -1,15 +1,12 @@
 import { useState } from "react";
 import { useTokenStore } from "../../store/tokenStore";
 import { usePaletteStore } from "../../store/paletteStore";
-import { exportTailwind, exportAndroidXml } from "../../lib/export";
-import { writeText } from "@tauri-apps/plugin-clipboard-manager";
 
 export function TokenPanel() {
     const [newGroupName, setNewGroupName] = useState("");
     const [newTokenNames, setNewTokenNames] = useState<Record<string, string>>(
         {},
     );
-    const [copied, setCopied] = useState<string | null>(null);
 
     const {
         groups,
@@ -34,159 +31,219 @@ export function TokenPanel() {
         setNewTokenNames((prev) => ({ ...prev, [groupId]: "" }));
     };
 
-    const handleCopy = async (type: "tailwind" | "android") => {
-        const text =
-            type === "tailwind"
-                ? exportTailwind(groups, palettes)
-                : exportAndroidXml(groups, palettes);
-        await writeText(text);
-        setCopied(type);
-        setTimeout(() => setCopied(null), 2000);
-    };
-
     return (
-        <div className="flex flex-col gap-6 p-4">
-            <div className="flex gap-2">
+        <div className="flex flex-col h-full">
+            {/* New group input */}
+            <div
+                className="flex gap-1.5 p-2"
+                style={{ borderBottom: "0.5px solid var(--border)" }}
+            >
                 <input
-                    type="text"
-                    placeholder="New group name"
+                    placeholder="New group…"
                     value={newGroupName}
                     onChange={(e) => setNewGroupName(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleAddGroup()}
-                    className="flex-1 rounded border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
                 />
                 <button
                     onClick={handleAddGroup}
-                    className="rounded bg-blue-500 px-3 py-1.5 text-sm text-white hover:bg-blue-600"
+                    className="shrink-0 px-3 py-1.5 text-xs rounded-lg"
+                    style={{
+                        background: "var(--accent)",
+                        color: "#fff",
+                        border: "none",
+                        cursor: "pointer",
+                        fontWeight: 500,
+                        fontFamily: '"DM Sans", sans-serif',
+                    }}
                 >
-                    Add group
+                    +
                 </button>
             </div>
 
-            {groups.map((group) => (
-                <div
-                    key={group.id}
-                    className="flex flex-col gap-3 rounded border border-gray-100 p-3"
-                >
-                    <div className="flex items-center justify-between">
-                        <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
-                            {group.name}
-                        </p>
-                        <button
-                            onClick={() => removeGroup(group.id)}
-                            className="text-xs text-gray-300 hover:text-red-400"
-                        >
-                            Remove group
-                        </button>
-                    </div>
+            {/* Groups list */}
+            <div className="flex-1 overflow-y-auto p-2 flex flex-col gap-3">
+                {groups.length === 0 && (
+                    <p
+                        className="text-xs pt-8 text-center"
+                        style={{ color: "var(--ink-4)" }}
+                    >
+                        Add a group to start mapping tokens
+                    </p>
+                )}
 
-                    {group.tokens.map((token) => {
-                        const assignedPalette = palettes.find(
-                            (p) => p.id === token.value.paletteId,
-                        );
-                        const assignedColour = assignedPalette?.colours.find(
-                            (c) => c.id === token.value.colourId,
-                        );
-
-                        return (
-                            <div
-                                key={token.id}
-                                className="flex items-center gap-2"
+                {groups.map((group) => (
+                    <div
+                        key={group.id}
+                        className="flex flex-col gap-1.5 rounded-xl p-2"
+                        style={{
+                            background: "var(--bg-raised)",
+                            border: "0.5px solid var(--border)",
+                        }}
+                    >
+                        {/* Group header */}
+                        <div className="flex items-center justify-between px-1 pt-0.5">
+                            <p
+                                className="text-2xs font-medium uppercase tracking-widest"
+                                style={{ color: "var(--ink-4)" }}
                             >
+                                {group.name}
+                            </p>
+                            <button
+                                onClick={() => removeGroup(group.id)}
+                                className="text-xs"
+                                style={{
+                                    color: "var(--ink-4)",
+                                    background: "none",
+                                    border: "none",
+                                    cursor: "pointer",
+                                }}
+                            >
+                                Remove
+                            </button>
+                        </div>
+
+                        {/* Tokens */}
+                        {group.tokens.map((token) => {
+                            const assignedPalette = palettes.find(
+                                (p) => p.id === token.value.paletteId,
+                            );
+                            const assignedColour =
+                                assignedPalette?.colours.find(
+                                    (c) => c.id === token.value.colourId,
+                                );
+
+                            return (
                                 <div
-                                    className="h-6 w-6 shrink-0 rounded border border-gray-200"
+                                    key={token.id}
+                                    className="flex items-center gap-2 rounded-lg px-2 py-1.5"
                                     style={{
-                                        backgroundColor:
-                                            assignedColour?.hex ?? "#f3f4f6",
-                                    }}
-                                />
-                                <span className="w-36 truncate font-mono text-xs text-gray-700">
-                                    {token.name}
-                                </span>
-                                <select
-                                    className="flex-1 rounded border border-gray-200 px-2 py-1 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
-                                    value={token.value.colourId}
-                                    onChange={(e) => {
-                                        const [paletteId, colourId] =
-                                            e.target.value.split("::");
-                                        assignColour(
-                                            group.id,
-                                            token.id,
-                                            paletteId,
-                                            colourId,
-                                        );
+                                        background: "var(--bg-sunken)",
+                                        border: "0.5px solid var(--border)",
                                     }}
                                 >
-                                    <option value="">— unassigned —</option>
-                                    {palettes.map((p) => (
-                                        <optgroup key={p.id} label={p.name}>
-                                            {p.colours.map((c) => (
-                                                <option
-                                                    key={c.id}
-                                                    value={`${p.id}::${c.id}`}
-                                                >
-                                                    {c.name || c.hex}
-                                                </option>
-                                            ))}
-                                        </optgroup>
-                                    ))}
-                                </select>
-                                <button
-                                    onClick={() =>
-                                        removeToken(group.id, token.id)
-                                    }
-                                    className="text-gray-300 hover:text-red-400"
-                                >
-                                    ✕
-                                </button>
-                            </div>
-                        );
-                    })}
+                                    {/* Colour preview dot */}
+                                    <div
+                                        className="w-5 h-5 rounded shrink-0"
+                                        style={{
+                                            background:
+                                                assignedColour?.hex ??
+                                                "var(--border)",
+                                            border: "0.5px solid rgba(0,0,0,0.08)",
+                                        }}
+                                    />
 
-                    <div className="flex gap-2">
-                        <input
-                            type="text"
-                            placeholder="Token name e.g. color-primary"
-                            value={newTokenNames[group.id] ?? ""}
-                            onChange={(e) =>
-                                setNewTokenNames((prev) => ({
-                                    ...prev,
-                                    [group.id]: e.target.value,
-                                }))
-                            }
-                            onKeyDown={(e) =>
-                                e.key === "Enter" && handleAddToken(group.id)
-                            }
-                            className="flex-1 rounded border border-gray-200 px-3 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
-                        />
-                        <button
-                            onClick={() => handleAddToken(group.id)}
-                            className="rounded border border-gray-200 px-3 py-1.5 text-xs hover:bg-gray-50"
-                        >
-                            Add token
-                        </button>
+                                    {/* Token name */}
+                                    <span
+                                        className="flex-1 text-xs truncate"
+                                        style={{
+                                            fontFamily: '"DM Mono", monospace',
+                                            color: "var(--ink-2)",
+                                        }}
+                                    >
+                                        {token.name}
+                                    </span>
+
+                                    {/* Colour picker — styled select */}
+                                    <select
+                                        value={
+                                            token.value.colourId
+                                                ? `${token.value.paletteId}::${token.value.colourId}`
+                                                : ""
+                                        }
+                                        onChange={(e) => {
+                                            const [paletteId, colourId] =
+                                                e.target.value.split("::");
+                                            assignColour(
+                                                group.id,
+                                                token.id,
+                                                paletteId,
+                                                colourId,
+                                            );
+                                        }}
+                                        style={{
+                                            fontSize: "11px",
+                                            padding: "3px 6px",
+                                            borderRadius: "6px",
+                                            background: "var(--bg-raised)",
+                                            border: "0.5px solid var(--border-strong)",
+                                            color: "var(--ink-2)",
+                                            fontFamily: '"DM Sans", sans-serif',
+                                            maxWidth: "90px",
+                                            cursor: "pointer",
+                                            width: "auto",
+                                        }}
+                                    >
+                                        <option value="">— none —</option>
+                                        {palettes.map((p) => (
+                                            <optgroup key={p.id} label={p.name}>
+                                                {p.colours.map((c) => (
+                                                    <option
+                                                        key={c.id}
+                                                        value={`${p.id}::${c.id}`}
+                                                    >
+                                                        {c.name || c.hex}
+                                                    </option>
+                                                ))}
+                                            </optgroup>
+                                        ))}
+                                    </select>
+
+                                    {/* Remove token */}
+                                    <button
+                                        onClick={() =>
+                                            removeToken(group.id, token.id)
+                                        }
+                                        className="shrink-0"
+                                        style={{
+                                            color: "var(--ink-4)",
+                                            background: "none",
+                                            border: "none",
+                                            cursor: "pointer",
+                                            fontSize: "11px",
+                                        }}
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                            );
+                        })}
+
+                        {/* Add token input */}
+                        <div className="flex gap-1.5 mt-0.5">
+                            <input
+                                placeholder="Token name…"
+                                value={newTokenNames[group.id] ?? ""}
+                                onChange={(e) =>
+                                    setNewTokenNames((prev) => ({
+                                        ...prev,
+                                        [group.id]: e.target.value,
+                                    }))
+                                }
+                                onKeyDown={(e) =>
+                                    e.key === "Enter" &&
+                                    handleAddToken(group.id)
+                                }
+                                style={{ fontSize: "11px", padding: "5px 8px" }}
+                            />
+                            <button
+                                onClick={() => handleAddToken(group.id)}
+                                className="shrink-0 px-2.5 text-xs rounded-lg"
+                                style={{
+                                    background: "var(--accent-soft)",
+                                    color: "var(--accent)",
+                                    border: "0.5px solid var(--accent)",
+                                    cursor: "pointer",
+                                    fontWeight: 500,
+                                    fontFamily: '"DM Sans", sans-serif',
+                                    fontSize: "11px",
+                                }}
+                            >
+                                Add
+                            </button>
+                        </div>
                     </div>
-                </div>
-            ))}
-
-            {groups.length > 0 && (
-                <div className="flex gap-2 border-t border-gray-100 pt-4">
-                    <button
-                        onClick={() => handleCopy("tailwind")}
-                        className="flex-1 rounded border border-gray-200 px-3 py-2 text-xs hover:bg-gray-50"
-                    >
-                        {copied === "tailwind"
-                            ? "Copied!"
-                            : "Copy Tailwind config"}
-                    </button>
-                    <button
-                        onClick={() => handleCopy("android")}
-                        className="flex-1 rounded border border-gray-200 px-3 py-2 text-xs hover:bg-gray-50"
-                    >
-                        {copied === "android" ? "Copied!" : "Copy Android XML"}
-                    </button>
-                </div>
-            )}
+                ))}
+            </div>
         </div>
     );
 }
