@@ -18,8 +18,8 @@ export interface Palette {
     id: string;
     name: string;
     colours: Colour[];
-    createdAt: string;
-    updatedAt: string;
+    createdAt: number;
+    updatedAt: number;
 }
 
 /**
