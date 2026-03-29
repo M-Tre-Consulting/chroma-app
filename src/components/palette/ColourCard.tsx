@@ -46,7 +46,7 @@ export function ColourCard({ colour, paletteId }: Props) {
                 onClick={() => setExpanded((e) => !e)}
             >
                 <div
-                    className="w-9 h-9 rounded-lg shrink-0 transition-transform hover:scale-105"
+                    className="w-9 h-9 rounded-md shrink-0 transition-transform hover:scale-105"
                     style={{
                         background: colour.hex,
                         border: "0.5px solid rgba(0,0,0,0.06)",
