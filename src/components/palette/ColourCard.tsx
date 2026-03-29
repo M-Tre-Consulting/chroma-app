@@ -9,7 +9,13 @@ interface Props {
     paletteId: string;
 }
 
-/** Displays a colour swatch with inline WCAG contrast checker and fix suggestion. */
+const wcagStyles: Record<string, { bg: string; fg: string }> = {
+    AAA: { bg: "var(--wcag-aaa-bg)", fg: "var(--wcag-aaa-fg)" },
+    AA: { bg: "var(--wcag-aa-bg)", fg: "var(--wcag-aa-fg)" },
+    "AA Large": { bg: "var(--wcag-aal-bg)", fg: "var(--wcag-aal-fg)" },
+    Fail: { bg: "var(--wcag-fail-bg)", fg: "var(--wcag-fail-fg)" },
+};
+
 export function ColourCard({ colour, paletteId }: Props) {
     const [expanded, setExpanded] = useState(false);
     const [bg, setBg] = useState("#ffffff");
@@ -21,83 +27,140 @@ export function ColourCard({ colour, paletteId }: Props) {
         level === "Fail" || level === "AA Large"
             ? suggestFix(colour.hex, bg)
             : null;
-
-    const levelColour: Record<string, string> = {
-        AAA: "bg-green-100 text-green-700",
-        AA: "bg-blue-100 text-blue-700",
-        "AA Large": "bg-yellow-100 text-yellow-700",
-        Fail: "bg-red-100 text-red-700",
-    };
+    const ws = wcagStyles[level];
 
     return (
-        <div className="rounded border border-gray-100 p-2 transition-all">
-            <div className="flex items-center gap-2">
-                <button
-                    onClick={() => setExpanded((e) => !e)}
-                    className="h-8 w-8 shrink-0 rounded border border-gray-200 transition-transform hover:scale-105"
-                    style={{ backgroundColor: colour.hex }}
+        <div
+            className="rounded-xl overflow-hidden transition-all"
+            style={{
+                background: "var(--bg-raised)",
+                border: "0.5px solid var(--border)",
+            }}
+        >
+            <div
+                className="flex items-center gap-2.5 px-3 py-2.5 cursor-pointer"
+                onClick={() => setExpanded((e) => !e)}
+            >
+                <div
+                    className="w-9 h-9 rounded-lg flex-shrink-0 transition-transform hover:scale-105"
+                    style={{
+                        background: colour.hex,
+                        border: "0.5px solid rgba(0,0,0,0.06)",
+                    }}
                 />
-                <div className="flex flex-1 flex-col">
-                    <span className="text-xs font-medium text-gray-700">
+                <div className="flex-1 min-w-0">
+                    <p
+                        className="text-sm font-medium truncate"
+                        style={{ color: "var(--ink)" }}
+                    >
                         {colour.name || colour.hex}
-                    </span>
-                    <span className="font-mono text-xs text-gray-400">
-                        {colour.hex}
-                    </span>
+                    </p>
+                    <p
+                        className="text-xs font-mono"
+                        style={{ color: "var(--ink-3)" }}
+                    >
+                        {colour.hex.toUpperCase()}
+                    </p>
                 </div>
+                <span
+                    className="text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0"
+                    style={{ background: ws.bg, color: ws.fg }}
+                >
+                    {level}
+                </span>
                 <button
-                    onClick={() => removeColour(paletteId, colour.id)}
-                    className="text-gray-300 hover:text-red-400"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        removeColour(paletteId, colour.id);
+                    }}
+                    className="text-xs opacity-0 hover:opacity-100 transition-opacity"
+                    style={{ color: "var(--ink-4)" }}
                 >
                     ✕
                 </button>
             </div>
 
             {expanded && (
-                <div className="mt-3 flex flex-col gap-2 border-t border-gray-100 pt-3">
+                <div
+                    className="px-3 pb-3 flex flex-col gap-2.5"
+                    style={{
+                        borderTop: "0.5px solid var(--border)",
+                        paddingTop: "10px",
+                        background: "var(--bg-sunken)",
+                    }}
+                >
                     <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-400">vs</span>
+                        <span
+                            className="text-xs flex-shrink-0"
+                            style={{ color: "var(--ink-3)" }}
+                        >
+                            vs
+                        </span>
                         <div
-                            className="h-5 w-5 shrink-0 rounded border border-gray-200"
-                            style={{ backgroundColor: bg }}
+                            className="w-5 h-5 rounded flex-shrink-0"
+                            style={{
+                                background: bg,
+                                border: "0.5px solid var(--border)",
+                            }}
                         />
-                        <span className="text-xs text-gray-400">#</span>
+                        <span
+                            className="text-xs flex-shrink-0"
+                            style={{ color: "var(--ink-3)" }}
+                        >
+                            #
+                        </span>
                         <HexColorInput
                             color={bg}
                             onChange={setBg}
-                            className="flex-1 rounded border border-gray-200 px-2 py-1 font-mono text-xs focus:outline-none focus:ring-1 focus:ring-blue-400"
+                            style={{
+                                flex: 1,
+                                fontFamily: '"DM Mono", monospace',
+                                fontSize: "11px",
+                                padding: "4px 8px",
+                                background: "var(--bg-raised)",
+                                border: "0.5px solid var(--border-strong)",
+                                borderRadius: "6px",
+                                color: "var(--ink)",
+                            }}
                         />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                        <span className="text-xs text-gray-500">
-                            Ratio:{" "}
-                            <span className="font-medium">{ratio}:1</span>
-                        </span>
                         <span
-                            className={`rounded px-2 py-0.5 text-xs font-medium ${levelColour[level]}`}
+                            className="text-xs font-medium flex-shrink-0"
+                            style={{ color: "var(--ink)" }}
                         >
-                            {level}
+                            {ratio}:1
                         </span>
                     </div>
 
                     <div
-                        className="rounded p-2 text-sm"
-                        style={{ backgroundColor: bg, color: colour.hex }}
+                        className="rounded-lg px-3 py-2 text-sm"
+                        style={{
+                            background: bg,
+                            color: colour.hex,
+                            border: "0.5px solid var(--border)",
+                        }}
                     >
                         The quick brown fox
                     </div>
 
-                    {fix && (
+                    {fix && fix !== colour.hex && (
                         <div className="flex items-center gap-2">
-                            <span className="text-xs text-gray-400">
-                                Suggested fix:
+                            <span
+                                className="text-xs"
+                                style={{ color: "var(--ink-3)" }}
+                            >
+                                Suggested fix
                             </span>
                             <div
-                                className="h-5 w-5 rounded border border-gray-200"
-                                style={{ backgroundColor: fix }}
+                                className="w-4 h-4 rounded flex-shrink-0"
+                                style={{
+                                    background: fix,
+                                    border: "0.5px solid var(--border)",
+                                }}
                             />
-                            <span className="font-mono text-xs text-gray-500">
+                            <span
+                                className="text-xs font-mono flex-shrink-0"
+                                style={{ color: "var(--ink-3)" }}
+                            >
                                 {fix}
                             </span>
                             <button
@@ -106,7 +169,13 @@ export function ColourCard({ colour, paletteId }: Props) {
                                         hex: fix,
                                     })
                                 }
-                                className="ml-auto text-xs text-blue-500 hover:text-blue-600"
+                                className="ml-auto text-xs font-medium"
+                                style={{
+                                    color: "var(--accent)",
+                                    background: "none",
+                                    border: "none",
+                                    cursor: "pointer",
+                                }}
                             >
                                 Apply
                             </button>

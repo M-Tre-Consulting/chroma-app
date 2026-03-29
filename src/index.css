@@ -1,3 +1,92 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    :root {
+        --bg: #fafaf9;
+        --bg-raised: #ffffff;
+        --bg-sunken: #f4f3ef;
+        --border: #e2e1d9;
+        --border-strong: #d3d1c7;
+        --ink: #1c1c1a;
+        --ink-2: #5f5e5a;
+        --ink-3: #888780;
+        --ink-4: #b4b2a9;
+        --accent: #7c6ff7;
+        --accent-soft: #e8e5fe;
+        --accent-strong: #5a4fd4;
+        --wcag-aaa-bg: #e8fdf4;
+        --wcag-aaa-fg: #0f6e56;
+        --wcag-aa-bg: #e8effe;
+        --wcag-aa-fg: #3c3489;
+        --wcag-aal-bg: #fef9e8;
+        --wcag-aal-fg: #854f0b;
+        --wcag-fail-bg: #fdf0ee;
+        --wcag-fail-fg: #993c1d;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --bg: #1a1a18;
+            --bg-raised: #242422;
+            --bg-sunken: #141412;
+            --border: #2e2e2b;
+            --border-strong: #3a3a36;
+            --ink: #f0efe9;
+            --ink-2: #b4b2a9;
+            --ink-3: #888780;
+            --ink-4: #5f5e5a;
+            --accent: #9d93f9;
+            --accent-soft: #2a2660;
+            --accent-strong: #bdb7fb;
+        }
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: var(--bg);
+        color: var(--ink);
+        font-family: "DM Sans", sans-serif;
+        font-size: 13px;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    input,
+    select,
+    textarea {
+        font-family: "DM Sans", sans-serif;
+        font-size: 12px;
+        background: var(--bg-sunken);
+        color: var(--ink);
+        border: 0.5px solid var(--border-strong);
+        border-radius: 8px;
+        padding: 6px 10px;
+        outline: none;
+        transition: border-color 0.15s;
+        width: 100%;
+    }
+
+    input:focus,
+    select:focus {
+        border-color: var(--accent);
+    }
+
+    input::placeholder {
+        color: var(--ink-4);
+    }
+
+    ::-webkit-scrollbar {
+        width: 4px;
+    }
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: var(--border-strong);
+        border-radius: 4px;
+    }
+}

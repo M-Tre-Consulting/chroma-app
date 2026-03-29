@@ -2,14 +2,10 @@ import { useState } from "react";
 import { HexColorPicker, HexColorInput } from "react-colorful";
 import { usePaletteStore } from "../../store/paletteStore";
 
-/**
- * ColourPicker: a colour picker React component for UI.
- */
 export function ColourPicker() {
-    const [hex, setHex] = useState("#3d6bce");
+    const [hex, setHex] = useState("#7c6ff7");
     const [name, setName] = useState("");
     const { palettes, activePaletteId, addColour } = usePaletteStore();
-
     const activePalette = palettes.find((p) => p.id === activePaletteId);
 
     const handleAdd = () => {
@@ -19,44 +15,85 @@ export function ColourPicker() {
     };
 
     return (
-        <div className="flex flex-col gap-4 p-4">
+        <>
             <HexColorPicker
                 color={hex}
                 onChange={setHex}
-                style={{ width: "100%" }}
+                style={{
+                    width: "100%",
+                    borderRadius: "10px",
+                    overflow: "hidden",
+                }}
             />
 
             <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500">#</span>
-                <HexColorInput
-                    color={hex}
-                    onChange={setHex}
-                    className="flex-1 rounded border border-gray-200 px-3 py-1.5 text-sm font-mono uppercase focus:outline-none focus:ring-1 focus:ring-blue-400"
+                <div
+                    className="h-7 w-7 flex-shrink-0 rounded-lg"
+                    style={{
+                        background: hex,
+                        border: "0.5px solid var(--border)",
+                    }}
                 />
                 <div
-                    className="h-8 w-8 rounded border border-gray-200"
-                    style={{ backgroundColor: hex }}
-                />
+                    className="flex items-center flex-1 rounded-lg overflow-hidden"
+                    style={{
+                        border: "0.5px solid var(--border-strong)",
+                        background: "var(--bg-sunken)",
+                    }}
+                >
+                    <span
+                        className="pl-2 text-xs"
+                        style={{ color: "var(--ink-3)" }}
+                    >
+                        #
+                    </span>
+                    <HexColorInput
+                        color={hex}
+                        onChange={setHex}
+                        style={{
+                            background: "transparent",
+                            border: "none",
+                            padding: "5px 8px",
+                            fontFamily: '"DM Mono", monospace',
+                            fontSize: "12px",
+                            color: "var(--ink)",
+                            textTransform: "uppercase",
+                            width: "100%",
+                        }}
+                    />
+                </div>
             </div>
 
             <input
-                type="text"
-                placeholder="Colour name (optional)"
+                placeholder="Name (optional)"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleAdd()}
-                className="rounded border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
             />
 
             <button
                 onClick={handleAdd}
                 disabled={!activePalette}
-                className="rounded bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-40"
+                style={{
+                    background: activePalette
+                        ? "var(--accent)"
+                        : "var(--border)",
+                    color: activePalette ? "#fff" : "var(--ink-3)",
+                    border: "none",
+                    borderRadius: "10px",
+                    padding: "8px",
+                    fontSize: "12px",
+                    fontWeight: 500,
+                    cursor: activePalette ? "pointer" : "not-allowed",
+                    fontFamily: '"DM Sans", sans-serif',
+                    transition: "background 0.15s",
+                    width: "100%",
+                }}
             >
                 {activePalette
                     ? `Add to ${activePalette.name}`
                     : "Select a palette first"}
             </button>
-        </div>
+        </>
     );
 }
