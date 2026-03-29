@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { usePaletteStore } from "../../store/paletteStore";
-import { ColourCard } from "./ColourCard";
 
 export function PalettePanel() {
     const [newName, setNewName] = useState("");
@@ -11,7 +10,6 @@ export function PalettePanel() {
         removePalette,
         setActivePalette,
     } = usePaletteStore();
-    const activePalette = palettes.find((p) => p.id === activePaletteId);
 
     const handleAdd = () => {
         if (!newName.trim()) return;
@@ -41,7 +39,7 @@ export function PalettePanel() {
                             }}
                         >
                             <div
-                                className="w-2 h-2 rounded-full flex-shrink-0"
+                                className="w-2 h-2 rounded-full shrink-0"
                                 style={{
                                     background:
                                         p.colours[0]?.hex ?? "var(--ink-4)",

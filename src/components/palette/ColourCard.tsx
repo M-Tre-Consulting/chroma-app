@@ -43,7 +43,7 @@ export function ColourCard({ colour, paletteId }: Props) {
                 onClick={() => setExpanded((e) => !e)}
             >
                 <div
-                    className="w-9 h-9 rounded-lg flex-shrink-0 transition-transform hover:scale-105"
+                    className="w-9 h-9 rounded-lg shrink-0 transition-transform hover:scale-105"
                     style={{
                         background: colour.hex,
                         border: "0.5px solid rgba(0,0,0,0.06)",
@@ -64,7 +64,7 @@ export function ColourCard({ colour, paletteId }: Props) {
                     </p>
                 </div>
                 <span
-                    className="text-xs font-medium px-2 py-0.5 rounded-full flex-shrink-0"
+                    className="text-xs font-medium px-2 py-0.5 rounded-full shrink-0"
                     style={{ background: ws.bg, color: ws.fg }}
                 >
                     {level}
@@ -92,20 +92,20 @@ export function ColourCard({ colour, paletteId }: Props) {
                 >
                     <div className="flex items-center gap-2">
                         <span
-                            className="text-xs flex-shrink-0"
+                            className="text-xs shrink-0"
                             style={{ color: "var(--ink-3)" }}
                         >
                             vs
                         </span>
                         <div
-                            className="w-5 h-5 rounded flex-shrink-0"
+                            className="w-5 h-5 rounded shrink-0"
                             style={{
                                 background: bg,
                                 border: "0.5px solid var(--border)",
                             }}
                         />
                         <span
-                            className="text-xs flex-shrink-0"
+                            className="text-xs shrink-0"
                             style={{ color: "var(--ink-3)" }}
                         >
                             #
@@ -125,7 +125,7 @@ export function ColourCard({ colour, paletteId }: Props) {
                             }}
                         />
                         <span
-                            className="text-xs font-medium flex-shrink-0"
+                            className="text-xs font-medium shrink-0"
                             style={{ color: "var(--ink)" }}
                         >
                             {ratio}:1
@@ -152,14 +152,14 @@ export function ColourCard({ colour, paletteId }: Props) {
                                 Suggested fix
                             </span>
                             <div
-                                className="w-4 h-4 rounded flex-shrink-0"
+                                className="w-4 h-4 rounded shrink-0"
                                 style={{
                                     background: fix,
                                     border: "0.5px solid var(--border)",
                                 }}
                             />
                             <span
-                                className="text-xs font-mono flex-shrink-0"
+                                className="text-xs font-mono shrink-0"
                                 style={{ color: "var(--ink-3)" }}
                             >
                                 {fix}
