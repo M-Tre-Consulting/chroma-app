@@ -22,13 +22,16 @@ export function ColourCard({ colour, paletteId }: Props) {
     const { removeColour, updateColour } = usePaletteStore();
 
     const isValidHex = /^#[0-9a-fA-F]{6}$/.test(bg);
-    const ratio = isValidHex ? contrastRatio(colour.hex, bg) : 0;
-    const level = isValidHex ? wcagLevel(ratio) : "Fail";
+    const ratio = isValidHex ? contrastRatio(colour.hex, bg) : null;
+    const level = isValidHex && ratio !== null ? wcagLevel(ratio) : null;
     const fix =
-        isValidHex && (level === "Fail" || level === "AA Large")
+        isValidHex &&
+        ratio !== null &&
+        (level === "Fail" || level === "AA Large")
             ? suggestFix(colour.hex, bg)
             : null;
-    const ws = wcagStyles[level];
+
+    const ws = level ? wcagStyles[level] : wcagStyles["Fail"];
 
     return (
         <div
@@ -63,12 +66,14 @@ export function ColourCard({ colour, paletteId }: Props) {
                         {colour.hex.toUpperCase()}
                     </p>
                 </div>
-                <span
-                    className="text-xs font-medium px-2 py-0.5 rounded-full shrink-0"
-                    style={{ background: ws.bg, color: ws.fg }}
-                >
-                    {level}
-                </span>
+                {level && (
+                    <span
+                        className="text-xs font-medium px-2 py-0.5 rounded-full shrink-0"
+                        style={{ background: ws.bg, color: ws.fg }}
+                    >
+                        {level}
+                    </span>
+                )}
                 <button
                     onClick={(e) => {
                         e.stopPropagation();
@@ -128,7 +133,7 @@ export function ColourCard({ colour, paletteId }: Props) {
                             className="text-xs font-medium shrink-0"
                             style={{ color: "var(--ink)" }}
                         >
-                            {ratio}:1
+                            {ratio !== null ? `${ratio}:1` : "—"}
                         </span>
                     </div>
 
