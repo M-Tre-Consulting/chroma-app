@@ -25,47 +25,59 @@ function App() {
             >
                 {/* Logo */}
                 <div
-                    className="flex items-center gap-2 px-4 py-18px"
-                    style={{ borderBottom: "0.5px solid var(--border)" }}
+                    className="flex items-center gap-3 px-4 shrink-0"
+                    style={{
+                        borderBottom: "0.5px solid var(--border)",
+                        minHeight: "72px",
+                    }}
                 >
                     <div
-                        className="h-5 w-5 rounded-full shrink-0"
+                        className="h-7 w-7 rounded-full shrink-0"
                         style={{ background: "var(--accent)" }}
                     />
                     <span
-                        className="text-base font-medium tracking-tight"
-                        style={{ color: "var(--ink)" }}
+                        className="font-medium tracking-tight"
+                        style={{ color: "var(--ink)", fontSize: "15px" }}
                     >
                         Chroma
                     </span>
                 </div>
 
                 {/* Tab switcher */}
-                <div className="flex px-2 pt-2">
-                    {(["palettes", "tokens"] as const).map((t) => (
-                        <button
-                            key={t}
-                            onClick={() => setTab(t)}
-                            className="flex-1 py-1.5 text-xs capitalize rounded-t-lg transition-all"
+                <div className="px-2 py-1.5">
+                    <div
+                        className="relative flex p-1 rounded-xl"
+                        style={{ background: "rgba(124, 111, 247, 0.1)" }}
+                    >
+                        {/* Sliding pill background */}
+                        <div
+                            className="absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-lg transition-transform duration-200 ease-in-out"
                             style={{
-                                background:
-                                    tab === t ? "var(--bg)" : "transparent",
-                                color:
-                                    tab === t ? "var(--ink)" : "var(--ink-3)",
-                                fontWeight: tab === t ? 500 : 400,
-                                border:
-                                    tab === t
-                                        ? "0.5px solid var(--border)"
-                                        : "none",
-                                borderBottom:
-                                    tab === t
-                                        ? "0.5px solid var(--bg)"
-                                        : "none",
+                                background: "var(--accent)",
+                                transform:
+                                    tab === "palettes"
+                                        ? "translateX(4px)"
+                                        : "translateX(calc(100% + 4px))",
                             }}
-                        >
-                            {t}
-                        </button>
-                    ))}
+                        />
+                        {(["palettes", "tokens"] as const).map((t) => (
+                            <button
+                                key={t}
+                                onClick={() => setTab(t)}
+                                className="relative flex-1 py-1.5 text-xs capitalize rounded-lg z-10 transition-colors duration-200"
+                                style={{
+                                    background: "transparent",
+                                    color:
+                                        tab === t ? "#ffffff" : "var(--accent)",
+                                    fontWeight: tab === t ? 500 : 400,
+                                    border: "none",
+                                    cursor: "pointer",
+                                }}
+                            >
+                                {t}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Panel content */}
@@ -78,8 +90,11 @@ function App() {
             <main className="flex flex-1 flex-col overflow-hidden">
                 {/* Header bar */}
                 <div
-                    className="flex items-center justify-between px-5 py-4 shrink-0"
-                    style={{ borderBottom: "0.5px solid var(--border)" }}
+                    className="flex items-center justify-between px-5 shrink-0"
+                    style={{
+                        borderBottom: "0.5px solid var(--border)",
+                        minHeight: "72px",
+                    }}
                 >
                     <div>
                         <p

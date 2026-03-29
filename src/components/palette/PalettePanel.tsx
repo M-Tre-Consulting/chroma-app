@@ -21,7 +21,7 @@ export function PalettePanel() {
         <div className="flex flex-col h-full">
             <div className="flex-1 overflow-y-auto p-2 flex flex-col gap-0.5">
                 <p
-                    className="px-2 pt-4 pb-1 text-2xs font-medium uppercase tracking-widest"
+                    className="px-2 pt-2 pb-1 text-2xs font-medium uppercase tracking-widest"
                     style={{ color: "var(--ink-4)" }}
                 >
                     My palettes
