@@ -12,7 +12,7 @@ function App() {
                 <aside className="flex w-64 flex-col border-r border-gray-100">
                     <div className="border-b border-gray-100 px-4 py-3">
                         <h1 className="text-sm font-medium tracking-wide text-gray-800">
-                            Iride
+                            Chroma
                         </h1>
                     </div>
                     <div className="flex border-b border-gray-100">

@@ -5,7 +5,7 @@ import type { Token, TokenGroup } from "../types";
 
 /**
  * Zustand store for managing design token groups, persisted to localStorage
- * under the key "iride-tokens".
+ * under the key "chroma-tokens".
  *
  * Tokens are organised into named groups (e.g. "Brand", "Surface").
  * Each token can be assigned a colour from any palette in the palette store.
@@ -167,6 +167,6 @@ export const useTokenStore = create<TokenStore>()(
                     }),
                 ),
         }),
-        { name: "iride-tokens" },
+        { name: "chroma-tokens" },
     ),
 );
