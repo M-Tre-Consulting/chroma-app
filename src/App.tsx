@@ -4,9 +4,12 @@ import { PalettePanel } from "./components/palette/PalettePanel";
 import { TokenPanel } from "./components/tokens/TokenPanel";
 import { usePaletteStore } from "./store/paletteStore";
 import { ColourCard } from "./components/palette/ColourCard";
+import { ExportPanel } from "./components/export/ExportPanel";
 
 function App() {
-    const [tab, setTab] = useState<"palettes" | "tokens">("palettes");
+    const [tab, setTab] = useState<"palettes" | "tokens" | "export">(
+        "palettes",
+    );
     const { palettes, activePaletteId } = usePaletteStore();
     const activePalette = palettes.find((p) => p.id === activePaletteId);
 
@@ -49,40 +52,53 @@ function App() {
                         className="relative flex p-1 rounded-xl"
                         style={{ background: "rgba(124, 111, 247, 0.1)" }}
                     >
-                        {/* Sliding pill background */}
                         <div
-                            className="absolute top-1 bottom-1 w-[calc(50%-4px)] rounded-lg transition-transform duration-200 ease-in-out"
+                            className="absolute top-1 bottom-1 rounded-lg transition-transform duration-200 ease-in-out"
                             style={{
                                 background: "var(--accent)",
+                                width: "calc(33.333% - 4px)",
                                 transform:
                                     tab === "palettes"
                                         ? "translateX(4px)"
-                                        : "translateX(calc(100% + 4px))",
+                                        : tab === "tokens"
+                                          ? "translateX(calc(100% + 4px))"
+                                          : "translateX(calc(200% + 4px))",
                             }}
                         />
-                        {(["palettes", "tokens"] as const).map((t) => (
-                            <button
-                                key={t}
-                                onClick={() => setTab(t)}
-                                className="relative flex-1 py-1.5 text-xs capitalize rounded-lg z-10 transition-colors duration-200"
-                                style={{
-                                    background: "transparent",
-                                    color:
-                                        tab === t ? "#ffffff" : "var(--accent)",
-                                    fontWeight: tab === t ? 500 : 400,
-                                    border: "none",
-                                    cursor: "pointer",
-                                }}
-                            >
-                                {t}
-                            </button>
-                        ))}
+                        {(["palettes", "tokens", "export"] as const).map(
+                            (t) => (
+                                <button
+                                    key={t}
+                                    onClick={() => setTab(t)}
+                                    className="relative flex-1 py-1.5 text-xs capitalize rounded-lg z-10"
+                                    style={{
+                                        background: "transparent",
+                                        color:
+                                            tab === t
+                                                ? "#ffffff"
+                                                : "var(--accent)",
+                                        fontWeight: tab === t ? 500 : 400,
+                                        border: "none",
+                                        cursor: "pointer",
+                                        transition: "color 0.2s ease",
+                                    }}
+                                >
+                                    {t}
+                                </button>
+                            ),
+                        )}
                     </div>
                 </div>
 
                 {/* Panel content */}
                 <div className="flex-1 overflow-y-auto">
-                    {tab === "palettes" ? <PalettePanel /> : <TokenPanel />}
+                    {tab === "palettes" ? (
+                        <PalettePanel />
+                    ) : tab === "tokens" ? (
+                        <TokenPanel />
+                    ) : (
+                        <ExportPanel />
+                    )}
                 </div>
             </aside>
 
