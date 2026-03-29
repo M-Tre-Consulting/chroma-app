@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ColourPicker } from "./components/picker/ColourPicker";
+import { ColourCard } from "./components/palette/ColourCard";
 import { PalettePanel } from "./components/palette/PalettePanel";
 import { TokenPanel } from "./components/tokens/TokenPanel";
 import { usePaletteStore } from "./store/paletteStore";
@@ -100,6 +101,14 @@ function App() {
                         <ColourPicker />
                     </div>
                     <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
+                        {!activePalette && (
+                            <p
+                                className="text-xs pt-4 text-center"
+                                style={{ color: "var(--ink-4)" }}
+                            >
+                                Create or select a palette to get started
+                            </p>
+                        )}
                         {activePalette?.colours.length === 0 && (
                             <p
                                 className="text-xs pt-4 text-center"
@@ -108,6 +117,13 @@ function App() {
                                 Pick a colour and add it to this palette
                             </p>
                         )}
+                        {activePalette?.colours.map((c) => (
+                            <ColourCard
+                                key={c.id}
+                                colour={c}
+                                paletteId={activePalette.id}
+                            />
+                        ))}
                     </div>
                 </div>
             </main>

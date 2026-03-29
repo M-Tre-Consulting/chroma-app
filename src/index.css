@@ -1,6 +1,30 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+    --font-family-sans: "DM Sans", sans-serif;
+    --font-family-mono: "DM Mono", monospace;
+
+    --color-surface: #fafaf9;
+    --color-surface-raised: #ffffff;
+    --color-surface-sunken: #f4f3ef;
+    --color-surface-border: #e2e1d9;
+    --color-surface-border-strong: #d3d1c7;
+
+    --color-ink: #1c1c1a;
+    --color-ink-2: #5f5e5a;
+    --color-ink-3: #888780;
+    --color-ink-4: #b4b2a9;
+
+    --color-accent: #7c6ff7;
+    --color-accent-soft: #e8e5fe;
+    --color-accent-strong: #5a4fd4;
+
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    --radius-2xl: 20px;
+}
 
 @layer base {
     :root {

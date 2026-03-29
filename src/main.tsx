@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import "./index.css";
 
 import "@fontsource/dm-sans/300.css";
 import "@fontsource/dm-sans/400.css";
