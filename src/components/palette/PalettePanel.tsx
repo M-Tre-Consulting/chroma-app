@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { usePaletteStore } from "../../store/paletteStore";
+import { ColourCard } from "./ColourCard";
 
 /**
  * PalettePanel: a palette panel React component for UI.
@@ -12,7 +13,6 @@ export function PalettePanel() {
         addPalette,
         removePalette,
         setActivePalette,
-        removeColour,
     } = usePaletteStore();
 
     const handleAdd = () => {
@@ -77,26 +77,13 @@ export function PalettePanel() {
                     <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
                         {activePalette.name}
                     </p>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-col gap-1">
                         {activePalette.colours.map((c) => (
-                            <div key={c.id} className="group relative">
-                                <div
-                                    title={c.name}
-                                    className="h-10 w-10 rounded border border-gray-200"
-                                    style={{ backgroundColor: c.hex }}
-                                />
-                                <button
-                                    onClick={() =>
-                                        removeColour(activePalette.id, c.id)
-                                    }
-                                    className="absolute -right-1 -top-1 hidden h-4 w-4 items-center justify-center rounded-full bg-red-400 text-xs text-white group-hover:flex"
-                                >
-                                    ✕
-                                </button>
-                                <p className="mt-1 max-w-[40px] truncate text-center text-xs text-gray-400">
-                                    {c.name || c.hex}
-                                </p>
-                            </div>
+                            <ColourCard
+                                key={c.id}
+                                colour={c}
+                                paletteId={activePalette.id}
+                            />
                         ))}
                     </div>
                 </div>
