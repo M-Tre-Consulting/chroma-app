@@ -21,14 +21,14 @@ export function ColourPicker() {
                 onChange={setHex}
                 style={{
                     width: "100%",
-                    borderRadius: "10px",
+                    borderRadius: "12px",
                     overflow: "hidden",
                 }}
             />
 
             <div className="flex items-center gap-2">
                 <div
-                    className="h-7 w-7 flex-shrink-0 rounded-lg"
+                    className="h-7 w-7 shrink-0 rounded-lg"
                     style={{
                         background: hex,
                         border: "0.5px solid var(--border)",
