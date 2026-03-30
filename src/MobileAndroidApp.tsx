@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { usePaletteStore } from './store/paletteStore'
 import { BottomNav } from './components/mobile/android/BottomNav'
 import { PaletteListScreen } from './components/mobile/android/PaletteListScreen'
@@ -11,6 +11,8 @@ type PaletteView = 'list' | 'colours'
 
 /** Root component for the Android mobile layout. */
 export function MobileAndroidApp() {
+  const [showSplash, setShowSplash] = useState(true)
+
   const [tab, setTab] = useState<Tab>('palettes')
   const [paletteView, setPaletteView] = useState<PaletteView>('list')
   const [hex, setHex] = useState('#9d93f9')
@@ -19,16 +21,18 @@ export function MobileAndroidApp() {
   const [showPicker, setShowPicker] = useState(false)
 
   const {
-    palettes,
-    activePaletteId,
-    addPalette,
-    removePalette,
-    setActivePalette,
-    addColour,
-    removeColour,
+    palettes, activePaletteId, addPalette, removePalette,
+    setActivePalette, addColour, removeColour,
   } = usePaletteStore()
 
   const activePalette = palettes.find(p => p.id === activePaletteId)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false)
+    }, 1500)
+    return () => clearTimeout(timer)
+  }, [])
 
   const handleAddPalette = () => {
     if (!newPaletteName.trim()) return
@@ -50,20 +54,33 @@ export function MobileAndroidApp() {
 
   return (
     <div style={{
-      display: 'flex',
-      flexDirection: 'column',
-      height: '100dvh',
-      background: 'var(--bg)',
-      color: 'var(--ink)',
-      fontFamily: '"DM Sans", sans-serif',
-      overflow: 'hidden',
-      position: 'relative',
+      display: 'flex', flexDirection: 'column', height: '100dvh',
+      background: 'var(--bg)', color: 'var(--ink)',
+      fontFamily: '"DM Sans", sans-serif', overflow: 'hidden', position: 'relative',
     }}>
+
+      {/* --- Material 3 Splash Screen --- */}
+      <div style={{
+        position: 'absolute', inset: 0, zIndex: 9999,
+        background: 'var(--bg)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        opacity: showSplash ? 1 : 0,
+        pointerEvents: showSplash ? 'auto' : 'none',
+        transition: 'opacity 0.6s cubic-bezier(0.2, 0, 0, 1)',
+      }}>
+        <h1 style={{
+          fontSize: '44px', fontWeight: 300, letterSpacing: '-1.5px',
+          color: 'var(--accent)', margin: 0,
+          transform: showSplash ? 'scale(1)' : 'scale(0.95)',
+          transition: 'transform 0.6s cubic-bezier(0.2, 0, 0, 1)',
+        }}>
+          Chroma
+        </h1>
+      </div>
 
       {/* Screen content */}
       <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
 
-        {/* Palettes — list view */}
         {tab === 'palettes' && paletteView === 'list' && (
           <PaletteListScreen
             palettes={palettes}
@@ -75,7 +92,6 @@ export function MobileAndroidApp() {
           />
         )}
 
-        {/* Palettes — colours drill-down */}
         {tab === 'palettes' && paletteView === 'colours' && activePalette && (
           <ColoursScreen
             palette={activePalette}
@@ -91,15 +107,11 @@ export function MobileAndroidApp() {
           />
         )}
 
-        {/* Tokens */}
         {tab === 'tokens' && <TokensScreen />}
-
-        {/* Export - Completely clean, no duplicate headers */}
         {tab === 'export' && <ExportScreen />}
 
       </div>
 
-      {/* Bottom nav */}
       <BottomNav
         tab={tab}
         onTabChange={(t) => { setTab(t); setPaletteView('list') }}
