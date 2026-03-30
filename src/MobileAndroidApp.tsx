@@ -14,7 +14,6 @@ export function MobileAndroidApp() {
   const [splashState, setSplashState] = useState<
     "visible" | "fading" | "hidden"
   >("visible");
-
   const [tab, setTab] = useState<Tab>("palettes");
   const [paletteView, setPaletteView] = useState<PaletteView>("list");
   const [hex, setHex] = useState("#9d93f9");
@@ -34,18 +33,27 @@ export function MobileAndroidApp() {
 
   const activePalette = palettes.find((p) => p.id === activePaletteId);
 
+  /** Handles startup sequence and native visibility. */
   useEffect(() => {
+    // Signal Kotlin to show the WebView now that React has mounted the Splash component
+    // @ts-ignore
+    if (window.NativeApp) {
+      // @ts-ignore
+      window.NativeApp.showApp();
+    }
+
     const fadeTimer = setTimeout(() => setSplashState("fading"), 1500);
     const removeTimer = setTimeout(() => setSplashState("hidden"), 2100);
+
     return () => {
       clearTimeout(fadeTimer);
       clearTimeout(removeTimer);
     };
   }, []);
 
-  // Material 3 colour injection
+  /** Handles Material You Dynamic Colors. */
   useEffect(() => {
-    // @ts-ignore - AndroidTheme is injected natively by Kotlin
+    // @ts-ignore
     if (window.AndroidTheme) {
       try {
         // @ts-ignore
@@ -57,13 +65,12 @@ export function MobileAndroidApp() {
 
         if (accent) {
           const root = document.documentElement;
-          // Override your CSS variables with the user's wallpaper colors
           root.style.setProperty("--accent", accent);
           root.style.setProperty("--accent-soft", accentSoft);
           root.style.setProperty("--accent-strong", accentStrong);
         }
       } catch (e) {
-        console.error("Failed to load Material You colors", e);
+        console.error("Theme injection failed", e);
       }
     }
   }, []);
@@ -99,6 +106,7 @@ export function MobileAndroidApp() {
         position: "relative",
       }}
     >
+      {/* Material 3 Splash Screen - Fixed positioning ensures it covers the initial unaligned frame */}
       {splashState !== "hidden" && (
         <div
           style={{
