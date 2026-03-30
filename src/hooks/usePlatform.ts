@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
-type Platform = "desktop" | "mobile";
+/** Platform type string */
+type Platform = 'desktop' | 'android' | 'ios';
 
 /**
  * Detects whether the app is running on a mobile or desktop platform
@@ -15,9 +16,14 @@ export function usePlatform(): Platform {
       try {
         const { platform } = await import("@tauri-apps/plugin-os");
         const p = platform();
-        setPlatform(p === "android" || p === "ios" ? "mobile" : "desktop");
+
+        switch (p) {
+          case 'android': setPlatform('android'); break;
+          case 'ios': setPlatform('ios'); break;
+          default: setPlatform('desktop'); break;
+        }
       } catch {
-        setPlatform(window.innerWidth < 768 ? "mobile" : "desktop");
+        setPlatform(window.innerWidth < 768 ? 'android' : 'desktop');
       }
     }
     detect();
