@@ -23,15 +23,18 @@ export function TokensScreen() {
   }
 
   return (
-    <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
 
-      {/* Header */}
-      <div style={{ padding: '20px 16px 12px', flexShrink: 0 }}>
-        <p style={{ fontSize: '22px', fontWeight: 500, letterSpacing: '-0.3px' }}>Tokens</p>
+      {/* Header - M3 Center Aligned with Safe Area */}
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        padding: 'max(20px, env(safe-area-inset-top)) 16px 16px', flexShrink: 0
+      }}>
+        <p style={{ fontSize: '22px', fontWeight: 400, letterSpacing: '-0.3px', color: 'var(--ink)' }}>Tokens</p>
       </div>
 
       {/* Groups list */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 12px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px' }}>
         {groups.length === 0 && (
           <p style={{
             textAlign: 'center', color: 'var(--ink-4)',
@@ -44,14 +47,18 @@ export function TokensScreen() {
           <div
             key={group.id}
             style={{
-              background: 'var(--bg-raised)', border: '0.5px solid var(--border)',
-              borderRadius: '20px', padding: '14px', marginBottom: '10px',
+              background: 'var(--bg-raised)',
+              border: 'none',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+              borderRadius: '24px',
+              padding: '16px',
+              marginBottom: '16px',
             }}
           >
             {/* Group header */}
             <div style={{
               display: 'flex', alignItems: 'center',
-              justifyContent: 'space-between', marginBottom: '10px',
+              justifyContent: 'space-between', marginBottom: '16px',
             }}>
               <p style={{
                 fontSize: '11px', fontWeight: 500, letterSpacing: '0.06em',
@@ -80,16 +87,17 @@ export function TokensScreen() {
                 <div
                   key={token.id}
                   style={{
-                    display: 'flex', alignItems: 'center', gap: '10px',
-                    background: 'var(--bg-sunken)', border: '0.5px solid var(--border)',
-                    borderRadius: '12px', padding: '10px 12px',
-                    marginBottom: '6px', minHeight: '48px',
+                    display: 'flex', alignItems: 'center', gap: '12px',
+                    background: 'var(--bg-sunken)',
+                    border: 'none', // Soft inner containers
+                    borderRadius: '16px', padding: '8px 12px',
+                    marginBottom: '8px', minHeight: '56px',
                   }}
                 >
                   <div style={{
-                    width: '24px', height: '24px', borderRadius: '6px',
-                    background: assignedColour?.hex ?? 'var(--border)',
-                    border: '0.5px solid rgba(0,0,0,0.08)', flexShrink: 0,
+                    width: '32px', height: '32px', borderRadius: '8px',
+                    background: assignedColour?.hex ?? 'transparent',
+                    border: '1px solid rgba(0,0,0,0.08)', flexShrink: 0,
                   }} />
                   <span style={{
                     flex: 1, fontSize: '12px',
@@ -107,9 +115,10 @@ export function TokensScreen() {
                       assignColour(group.id, token.id, paletteId, colourId)
                     }}
                     style={{
-                      fontSize: '11px', padding: '6px 8px', borderRadius: '8px',
-                      background: 'var(--bg-raised)', border: '0.5px solid var(--border-strong)',
-                      color: 'var(--ink-2)', maxWidth: '100px', cursor: 'pointer', width: 'auto',
+                      fontSize: '12px', padding: '8px 12px', borderRadius: '12px',
+                      background: 'var(--bg)', border: 'none',
+                      color: 'var(--ink-2)', maxWidth: '110px', cursor: 'pointer', width: 'auto',
+                      outline: 'none'
                     }}
                   >
                     <option value="">— none —</option>
@@ -127,7 +136,7 @@ export function TokensScreen() {
                     onClick={() => removeToken(group.id, token.id)}
                     style={{
                       background: 'none', border: 'none', color: 'var(--ink-4)',
-                      fontSize: '12px', cursor: 'pointer',
+                      fontSize: '14px', cursor: 'pointer',
                       minWidth: '44px', minHeight: '44px',
                     }}
                   >
@@ -138,21 +147,25 @@ export function TokensScreen() {
             })}
 
             {/* Add token */}
-            <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+            <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
               <input
                 placeholder="Token name…"
                 value={newTokenNames[group.id] ?? ''}
                 onChange={e => setNewTokenNames(prev => ({ ...prev, [group.id]: e.target.value }))}
                 onKeyDown={e => e.key === 'Enter' && handleAddToken(group.id)}
-                style={{ flex: 1, fontSize: '12px', padding: '8px 10px' }}
+                style={{
+                  flex: 1, fontSize: '13px', padding: '12px 16px',
+                  borderRadius: '16px', border: 'none', background: 'var(--bg-sunken)',
+                  color: 'var(--ink-2)', outline: 'none'
+                }}
               />
               <button
                 onClick={() => handleAddToken(group.id)}
                 style={{
                   background: 'var(--accent-soft)', color: 'var(--accent)',
-                  border: '0.5px solid var(--accent)', borderRadius: '10px',
-                  padding: '0 14px', fontSize: '12px', cursor: 'pointer',
-                  fontFamily: '"DM Sans", sans-serif', minHeight: '44px',
+                  border: 'none', borderRadius: '16px',
+                  padding: '0 20px', fontSize: '13px', fontWeight: 500, cursor: 'pointer',
+                  fontFamily: '"DM Sans", sans-serif', minHeight: '48px',
                 }}
               >
                 Add
@@ -162,25 +175,31 @@ export function TokensScreen() {
         ))}
       </div>
 
-      {/* Add group bar */}
+      {/* Add group bar - M3 Tonal Bottom Bar */}
       <div style={{
-        padding: '12px', borderTop: '0.5px solid var(--border)',
-        display: 'flex', gap: '8px', flexShrink: 0, background: 'var(--bg)',
+        padding: '12px 16px calc(16px + env(safe-area-inset-bottom))',
+        borderTop: 'none',
+        boxShadow: '0 -1px 4px rgba(0,0,0,0.03)',
+        display: 'flex', gap: '12px', flexShrink: 0, background: 'var(--bg-raised)',
       }}>
         <input
           placeholder="New group…"
           value={newGroupName}
           onChange={e => setNewGroupName(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && handleAddGroup()}
-          style={{ flex: 1 }}
+          style={{
+            flex: 1, fontSize: '14px', padding: '12px 16px',
+            borderRadius: '24px', border: 'none', background: 'var(--bg-sunken)',
+            color: 'var(--ink-2)', outline: 'none'
+          }}
         />
         <button
           onClick={handleAddGroup}
           style={{
             background: 'var(--accent)', color: '#fff', border: 'none',
-            borderRadius: '12px', padding: '0 20px', fontSize: '20px',
-            cursor: 'pointer', minWidth: '48px', minHeight: '48px',
-            fontFamily: '"DM Sans", sans-serif',
+            borderRadius: '16px', padding: '0 24px', fontSize: '24px', fontWeight: 300,
+            cursor: 'pointer', minWidth: '56px', minHeight: '48px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
           }}
         >
           +
