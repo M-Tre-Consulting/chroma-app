@@ -4,7 +4,7 @@ import { BottomNav } from './components/mobile/android/BottomNav'
 import { PaletteListScreen } from './components/mobile/android/PaletteListScreen'
 import { ColoursScreen } from './components/mobile/android/ColoursScreen'
 import { TokensScreen } from './components/mobile/android/TokensScreen'
-import { ExportPanel } from './components/export/ExportPanel'
+import { ExportScreen } from './components/mobile/android/ExportScreen'
 
 type Tab = 'palettes' | 'tokens' | 'export'
 type PaletteView = 'list' | 'colours'
@@ -101,7 +101,7 @@ export function MobileAndroidApp() {
             <div style={{ padding: '20px 16px 8px', flexShrink: 0 }}>
               <p style={{ fontSize: '22px', fontWeight: 500, letterSpacing: '-0.3px' }}>Export</p>
             </div>
-            <ExportPanel />
+            <ExportScreen />
           </div>
         )}
       </div>
