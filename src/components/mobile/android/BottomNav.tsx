@@ -22,6 +22,7 @@ export function BottomNav({ tab, onTabChange }: Props) {
       alignItems: 'center',
       justifyContent: 'space-around',
       padding: '0 8px',
+      paddingBottom: 'env(safe-area-inset-bottom, 0px)',
       flexShrink: 0,
     }}>
       {tabs.map(t => (

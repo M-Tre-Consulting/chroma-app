@@ -58,6 +58,8 @@ export function MobileAndroidApp() {
       fontFamily: '"DM Sans", sans-serif',
       overflow: 'hidden',
       position: 'relative',
+      paddingTop: 'env(safe-area-inset-top, 0px)',
+      paddingBottom: 'env(safe-area-inset-bottom, 0px)',
     }}>
 
       {/* Screen content */}
