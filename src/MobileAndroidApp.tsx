@@ -58,7 +58,6 @@ export function MobileAndroidApp() {
       fontFamily: '"DM Sans", sans-serif',
       overflow: 'hidden',
       position: 'relative',
-      paddingTop: 'env(safe-area-inset-top, 48px)',
     }}>
 
       {/* Screen content */}
@@ -95,15 +94,9 @@ export function MobileAndroidApp() {
         {/* Tokens */}
         {tab === 'tokens' && <TokensScreen />}
 
-        {/* Export */}
-        {tab === 'export' && (
-          <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ padding: '20px 16px 8px', flexShrink: 0 }}>
-              <p style={{ fontSize: '22px', fontWeight: 500, letterSpacing: '-0.3px' }}>Export</p>
-            </div>
-            <ExportScreen />
-          </div>
-        )}
+        {/* Export - Completely clean, no duplicate headers */}
+        {tab === 'export' && <ExportScreen />}
+
       </div>
 
       {/* Bottom nav */}
