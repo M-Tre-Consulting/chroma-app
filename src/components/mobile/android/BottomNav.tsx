@@ -1,3 +1,4 @@
+// src/components/mobile/android/BottomNav.tsx
 type Tab = 'palettes' | 'tokens' | 'export'
 
 interface Props {
@@ -20,8 +21,9 @@ export function BottomNav({ tab, onTabChange }: Props) {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-around',
-      padding: '8px 8px 34px',
+      padding: '8px 8px calc(16px + env(safe-area-inset-bottom))',
       flexShrink: 0,
+      minHeight: 'calc(80px + env(safe-area-inset-bottom))', // M3 Standard height
     }}>
       {tabs.map(t => (
         <button
