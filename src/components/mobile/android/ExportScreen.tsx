@@ -60,7 +60,7 @@ export function ExportScreen() {
     return (
         <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
 
-            {/* Header - M3 Center Aligned with Safe Area */}
+            {/* Header */}
             <div style={{
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 padding: 'max(20px, env(safe-area-inset-top)) 16px 16px', flexShrink: 0
@@ -68,35 +68,35 @@ export function ExportScreen() {
                 <p style={{ fontSize: '22px', fontWeight: 400, letterSpacing: '-0.3px', color: 'var(--ink)' }}>Export</p>
             </div>
 
-            {/* Format picker - M3 Filter Chips */}
-            <div style={{
-                display: 'flex', gap: '8px', padding: '0 16px 16px',
-                flexWrap: 'wrap', flexShrink: 0
-            }}>
-                {formats.map((f) => (
-                    <button
-                        key={f.id}
-                        onClick={() => setFormat(f.id)}
+            {/* Format picker */}
+            <div style={{ padding: '0 16px 16px', flexShrink: 0 }}>
+                <div style={{
+                    display: 'flex', alignItems: 'center', background: 'var(--bg-raised)',
+                    borderRadius: '20px', padding: '4px 16px', position: 'relative'
+                }}>
+                    <span style={{ fontSize: '13px', color: 'var(--ink-3)', marginRight: '8px' }}>
+                        Format:
+                    </span>
+                    <select
+                        value={format}
+                        onChange={e => setFormat(e.target.value as Format)}
                         style={{
-                            background: format === f.id ? "var(--accent-soft)" : "var(--bg-raised)",
-                            color: format === f.id ? "var(--accent)" : "var(--ink-2)",
-                            border: "none",
-                            borderRadius: "100px", // Pill shape
-                            padding: "8px 16px",
-                            fontSize: "13px",
-                            fontWeight: format === f.id ? 600 : 500,
-                            cursor: "pointer",
-                            transition: "all 0.2s ease",
-                            // Removes Android tap highlight box
-                            WebkitTapHighlightColor: 'transparent',
+                            flex: 1, appearance: 'none', background: 'transparent',
+                            border: 'none', fontSize: '14px', fontWeight: 500,
+                            color: 'var(--accent)', padding: '12px 0', outline: 'none',
                         }}
                     >
-                        {f.label}
-                    </button>
-                ))}
+                        {formats.map((f) => (
+                            <option key={f.id} value={f.id}>{f.label}</option>
+                        ))}
+                    </select>
+                    <span style={{ color: 'var(--accent)', fontSize: '12px', pointerEvents: 'none' }}>
+                        ▼
+                    </span>
+                </div>
             </div>
 
-            {/* Output preview Container */}
+            {/* Output preview */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 16px', display: 'flex', flexDirection: 'column' }}>
                 {isEmpty ? (
                     <p style={{ textAlign: 'center', color: 'var(--ink-4)', fontSize: '13px', paddingTop: '48px' }}>
@@ -104,25 +104,17 @@ export function ExportScreen() {
                     </p>
                 ) : (
                     <pre style={{
-                        flex: 1,
-                        margin: 0,
-                        fontFamily: '"DM Mono", monospace',
-                        fontSize: '12px',
-                        color: 'var(--ink)',
-                        background: 'var(--bg-sunken)',
-                        border: 'none',
-                        borderRadius: '24px', // M3 Large Container
-                        padding: '20px',
-                        overflowY: 'auto',
-                        whiteSpace: 'pre-wrap',
-                        wordBreak: 'break-all',
+                        flex: 1, margin: 0, fontFamily: '"DM Mono", monospace',
+                        fontSize: '12px', color: 'var(--ink)', background: 'var(--bg-sunken)',
+                        border: 'none', borderRadius: '24px', padding: '20px',
+                        overflowY: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all',
                     }}>
                         {output}
                     </pre>
                 )}
             </div>
 
-            {/* Actions - M3 Tonal Bottom Bar with Pill Buttons */}
+            {/* Actions */}
             {!isEmpty && (
                 <div style={{
                     padding: '12px 16px calc(16px + env(safe-area-inset-bottom))',
