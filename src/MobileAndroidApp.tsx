@@ -43,6 +43,31 @@ export function MobileAndroidApp() {
     };
   }, []);
 
+  // Material 3 colour injection
+  useEffect(() => {
+    // @ts-ignore - AndroidTheme is injected natively by Kotlin
+    if (window.AndroidTheme) {
+      try {
+        // @ts-ignore
+        const accent = window.AndroidTheme.getSystemAccentColor();
+        // @ts-ignore
+        const accentSoft = window.AndroidTheme.getSystemAccentSoftColor();
+        // @ts-ignore
+        const accentStrong = window.AndroidTheme.getSystemAccentStrongColor();
+
+        if (accent) {
+          const root = document.documentElement;
+          // Override your CSS variables with the user's wallpaper colors
+          root.style.setProperty("--accent", accent);
+          root.style.setProperty("--accent-soft", accentSoft);
+          root.style.setProperty("--accent-strong", accentStrong);
+        }
+      } catch (e) {
+        console.error("Failed to load Material You colors", e);
+      }
+    }
+  }, []);
+
   const handleAddPalette = () => {
     if (!newPaletteName.trim()) return;
     addPalette(newPaletteName.trim());
