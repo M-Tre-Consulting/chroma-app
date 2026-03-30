@@ -15,14 +15,12 @@ export function BottomNav({ tab, onTabChange }: Props) {
 
   return (
     <div style={{
-      height: '64px',
       background: 'var(--bg-raised)',
       borderTop: '0.5px solid var(--border)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-around',
-      padding: '0 8px',
-      paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+      padding: '8px 8px 34px',
       flexShrink: 0,
     }}>
       {tabs.map(t => (

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-  <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
-  <item name="android:fitsSystemWindows">false</item>
-</resources>
