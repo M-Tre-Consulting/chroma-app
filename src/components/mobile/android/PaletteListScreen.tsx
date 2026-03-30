@@ -19,18 +19,21 @@ export function PaletteListScreen({
   onRemovePalette,
 }: Props) {
   return (
-    <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', background: 'var(--bg)' }}>
 
-      {/* Header */}
-      <div style={{ padding: '20px 16px 12px', flexShrink: 0 }}>
-        <p style={{ fontSize: '22px', fontWeight: 500, letterSpacing: '-0.3px' }}>Chroma</p>
-        <p style={{ fontSize: '12px', color: 'var(--ink-3)', marginTop: '2px' }}>
+      {/* Header - M3 Center Aligned with Safe Area */}
+      <div style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        padding: 'max(20px, env(safe-area-inset-top)) 16px 16px', flexShrink: 0
+      }}>
+        <p style={{ fontSize: '22px', fontWeight: 400, letterSpacing: '-0.3px', color: 'var(--ink)' }}>Palettes</p>
+        <p style={{ fontSize: '13px', color: 'var(--ink-3)', marginTop: '4px' }}>
           {palettes.length} palette{palettes.length !== 1 ? 's' : ''}
         </p>
       </div>
 
       {/* List */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 12px' }}>
+      <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px' }}>
         {palettes.length === 0 && (
           <p style={{
             textAlign: 'center', color: 'var(--ink-4)',
@@ -44,33 +47,35 @@ export function PaletteListScreen({
             key={p.id}
             onClick={() => onSelectPalette(p.id)}
             style={{
-              display: 'flex', alignItems: 'center', gap: '12px',
-              background: 'var(--bg-raised)', border: '0.5px solid var(--border)',
-              borderRadius: '16px', padding: '14px', marginBottom: '8px',
-              cursor: 'pointer', minHeight: '64px',
+              display: 'flex', alignItems: 'center', gap: '16px',
+              background: 'var(--bg-raised)',
+              border: 'none',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.04)', // Soft M3 elevation
+              borderRadius: '24px', padding: '16px', marginBottom: '12px',
+              cursor: 'pointer', minHeight: '72px',
             }}
           >
             {/* Colour preview dots */}
             <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
               {p.colours.slice(0, 4).map(c => (
                 <div key={c.id} style={{
-                  width: '20px', height: '20px', borderRadius: '6px',
-                  background: c.hex, border: '0.5px solid rgba(0,0,0,0.1)',
+                  width: '24px', height: '24px', borderRadius: '50%', // M3 Circular swatches
+                  background: c.hex, border: '1px solid rgba(0,0,0,0.05)',
                 }} />
               ))}
               {p.colours.length === 0 && (
                 <div style={{
-                  width: '20px', height: '20px', borderRadius: '6px',
-                  background: 'var(--border)',
+                  width: '24px', height: '24px', borderRadius: '50%',
+                  background: 'var(--bg-sunken)', border: '1px solid rgba(0,0,0,0.05)'
                 }} />
               )}
             </div>
 
             <div style={{ flex: 1, minWidth: 0 }}>
-              <p style={{ fontWeight: 500, fontSize: '14px', color: 'var(--ink)' }}>
+              <p style={{ fontWeight: 500, fontSize: '15px', color: 'var(--ink)' }}>
                 {p.name}
               </p>
-              <p style={{ fontSize: '11px', color: 'var(--ink-3)', marginTop: '2px' }}>
+              <p style={{ fontSize: '12px', color: 'var(--ink-3)', marginTop: '2px' }}>
                 {p.colours.length} colour{p.colours.length !== 1 ? 's' : ''}
               </p>
             </div>
@@ -80,7 +85,8 @@ export function PaletteListScreen({
               style={{
                 background: 'none', border: 'none', color: 'var(--ink-4)',
                 fontSize: '16px', cursor: 'pointer',
-                minWidth: '44px', minHeight: '44px',
+                minWidth: '48px', minHeight: '48px',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}
             >
               ✕
@@ -89,25 +95,31 @@ export function PaletteListScreen({
         ))}
       </div>
 
-      {/* Add palette bar */}
+      {/* Add palette bar - M3 Tonal Bottom Bar */}
       <div style={{
-        padding: '12px', borderTop: '0.5px solid var(--border)',
-        display: 'flex', gap: '8px', flexShrink: 0, background: 'var(--bg)',
+        padding: '12px 16px calc(16px + env(safe-area-inset-bottom))',
+        borderTop: 'none',
+        boxShadow: '0 -1px 4px rgba(0,0,0,0.03)',
+        display: 'flex', gap: '12px', flexShrink: 0, background: 'var(--bg-raised)',
       }}>
         <input
           placeholder="New palette…"
           value={newPaletteName}
           onChange={e => setNewPaletteName(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && onAddPalette()}
-          style={{ flex: 1 }}
+          style={{
+            flex: 1, fontSize: '14px', padding: '12px 16px',
+            borderRadius: '24px', border: 'none', background: 'var(--bg-sunken)',
+            color: 'var(--ink-2)', outline: 'none'
+          }}
         />
         <button
           onClick={onAddPalette}
           style={{
             background: 'var(--accent)', color: '#fff', border: 'none',
-            borderRadius: '12px', padding: '0 20px', fontSize: '20px',
-            cursor: 'pointer', minWidth: '48px', minHeight: '48px',
-            fontFamily: '"DM Sans", sans-serif',
+            borderRadius: '16px', padding: '0 24px', fontSize: '24px', fontWeight: 300,
+            cursor: 'pointer', minWidth: '56px', minHeight: '48px',
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
           }}
         >
           +

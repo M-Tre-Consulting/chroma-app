@@ -28,19 +28,20 @@ export function ColoursScreen({
   showPicker, setShowPicker, onAddColour, onRemoveColour, onBack,
 }: Props) {
   return (
-    <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+    <div style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', position: 'relative', background: 'var(--bg)' }}>
 
       {/* Header */}
       <div style={{
-        padding: '20px 16px 12px', flexShrink: 0,
-        display: 'flex', alignItems: 'center', gap: '12px',
+        padding: 'max(20px, env(safe-area-inset-top)) 16px 16px', flexShrink: 0,
+        display: 'flex', alignItems: 'center', gap: '16px',
       }}>
         <button
           onClick={onBack}
           style={{
-            background: 'var(--bg-raised)', border: '0.5px solid var(--border)',
-            borderRadius: '12px', width: '40px', height: '40px',
-            fontSize: '18px', cursor: 'pointer', color: 'var(--ink)',
+            background: 'var(--bg-raised)', border: 'none',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+            borderRadius: '16px', width: '48px', height: '48px',
+            fontSize: '20px', cursor: 'pointer', color: 'var(--ink)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             flexShrink: 0,
           }}
@@ -48,48 +49,50 @@ export function ColoursScreen({
           ←
         </button>
         <div>
-          <p style={{ fontSize: '20px', fontWeight: 500, letterSpacing: '-0.3px' }}>
+          <p style={{ fontSize: '22px', fontWeight: 400, letterSpacing: '-0.3px', color: 'var(--ink)' }}>
             {palette.name}
           </p>
-          <p style={{ fontSize: '12px', color: 'var(--ink-3)' }}>
+          <p style={{ fontSize: '13px', color: 'var(--ink-3)', marginTop: '2px' }}>
             {palette.colours.length} colour{palette.colours.length !== 1 ? 's' : ''}
           </p>
         </div>
       </div>
 
-      {/* Picker sheet */}
+      {/* Picker sheet - M3 Expanded Card */}
       {showPicker && (
         <div style={{
-          margin: '0 12px 10px',
+          margin: '0 16px 16px',
           background: 'var(--bg-raised)',
-          border: '0.5px solid var(--border)',
-          borderRadius: '20px',
-          padding: '14px',
+          border: 'none',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+          borderRadius: '24px',
+          padding: '16px',
           flexShrink: 0,
         }}>
           <HexColorPicker
             color={hex}
             onChange={setHex}
-            style={{ width: '100%', borderRadius: '12px', overflow: 'hidden' }}
+            style={{ width: '100%', borderRadius: '16px', overflow: 'hidden' }}
           />
-          <div style={{ display: 'flex', gap: '8px', marginTop: '10px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '12px', marginTop: '16px', alignItems: 'center' }}>
             <div style={{
-              width: '36px', height: '36px', borderRadius: '10px',
-              background: hex, border: '0.5px solid var(--border)', flexShrink: 0,
+              width: '48px', height: '48px', borderRadius: '12px',
+              background: hex, border: '1px solid rgba(0,0,0,0.05)', flexShrink: 0,
             }} />
             <div style={{
               flex: 1, display: 'flex', alignItems: 'center',
-              background: 'var(--bg-sunken)', border: '0.5px solid var(--border)',
-              borderRadius: '10px', padding: '0 10px',
+              background: 'var(--bg-sunken)', border: 'none',
+              borderRadius: '16px', padding: '0 16px', minHeight: '48px'
             }}>
-              <span style={{ color: 'var(--ink-3)', fontSize: '12px' }}>#</span>
+              <span style={{ color: 'var(--ink-3)', fontSize: '14px' }}>#</span>
               <HexColorInput
                 color={hex}
                 onChange={setHex}
                 style={{
-                  background: 'transparent', border: 'none', padding: '8px',
-                  fontFamily: '"DM Mono", monospace', fontSize: '12px',
+                  background: 'transparent', border: 'none', padding: '12px 8px',
+                  fontFamily: '"DM Mono", monospace', fontSize: '14px',
                   color: 'var(--ink)', textTransform: 'uppercase', width: '100%',
+                  outline: 'none'
                 }}
               />
             </div>
@@ -98,16 +101,20 @@ export function ColoursScreen({
             placeholder="Colour name (optional)"
             value={colourName}
             onChange={e => setColourName(e.target.value)}
-            style={{ marginTop: '8px' }}
+            style={{
+              marginTop: '12px', width: '100%', padding: '14px 16px',
+              borderRadius: '16px', border: 'none', background: 'var(--bg-sunken)',
+              color: 'var(--ink)', fontSize: '14px', outline: 'none'
+            }}
           />
-          <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+          <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
             <button
               onClick={() => setShowPicker(false)}
               style={{
-                flex: 1, background: 'var(--bg-sunken)', color: 'var(--ink-3)',
-                border: '0.5px solid var(--border)', borderRadius: '14px',
-                padding: '13px', fontSize: '14px', cursor: 'pointer',
-                fontFamily: '"DM Sans", sans-serif',
+                flex: 1, background: 'var(--bg-sunken)', color: 'var(--ink-2)',
+                border: 'none', borderRadius: '16px',
+                padding: '14px', fontSize: '14px', fontWeight: 500, cursor: 'pointer',
+                fontFamily: '"DM Sans", sans-serif', minHeight: '48px'
               }}
             >
               Cancel
@@ -116,9 +123,9 @@ export function ColoursScreen({
               onClick={onAddColour}
               style={{
                 flex: 2, background: 'var(--accent)', color: '#fff',
-                border: 'none', borderRadius: '14px', padding: '13px',
+                border: 'none', borderRadius: '16px', padding: '14px',
                 fontSize: '14px', fontWeight: 500, cursor: 'pointer',
-                fontFamily: '"DM Sans", sans-serif',
+                fontFamily: '"DM Sans", sans-serif', minHeight: '48px'
               }}
             >
               Add colour
@@ -128,7 +135,8 @@ export function ColoursScreen({
       )}
 
       {/* Colours list */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '0 12px' }}>
+      {/* Added bottom padding so the last item scrolls above the FAB */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '0 16px 100px' }}>
         {palette.colours.length === 0 && (
           <p style={{
             textAlign: 'center', color: 'var(--ink-4)',
@@ -147,29 +155,29 @@ export function ColoursScreen({
               key={c.id}
               style={{
                 display: 'flex', alignItems: 'center', gap: '12px',
-                background: 'var(--bg-raised)', border: '0.5px solid var(--border)',
-                borderRadius: '16px', padding: '12px 14px',
-                marginBottom: '8px', minHeight: '64px',
+                background: 'var(--bg-sunken)', border: 'none', // Flat tonal
+                borderRadius: '20px', padding: '12px 16px',
+                marginBottom: '8px', minHeight: '72px',
               }}
             >
               <div style={{
-                width: '44px', height: '44px', borderRadius: '12px',
-                background: c.hex, border: '0.5px solid rgba(0,0,0,0.08)', flexShrink: 0,
+                width: '40px', height: '40px', borderRadius: '10px',
+                background: c.hex, border: '1px solid rgba(0,0,0,0.05)', flexShrink: 0,
               }} />
               <div style={{ flex: 1, minWidth: 0 }}>
-                <p style={{ fontWeight: 500, fontSize: '13px', color: 'var(--ink)' }}>
+                <p style={{ fontWeight: 500, fontSize: '14px', color: 'var(--ink)' }}>
                   {c.name || c.hex}
                 </p>
                 <p style={{
-                  fontSize: '11px', fontFamily: '"DM Mono", monospace',
+                  fontSize: '12px', fontFamily: '"DM Mono", monospace',
                   color: 'var(--ink-3)', marginTop: '2px',
                 }}>
                   {c.hex.toUpperCase()}
                 </p>
               </div>
               <span style={{
-                fontSize: '10px', fontWeight: 500, padding: '3px 8px',
-                borderRadius: '20px', background: ws.bg, color: ws.fg, flexShrink: 0,
+                fontSize: '11px', fontWeight: 600, padding: '4px 10px',
+                borderRadius: '12px', background: ws.bg, color: ws.fg, flexShrink: 0,
               }}>
                 {level}
               </span>
@@ -177,8 +185,9 @@ export function ColoursScreen({
                 onClick={() => onRemoveColour(c.id)}
                 style={{
                   background: 'none', border: 'none', color: 'var(--ink-4)',
-                  fontSize: '14px', cursor: 'pointer',
-                  minWidth: '44px', minHeight: '44px',
+                  fontSize: '16px', cursor: 'pointer',
+                  minWidth: '48px', minHeight: '48px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center'
                 }}
               >
                 ✕
@@ -188,17 +197,18 @@ export function ColoursScreen({
         })}
       </div>
 
-      {/* FAB */}
+      {/* FAB - Material 3 Style */}
       {!showPicker && (
         <button
           onClick={() => setShowPicker(true)}
           style={{
-            position: 'absolute', bottom: '12px', right: '16px',
-            width: '56px', height: '56px', borderRadius: '16px',
+            position: 'absolute', bottom: '24px', right: '24px',
+            width: '64px', height: '64px', borderRadius: '20px', // M3 Large rounded rectangle
             background: 'var(--accent)', border: 'none', color: '#fff',
-            fontSize: '28px', cursor: 'pointer',
-            boxShadow: '0 4px 16px rgba(157,147,249,0.4)',
+            fontSize: '32px', fontWeight: 300, cursor: 'pointer',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)', // Darker, native-feeling shadow
             display: 'flex', alignItems: 'center', justifyContent: 'center',
+            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
           }}
         >
           +
