@@ -1,0 +1,19 @@
+{
+  "languages": {
+    "TypeScript": {
+      "language_servers": ["typescript-language-server", "eslint"],
+    },
+    "TSX": {
+      "language_servers": ["typescript-language-server", "eslint"],
+    },
+  },
+  "lsp": {
+    "typescript-language-server": {
+      "initialization_options": {
+        "tsserver": {
+          "rootDir": "${workspaceFolder}",
+        },
+      },
+    },
+  },
+}

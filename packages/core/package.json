@@ -1,0 +1,16 @@
+{
+  "name": "@chroma/core",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "zustand": ">=5.0.0"
+  },
+  "devDependencies": {
+    "react": "^19.1.0",
+    "typescript": "~5.8.3",
+    "zustand": "^5.0.12"
+  }
+}
