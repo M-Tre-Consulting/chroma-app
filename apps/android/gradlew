@@ -1,0 +1,27 @@
+#!/bin/sh
+# Gradle wrapper script — standard boilerplate
+APP_NAME="Gradle"
+APP_BASE_NAME=$(basename "$0")
+APP_HOME=$(cd "$(dirname "$0")" && pwd)
+MAX_FD="maximum"
+GRADLE_USER_HOME=${GRADLE_USER_HOME:-"$HOME/.gradle"}
+GRADLE_OPTS="${GRADLE_OPTS:-""}"
+JAVA_OPTS="${JAVA_OPTS:-""}"
+
+die() { echo "$*" >&2; exit 1; }
+
+if [ -z "$JAVA_HOME" ]; then
+    JAVACMD="java"
+else
+    JAVACMD="$JAVA_HOME/bin/java"
+fi
+
+WRAPPER_LAUNCHER=org.gradle.wrapper.GradleWrapperMain
+WRAPPER_JAR="$APP_HOME/gradle/wrapper/gradle-wrapper.jar"
+if [ ! -e "$WRAPPER_JAR" ]; then
+    die "ERROR: Gradle wrapper jar not found at $WRAPPER_JAR. Run 'gradle wrapper' from Android Studio or download it."
+fi
+
+exec "$JAVACMD" $JAVA_OPTS \
+  -classpath "$WRAPPER_JAR" \
+  $WRAPPER_LAUNCHER "$@"
