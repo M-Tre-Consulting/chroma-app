@@ -10,14 +10,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -57,6 +57,8 @@ import it.mtre_consulting.chroma.ui.theme.Surface
 import it.mtre_consulting.chroma.ui.theme.SurfaceVariant
 import it.mtre_consulting.chroma.ui.theme.TextDisabled
 import it.mtre_consulting.chroma.ui.theme.TextSecondary
+import it.mtre_consulting.chroma.ui.navigation.PILL_GAP
+import it.mtre_consulting.chroma.ui.navigation.PILL_HEIGHT
 import it.mtre_consulting.chroma.util.exportAndroidXml
 import it.mtre_consulting.chroma.util.exportCSS
 import it.mtre_consulting.chroma.util.exportJSON
@@ -99,22 +101,26 @@ fun ExportScreen(vm: AppViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
-            .windowInsetsPadding(WindowInsets.statusBars),
+            .background(Background),
     ) {
-        // Header
-        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)) {
+        // Header — status bar inset only here
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 4.dp),
+        ) {
             Text("Export", fontSize = 28.sp, fontWeight = FontWeight.Medium, color = OnSurface, letterSpacing = (-0.5).sp)
             Text(
                 "${groups.size} group${if (groups.size != 1) "s" else ""}",
                 fontSize = 13.sp,
                 color = TextSecondary,
-                modifier = Modifier.padding(top = 2.dp),
+                modifier = Modifier.padding(top = 1.dp),
             )
         }
 
         // Format selector
-        Column(modifier = Modifier.padding(horizontal = 16.dp).padding(bottom = 12.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 16.dp).padding(top = 8.dp, bottom = 12.dp)) {
             Text(
                 "FORMAT",
                 fontSize = 11.sp,
@@ -134,10 +140,15 @@ fun ExportScreen(vm: AppViewModel) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
                     Box(
-                        modifier = Modifier.size(36.dp).clip(RoundedCornerShape(10.dp))
-                            .background(Color(0xFF9D93F9).copy(alpha = 0.15f)),
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Primary.copy(alpha = 0.15f)),
                         contentAlignment = Alignment.Center,
                     ) {
                         Icon(Icons.Rounded.Code, contentDescription = null, tint = Primary, modifier = Modifier.size(18.dp))
@@ -151,11 +162,19 @@ fun ExportScreen(vm: AppViewModel) {
             }
         }
 
-        // Output
-        Box(modifier = Modifier.weight(1f).padding(horizontal = 12.dp)) {
+        // Output preview
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 12.dp),
+        ) {
             if (isEmpty) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text("Add tokens in the Tokens tab to generate exports", fontSize = 14.sp, color = TextDisabled)
+                    Text(
+                        "Add tokens in the Tokens tab to generate exports",
+                        fontSize = 14.sp,
+                        color = TextDisabled,
+                    )
                 }
             } else {
                 Text(
@@ -174,24 +193,21 @@ fun ExportScreen(vm: AppViewModel) {
             }
         }
 
-        // Action buttons
+        // Actions — sits above the pill
         if (!isEmpty) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Background)
-                    .padding(horizontal = 12.dp, vertical = 12.dp),
+                    .navigationBarsPadding()
+                    .padding(start = 12.dp, end = 12.dp, top = 10.dp, bottom = 10.dp + PILL_HEIGHT + PILL_GAP),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Button(
                     onClick = {
-                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                        clipboard.setPrimaryClip(ClipData.newPlainText("chroma-export", output))
-                        scope.launch {
-                            copied = true
-                            delay(2000)
-                            copied = false
-                        }
+                        val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        cm.setPrimaryClip(ClipData.newPlainText("chroma-export", output))
+                        scope.launch { copied = true; delay(2000); copied = false }
                     },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(999.dp),
@@ -201,12 +217,16 @@ fun ExportScreen(vm: AppViewModel) {
                 }
                 OutlinedButton(
                     onClick = {
-                        val intent = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/plain"
-                            putExtra(Intent.EXTRA_TEXT, output)
-                            putExtra(Intent.EXTRA_TITLE, "chroma-tokens.${format.ext}")
-                        }
-                        context.startActivity(Intent.createChooser(intent, "Share as .${format.ext}"))
+                        context.startActivity(
+                            Intent.createChooser(
+                                Intent(Intent.ACTION_SEND).apply {
+                                    type = "text/plain"
+                                    putExtra(Intent.EXTRA_TEXT, output)
+                                    putExtra(Intent.EXTRA_TITLE, "chroma-tokens.${format.ext}")
+                                },
+                                "Share as .${format.ext}",
+                            )
+                        )
                     },
                     modifier = Modifier.weight(1f),
                     shape = RoundedCornerShape(999.dp),
@@ -219,7 +239,6 @@ fun ExportScreen(vm: AppViewModel) {
         }
     }
 
-    // Format picker sheet
     if (showDropdown) {
         ModalBottomSheet(
             onDismissRequest = { showDropdown = false },
@@ -229,7 +248,7 @@ fun ExportScreen(vm: AppViewModel) {
             Column(modifier = Modifier.padding(horizontal = 20.dp).padding(bottom = 32.dp)) {
                 Text(
                     "SELECT FORMAT",
-                    fontSize = 13.sp,
+                    fontSize = 11.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = TextSecondary,
                     letterSpacing = 0.08.sp,
@@ -239,10 +258,7 @@ fun ExportScreen(vm: AppViewModel) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable {
-                                format = f
-                                showDropdown = false
-                            }
+                            .clickable { format = f; showDropdown = false }
                             .padding(vertical = 14.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -256,16 +272,15 @@ fun ExportScreen(vm: AppViewModel) {
                             )
                             Text(f.description, fontSize = 11.sp, color = TextDisabled)
                         }
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
                             Text(".${f.ext}", fontSize = 11.sp, color = TextDisabled, fontFamily = FontFamily.Monospace)
-                            if (format == f) {
-                                Text("✓", fontSize = 16.sp, color = Primary, fontWeight = FontWeight.Bold)
-                            }
+                            if (format == f) Text("✓", fontSize = 16.sp, color = Primary, fontWeight = FontWeight.Bold)
                         }
                     }
-                    if (index < ExportFormat.entries.size - 1) {
-                        HorizontalDivider(color = Outline, thickness = 0.5.dp)
-                    }
+                    if (index < ExportFormat.entries.size - 1) HorizontalDivider(color = Outline, thickness = 0.5.dp)
                 }
             }
         }

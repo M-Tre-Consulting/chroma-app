@@ -8,13 +8,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -58,6 +63,8 @@ import it.mtre_consulting.chroma.ui.theme.Surface
 import it.mtre_consulting.chroma.ui.theme.SurfaceVariant
 import it.mtre_consulting.chroma.ui.theme.TextDisabled
 import it.mtre_consulting.chroma.ui.theme.TextSecondary
+import it.mtre_consulting.chroma.ui.navigation.PILL_GAP
+import it.mtre_consulting.chroma.ui.navigation.PILL_HEIGHT
 import it.mtre_consulting.chroma.viewmodel.AppViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -175,12 +182,13 @@ fun PalettesScreen(vm: AppViewModel, onSelectPalette: (String) -> Unit) {
             }
         }
 
-        // Add bar
+        // Add bar — sits above the pill via navigationBarsPadding + pill clearance
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Background)
-                .padding(horizontal = 12.dp, vertical = 10.dp),
+                .navigationBarsPadding()
+                .padding(start = 12.dp, end = 12.dp, top = 10.dp, bottom = 10.dp + PILL_HEIGHT + PILL_GAP),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -281,10 +289,20 @@ private fun AboutContent() {
 private fun AboutRow(label: String, value: String) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top,
     ) {
-        Text(label, fontSize = 13.sp, color = TextSecondary, modifier = Modifier.padding(end = 16.dp))
-        Text(value, fontSize = 13.sp, color = OnSurface, fontWeight = FontWeight.Medium)
+        Text(
+            text = label,
+            fontSize = 13.sp,
+            color = TextSecondary,
+            modifier = Modifier.width(116.dp),
+        )
+        Text(
+            text = value,
+            fontSize = 13.sp,
+            color = OnSurface,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.weight(1f),
+        )
     }
 }
