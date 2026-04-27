@@ -11,20 +11,19 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Button
@@ -47,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -80,34 +80,41 @@ fun TokensScreen(vm: AppViewModel) {
         modifier = Modifier
             .fillMaxSize()
             .background(Background)
-            .windowInsetsPadding(WindowInsets.statusBars)
             .imePadding(),
     ) {
         // Header
-        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 4.dp),
+        ) {
             Text("Tokens", fontSize = 28.sp, fontWeight = FontWeight.Medium, color = OnSurface, letterSpacing = (-0.5).sp)
             Text(
                 "${groups.size} group${if (groups.size != 1) "s" else ""}",
                 fontSize = 13.sp,
                 color = TextSecondary,
-                modifier = Modifier.padding(top = 2.dp),
+                modifier = Modifier.padding(top = 1.dp),
             )
         }
 
-        // Groups
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 12.dp, vertical = 8.dp),
+        LazyColumn(
+            modifier = Modifier.weight(1f),
+            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             if (groups.isEmpty()) {
-                Box(modifier = Modifier.fillMaxWidth().padding(top = 48.dp), contentAlignment = Alignment.Center) {
-                    Text("Add a group to start mapping tokens", fontSize = 14.sp, color = TextDisabled)
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(top = 48.dp),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text("Add a group to start mapping tokens", fontSize = 14.sp, color = TextDisabled)
+                    }
                 }
             }
-            groups.forEach { group ->
+
+            items(groups, key = { it.id }) { group ->
                 val isExpanded = expandedGroupId == group.id
                 Column(
                     modifier = Modifier
@@ -115,7 +122,6 @@ fun TokensScreen(vm: AppViewModel) {
                         .clip(RoundedCornerShape(16.dp))
                         .background(Surface),
                 ) {
-                    // Group header
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -124,9 +130,19 @@ fun TokensScreen(vm: AppViewModel) {
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
-                        Text(group.name.uppercase(), fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = TextSecondary, letterSpacing = 0.08.sp)
+                        Text(
+                            group.name.uppercase(),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = TextSecondary,
+                            letterSpacing = 0.08.sp,
+                        )
                         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            Text("${group.tokens.size} token${if (group.tokens.size != 1) "s" else ""}", fontSize = 11.sp, color = TextDisabled)
+                            Text(
+                                "${group.tokens.size} token${if (group.tokens.size != 1) "s" else ""}",
+                                fontSize = 11.sp,
+                                color = TextDisabled,
+                            )
                             TextButton(
                                 onClick = { vm.removeGroup(group.id) },
                                 colors = ButtonDefaults.textButtonColors(contentColor = Color(0xFFF87171)),
@@ -136,7 +152,6 @@ fun TokensScreen(vm: AppViewModel) {
                         }
                     }
 
-                    // Tokens
                     AnimatedVisibility(
                         visible = isExpanded,
                         enter = expandVertically(spring(stiffness = Spring.StiffnessMediumLow)),
@@ -144,14 +159,15 @@ fun TokensScreen(vm: AppViewModel) {
                     ) {
                         Column(
                             modifier = Modifier
-                                .border(width = 0.5.dp, color = Outline, shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
+                                .border(0.5.dp, Outline, RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
                                 .padding(12.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
+                            val allColours = palettes.flatMap { p -> p.colours.map { c -> c to p.id } }
+
                             group.tokens.forEach { token ->
                                 val assignedPalette = palettes.find { it.id == token.value.paletteId }
                                 val assignedColour = assignedPalette?.colours?.find { it.id == token.value.colourId }
-                                val allColours = palettes.flatMap { p -> p.colours.map { c -> c to p.id } }
 
                                 Row(
                                     modifier = Modifier
@@ -162,12 +178,15 @@ fun TokensScreen(vm: AppViewModel) {
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                                 ) {
-                                    val swatchColor = assignedColour?.hex?.let {
-                                        runCatching { Color(android.graphics.Color.parseColor(it)) }.getOrNull()
-                                    } ?: Color(0xFF2A2A2A)
                                     Box(
-                                        modifier = Modifier.size(24.dp).clip(RoundedCornerShape(6.dp))
-                                            .background(swatchColor),
+                                        modifier = Modifier
+                                            .size(24.dp)
+                                            .clip(RoundedCornerShape(6.dp))
+                                            .background(
+                                                assignedColour?.hex?.let {
+                                                    runCatching { Color(android.graphics.Color.parseColor(it)) }.getOrNull()
+                                                } ?: Color(0xFF2A2A2A)
+                                            ),
                                     )
                                     Text(
                                         token.name,
@@ -177,15 +196,14 @@ fun TokensScreen(vm: AppViewModel) {
                                         modifier = Modifier.weight(1f),
                                         maxLines = 1,
                                     )
-                                    // Assign button cycles colours
                                     Box(
                                         modifier = Modifier
                                             .clip(RoundedCornerShape(8.dp))
                                             .background(Color(0xFF2E2E2E))
                                             .clickable {
                                                 if (allColours.isEmpty()) return@clickable
-                                                val currentIndex = allColours.indexOfFirst { (c, _) -> c.id == token.value.colourId }
-                                                val next = allColours[(currentIndex + 1) % allColours.size]
+                                                val idx = allColours.indexOfFirst { (c, _) -> c.id == token.value.colourId }
+                                                val next = allColours[(idx + 1) % allColours.size]
                                                 vm.assignColour(group.id, token.id, next.second, next.first.id)
                                             }
                                             .padding(horizontal = 10.dp, vertical = 5.dp),
@@ -208,7 +226,6 @@ fun TokensScreen(vm: AppViewModel) {
                                 }
                             }
 
-                            // Add token row
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -220,6 +237,7 @@ fun TokensScreen(vm: AppViewModel) {
                                     singleLine = true,
                                     modifier = Modifier.weight(1f),
                                     shape = RoundedCornerShape(12.dp),
+                                    textStyle = TextStyle(fontSize = 13.sp),
                                     colors = OutlinedTextFieldDefaults.colors(
                                         focusedBorderColor = Primary,
                                         unfocusedBorderColor = Outline,
@@ -229,23 +247,16 @@ fun TokensScreen(vm: AppViewModel) {
                                         focusedContainerColor = SurfaceVariant,
                                         unfocusedContainerColor = SurfaceVariant,
                                     ),
-                                    textStyle = androidx.compose.ui.text.TextStyle(fontSize = 13.sp),
                                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                                     keyboardActions = KeyboardActions(onDone = {
                                         val name = newTokenNames[group.id]?.trim() ?: return@KeyboardActions
-                                        if (name.isNotEmpty()) {
-                                            vm.addToken(group.id, name)
-                                            newTokenNames[group.id] = ""
-                                        }
+                                        if (name.isNotEmpty()) { vm.addToken(group.id, name); newTokenNames[group.id] = "" }
                                     }),
                                 )
                                 Button(
                                     onClick = {
                                         val name = newTokenNames[group.id]?.trim() ?: return@Button
-                                        if (name.isNotEmpty()) {
-                                            vm.addToken(group.id, name)
-                                            newTokenNames[group.id] = ""
-                                        }
+                                        if (name.isNotEmpty()) { vm.addToken(group.id, name); newTokenNames[group.id] = "" }
                                     },
                                     shape = RoundedCornerShape(12.dp),
                                     colors = ButtonDefaults.buttonColors(containerColor = Primary),
@@ -257,12 +268,11 @@ fun TokensScreen(vm: AppViewModel) {
             }
         }
 
-        // Add group bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Background)
-                .padding(horizontal = 12.dp, vertical = 12.dp),
+                .padding(horizontal = 12.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {

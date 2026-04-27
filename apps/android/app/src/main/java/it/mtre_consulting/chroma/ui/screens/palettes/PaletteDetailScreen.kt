@@ -10,17 +10,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,7 +30,6 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
@@ -99,20 +96,22 @@ fun PaletteDetailScreen(vm: AppViewModel, paletteId: String, onBack: () -> Unit)
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Background)
-            .windowInsetsPadding(WindowInsets.statusBars),
+            .background(Background),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             // Header
             Row(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .padding(start = 4.dp, end = 16.dp, top = 4.dp, bottom = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 IconButton(onClick = onBack) {
                     Icon(Icons.Rounded.ArrowBack, contentDescription = "Back", tint = OnSurface)
                 }
-                Column {
+                Column(modifier = Modifier.weight(1f)) {
                     Text(palette.name, fontSize = 22.sp, fontWeight = FontWeight.Medium, color = OnSurface)
                     Text(
                         "${palette.colours.size} colour${if (palette.colours.size != 1) "s" else ""}",
@@ -122,11 +121,8 @@ fun PaletteDetailScreen(vm: AppViewModel, paletteId: String, onBack: () -> Unit)
                 }
             }
 
-            // Colours list
             LazyColumn(
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(
-                    horizontal = 12.dp, vertical = 8.dp,
-                ),
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 if (palette.colours.isEmpty()) {
@@ -159,8 +155,14 @@ fun PaletteDetailScreen(vm: AppViewModel, paletteId: String, onBack: () -> Unit)
                             horizontalArrangement = Arrangement.spacedBy(12.dp),
                         ) {
                             Box(
-                                modifier = Modifier.size(44.dp).clip(RoundedCornerShape(12.dp))
-                                    .background(Color(android.graphics.Color.parseColor(colour.hex))),
+                                modifier = Modifier
+                                    .size(44.dp)
+                                    .clip(RoundedCornerShape(12.dp))
+                                    .background(
+                                        runCatching {
+                                            Color(android.graphics.Color.parseColor(colour.hex))
+                                        }.getOrDefault(Color.Gray)
+                                    ),
                             )
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(
@@ -171,11 +173,14 @@ fun PaletteDetailScreen(vm: AppViewModel, paletteId: String, onBack: () -> Unit)
                                 )
                                 Text(colour.hex.uppercase(), fontSize = 11.sp, color = TextSecondary)
                             }
-                            if (levelWhite != null) {
-                                WcagBadge(levelWhite)
-                            }
+                            if (levelWhite != null) WcagBadge(levelWhite)
                             IconButton(onClick = { vm.removeColour(paletteId, colour.id) }) {
-                                Icon(Icons.Rounded.Close, contentDescription = "Delete", tint = TextDisabled, modifier = Modifier.size(18.dp))
+                                Icon(
+                                    Icons.Rounded.Close,
+                                    contentDescription = "Delete",
+                                    tint = TextDisabled,
+                                    modifier = Modifier.size(18.dp),
+                                )
                             }
                         }
 
@@ -188,32 +193,38 @@ fun PaletteDetailScreen(vm: AppViewModel, paletteId: String, onBack: () -> Unit)
                                 modifier = Modifier.padding(top = 12.dp),
                                 verticalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
-                                // vs white
-                                ContrastRow(
-                                    bgColor = Color.White,
-                                    label = "vs white",
-                                    ratio = ratioWhite,
-                                    level = levelWhite,
-                                )
+                                ContrastRow("vs white", Color.White, ratioWhite, levelWhite)
                                 Box(
-                                    modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp))
-                                        .background(Color.White).padding(10.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(Color.White)
+                                        .padding(10.dp),
                                 ) {
-                                    Text("The quick brown fox", color = Color(android.graphics.Color.parseColor(colour.hex)), fontSize = 14.sp)
+                                    Text(
+                                        "The quick brown fox",
+                                        color = runCatching {
+                                            Color(android.graphics.Color.parseColor(colour.hex))
+                                        }.getOrDefault(Color.Gray),
+                                        fontSize = 14.sp,
+                                    )
                                 }
-                                // vs black
                                 val levelBlack = ratioBlack?.let { wcagLevel(it) }
-                                ContrastRow(
-                                    bgColor = Color.Black,
-                                    label = "vs black",
-                                    ratio = ratioBlack,
-                                    level = levelBlack,
-                                )
+                                ContrastRow("vs black", Color.Black, ratioBlack, levelBlack)
                                 Box(
-                                    modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp))
-                                        .background(Color.Black).padding(10.dp),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .background(Color.Black)
+                                        .padding(10.dp),
                                 ) {
-                                    Text("The quick brown fox", color = Color(android.graphics.Color.parseColor(colour.hex)), fontSize = 14.sp)
+                                    Text(
+                                        "The quick brown fox",
+                                        color = runCatching {
+                                            Color(android.graphics.Color.parseColor(colour.hex))
+                                        }.getOrDefault(Color.Gray),
+                                        fontSize = 14.sp,
+                                    )
                                 }
                             }
                         }
@@ -222,10 +233,12 @@ fun PaletteDetailScreen(vm: AppViewModel, paletteId: String, onBack: () -> Unit)
             }
         }
 
-        // FAB
         FloatingActionButton(
             onClick = { showAddSheet = true },
-            modifier = Modifier.align(Alignment.BottomEnd).padding(16.dp),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .navigationBarsPadding()
+                .padding(16.dp),
             containerColor = Primary,
             contentColor = Color.White,
             elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 4.dp),
@@ -234,7 +247,6 @@ fun PaletteDetailScreen(vm: AppViewModel, paletteId: String, onBack: () -> Unit)
         }
     }
 
-    // Add colour bottom sheet
     if (showAddSheet) {
         val controller = rememberColorPickerController()
         ModalBottomSheet(
@@ -252,31 +264,30 @@ fun PaletteDetailScreen(vm: AppViewModel, paletteId: String, onBack: () -> Unit)
                 Text("Add colour", fontSize = 17.sp, fontWeight = FontWeight.SemiBold, color = OnSurface)
 
                 HsvColorPicker(
-                    modifier = Modifier.fillMaxWidth().height(260.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .size(260.dp),
                     controller = controller,
-                    onColorChanged = { colorEnvelope ->
-                        pickedHex = colorEnvelope.hexCode.take(6)
-                    },
+                    onColorChanged = { pickedHex = it.hexCode.take(6) },
                 )
 
-                // Hex row
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     Box(
-                        modifier = Modifier.size(44.dp).clip(RoundedCornerShape(12.dp))
+                        modifier = Modifier
+                            .size(44.dp)
+                            .clip(RoundedCornerShape(12.dp))
                             .background(
-                                runCatching { Color(android.graphics.Color.parseColor("#$pickedHex")) }
-                                    .getOrDefault(Primary)
+                                runCatching {
+                                    Color(android.graphics.Color.parseColor("#$pickedHex"))
+                                }.getOrDefault(Primary)
                             ),
                     )
                     OutlinedTextField(
                         value = pickedHex,
-                        onValueChange = { v ->
-                            val clean = v.trimStart('#').take(6).uppercase()
-                            pickedHex = clean
-                        },
+                        onValueChange = { pickedHex = it.trimStart('#').take(6).uppercase() },
                         prefix = { Text("#", color = TextSecondary) },
                         singleLine = true,
                         modifier = Modifier.weight(1f),
@@ -322,7 +333,6 @@ fun PaletteDetailScreen(vm: AppViewModel, paletteId: String, onBack: () -> Unit)
                         border = androidx.compose.foundation.BorderStroke(1.dp, Primary),
                         colors = ButtonDefaults.outlinedButtonColors(contentColor = Primary),
                     ) { Text("Cancel") }
-
                     Button(
                         onClick = {
                             val hex = "#${pickedHex.take(6).padEnd(6, '0')}"
@@ -350,28 +360,29 @@ private fun WcagBadge(level: WcagLevel) {
         WcagLevel.FAIL -> WcagFailBg to WcagFailFg
     }
     Box(
-        modifier = Modifier.clip(RoundedCornerShape(999.dp)).background(bg).padding(horizontal = 8.dp, vertical = 3.dp),
+        modifier = Modifier
+            .clip(RoundedCornerShape(999.dp))
+            .background(bg)
+            .padding(horizontal = 8.dp, vertical = 3.dp),
     ) {
         Text(wcagLabel(level), fontSize = 10.sp, fontWeight = FontWeight.SemiBold, color = fg)
     }
 }
 
 @Composable
-private fun ContrastRow(bgColor: Color, label: String, ratio: Double?, level: WcagLevel?) {
+private fun ContrastRow(label: String, bgColor: Color, ratio: Double?, level: WcagLevel?) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Box(
-            modifier = Modifier.size(20.dp).clip(RoundedCornerShape(6.dp))
+            modifier = Modifier
+                .size(20.dp)
+                .clip(RoundedCornerShape(6.dp))
                 .background(bgColor),
         )
         Text(label, fontSize = 12.sp, color = TextSecondary, modifier = Modifier.weight(1f))
-        if (ratio != null) {
-            Text("${ratio}:1", fontSize = 12.sp, fontWeight = FontWeight.Medium, color = OnSurface)
-        }
-        if (level != null) {
-            WcagBadge(level)
-        }
+        if (ratio != null) Text("${ratio}:1", fontSize = 12.sp, fontWeight = FontWeight.Medium, color = OnSurface)
+        if (level != null) WcagBadge(level)
     }
 }
