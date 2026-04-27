@@ -26,3 +26,6 @@ dist-ssr
 # Android keystore
 *.keystore
 src-tauri/gen/android/keystore.properties
+
+# Claude resume files
+claude.txt
