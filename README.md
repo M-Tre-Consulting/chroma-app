@@ -9,11 +9,9 @@ A cross-platform color palette and design token management tool for designers an
 | Platform | Technology |
 |----------|-----------|
 | Desktop (Windows, macOS, Linux) | Tauri 2 + React |
-| Android | Expo / React Native + native Kotlin wrapper |
+| Android | Native Kotlin + Jetpack Compose |
 | iOS | Expo / React Native |
 | Web | Expo Web |
-
-The desktop binary auto-detects when running on Android and switches to a Material Design 3 interface with dynamic theming (Material You).
 
 ---
 
@@ -44,7 +42,7 @@ The desktop binary auto-detects when running on Android and switches to a Materi
 
 **Privacy**
 - No backend, no network requests
-- All data is stored locally (localStorage on desktop, AsyncStorage on mobile)
+- All data is stored locally (localStorage, DataStore, or AsyncStorage depending on platform)
 
 ---
 
@@ -54,12 +52,13 @@ The desktop binary auto-detects when running on Android and switches to a Materi
 chroma-app/
 ├── apps/
 │   ├── desktop/          # Tauri desktop application (React + Rust)
-│   └── mobile/           # Expo React Native application
+│   ├── android/          # Native Android application (Kotlin + Jetpack Compose)
+│   └── mobile/           # Expo React Native application (iOS / Web)
 └── packages/
     └── core/             # Shared library: color logic, state, types, exporters
 ```
 
-The `@chroma/core` package contains all color conversion utilities, Zustand stores, and export formatters. Both `desktop` and `mobile` depend on it — no business logic lives in the app packages.
+The `@chroma/core` package contains all color conversion utilities, Zustand stores, and export formatters. Both `desktop` and `mobile` depend on it — no business logic lives in the app packages. The native Android app implements its own equivalent logic directly in Kotlin.
 
 ---
 
@@ -97,13 +96,22 @@ pnpm desktop
 
 This starts the Vite dev server on port 1420 and launches the Tauri window with hot module replacement.
 
-**Run the mobile app (development):**
+**Run the Android app (development):**
+
+Open `apps/android` in Android Studio and run on a connected device or emulator, or use Gradle directly:
+
+```bash
+cd apps/android
+./gradlew installDebug
+```
+
+**Run the iOS / web app (development):**
 
 ```bash
 pnpm mobile
 ```
 
-Then press `a` for Android, `i` for iOS, or `w` for web in the Expo CLI prompt.
+Then press `i` for iOS or `w` for web in the Expo CLI prompt.
 
 ---
 
@@ -118,13 +126,21 @@ pnpm tauri build
 
 Produces a platform-native installer in `apps/desktop/src-tauri/target/release/bundle/`.
 
-**Mobile:**
+**Android:**
 
-Use Expo EAS Build for managed iOS and Android builds:
+```bash
+cd apps/android
+./gradlew assembleRelease
+```
+
+The signed APK/AAB is output to `apps/android/app/build/outputs/`.
+
+**iOS / Web:**
+
+Use Expo EAS Build for managed iOS builds:
 
 ```bash
 cd apps/mobile
-npx eas build --platform android
 npx eas build --platform ios
 ```
 
@@ -135,10 +151,11 @@ npx eas build --platform ios
 | Command | Description |
 |---------|-------------|
 | `pnpm desktop` | Start desktop app in development mode |
-| `pnpm mobile` | Start Expo dev server |
+| `pnpm mobile` | Start Expo dev server (iOS / Web) |
 | `pnpm --filter desktop build` | Build desktop frontend only |
-| `pnpm --filter mobile android` | Run on connected Android device/emulator |
 | `pnpm --filter mobile ios` | Run on iOS simulator (macOS only) |
+| `./gradlew installDebug` (in `apps/android`) | Install debug build on Android device/emulator |
+| `./gradlew assembleRelease` (in `apps/android`) | Build release APK/AAB |
 
 ---
 
@@ -154,7 +171,14 @@ npx eas build --platform ios
 - Tailwind CSS 4
 - Tauri 2 (Rust backend, file system, clipboard, native dialogs)
 
-**Mobile**
+**Android**
+- Kotlin
+- Jetpack Compose + Material3
+- AndroidX Navigation Compose
+- AndroidX DataStore (Preferences)
+- Kotlin Serialization
+
+**iOS / Web**
 - React Native 0.81 via Expo 54
 - Expo Router 6 (file-based navigation)
 - React Native Reanimated 4
@@ -170,7 +194,7 @@ Data is stored locally under two keys:
 | `chroma-palettes` | All palette and color data |
 | `chroma-tokens` | All token groups and token assignments |
 
-Desktop uses `localStorage`; mobile uses `@react-native-async-storage/async-storage`. No data ever leaves the device.
+Desktop uses `localStorage`; the native Android app uses AndroidX DataStore (Preferences); iOS/Web use `@react-native-async-storage/async-storage`. No data ever leaves the device.
 
 ---
 
