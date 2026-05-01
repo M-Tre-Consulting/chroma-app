@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4B62A30AEA6AE3E05D9AB16D /* ChromaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE714F9F99A50FF34D2A42D3 /* ChromaTests.swift */; };
+		BA6D1FC62FA5622200B9B9B3 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA6D1FC52FA5622000B9B9B3 /* Models.swift */; };
 		C120B50E472E1A0A28B8B0FA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C8983D80EC1A538F46EBE81 /* ContentView.swift */; };
 		F4B6420DE75BFC67B91D7D24 /* ChromaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E338A8FE70DB573640536D /* ChromaApp.swift */; };
 		FE5B1FC68AAC6BBDD621D4FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C924E425332EF238DB1F20D0 /* Assets.xcassets */; };
@@ -29,6 +30,7 @@
 		5AFCC6D43C80D59DBF83303E /* Chroma.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Chroma.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		69A58160E6649C5744B46E6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7C8983D80EC1A538F46EBE81 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		BA6D1FC52FA5622000B9B9B3 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		C924E425332EF238DB1F20D0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EE714F9F99A50FF34D2A42D3 /* ChromaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChromaTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -69,9 +71,18 @@
 			);
 			sourceTree = "<group>";
 		};
+		BA6D1FC42FA5621900B9B9B3 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				BA6D1FC52FA5622000B9B9B3 /* Models.swift */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
 		C6C2FF797F32A2A68F5C4BD5 /* Chroma */ = {
 			isa = PBXGroup;
 			children = (
+				BA6D1FC42FA5621900B9B9B3 /* Data */,
 				01782D7392415CD71F690950 /* App */,
 				33EA4EDD1BEB15DC41AF5D5D /* Resources */,
 			);
@@ -134,8 +145,6 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
-				TargetAttributes = {
-				};
 			};
 			buildConfigurationList = B7E17F9F723B962FCC53F146 /* Build configuration list for PBXProject "Chroma" */;
 			developmentRegion = en;
@@ -173,6 +182,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA6D1FC62FA5622200B9B9B3 /* Models.swift in Sources */,
 				F4B6420DE75BFC67B91D7D24 /* ChromaApp.swift in Sources */,
 				C120B50E472E1A0A28B8B0FA /* ContentView.swift in Sources */,
 			);
