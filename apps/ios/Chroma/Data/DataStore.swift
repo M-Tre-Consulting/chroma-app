@@ -15,24 +15,24 @@ import Foundation
 /// after every mutation.
 final class DataStore {
     var palettes: [Palette] = []
-    var tokens: [Token] = []
+    var tokenGroups: [TokenGroup] = []
 
     private let defaults = UserDefaults.standard
     private let encoder = JSONEncoder()
     private let decoder = JSONDecoder()
 
     private let palettesKey = "chroma-palettes"
-    private let tokensKey = "chroma-tokens"
+    private let tokenGroupsKey = "chroma-token-groups"
 
-    /// Loads palettes and tokens from `UserDefaults` into memory.
+    /// Loads palettes and token groups from `UserDefaults` into memory.
     /// Falls back to empty arrays if no data is found or decoding fails.
     func load() {
         if let data = defaults.data(forKey: palettesKey) {
             palettes = (try? decoder.decode([Palette].self, from: data)) ?? []
         }
 
-        if let data = defaults.data(forKey: tokensKey) {
-            tokens = (try? decoder.decode([Token].self, from: data)) ?? []
+        if let data = defaults.data(forKey: tokenGroupsKey) {
+            tokenGroups = (try? decoder.decode([TokenGroup].self, from: data)) ?? []
         }
     }
 
@@ -43,10 +43,10 @@ final class DataStore {
         }
     }
 
-    /// Encodes ``tokens`` to JSON and writes it to `UserDefaults`.
-    func saveTokens() {
-        if let data = try? encoder.encode(tokens) {
-            defaults.set(data, forKey: tokensKey)
+    /// Encodes ``tokenGroups`` to JSON and writes it to `UserDefaults`.
+    func saveTokenGroups() {
+        if let data = try? encoder.encode(tokenGroups) {
+            defaults.set(data, forKey: tokenGroupsKey)
         }
     }
 }
