@@ -50,3 +50,10 @@ struct Token: Codable {
     var description: String = ""
     var value: TokenValue
 }
+
+/// A named group of tokens that maps an identifier to a list of Tokens
+struct TokenGroup: Codable {
+    let id: String
+    let name: String
+    var tokens: [Token]
+}
