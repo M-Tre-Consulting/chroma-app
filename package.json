@@ -3,7 +3,6 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "desktop": "pnpm --filter desktop dev",
-    "mobile": "pnpm --filter mobile start"
+    "desktop": "pnpm --filter desktop dev"
   }
 }
