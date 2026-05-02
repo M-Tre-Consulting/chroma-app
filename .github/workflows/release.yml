@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   android:
     runs-on: ubuntu-latest
@@ -31,9 +34,23 @@ jobs:
           KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE }}
         run: |
           if [ -n "$KEYSTORE_B64" ]; then
-            echo "$KEYSTORE_B64" | base64 --decode > /tmp/release.keystore
+            printf '%s' "$KEYSTORE_B64" | tr -d '\r\n' | base64 --decode > /tmp/release.keystore
             echo "ANDROID_KEYSTORE_PATH=/tmp/release.keystore" >> "$GITHUB_ENV"
           fi
+
+      - name: Verify keystore
+        env:
+          ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          echo "Keystore size: $(wc -c < /tmp/release.keystore) bytes"
+          keytool -list -keystore /tmp/release.keystore -storepass "$ANDROID_STORE_PASSWORD"
+          keytool -certreq -keystore /tmp/release.keystore \
+            -storepass "$ANDROID_STORE_PASSWORD" \
+            -alias "$ANDROID_KEY_ALIAS" \
+            -keypass "$ANDROID_KEY_PASSWORD" \
+            -file /dev/null
 
       - name: Set version from tag
         run: |
