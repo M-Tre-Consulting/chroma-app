@@ -5,10 +5,6 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
-kotlin {
-    jvmToolchain(17)
-}
-
 android {
     namespace = "it.mtre_consulting.chroma"
     compileSdk = 36
