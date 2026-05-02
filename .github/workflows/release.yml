@@ -16,13 +16,10 @@ jobs:
           gradle-version: '9.3.1'
 
       - name: Install JetBrains JDK 21
-        env:
-          GH_TOKEN: ${{ github.token }}
         run: |
-          url=$(curl -sH "Authorization: Bearer $GH_TOKEN" \
-            "https://api.github.com/repos/JetBrains/JetBrainsRuntime/releases" | \
-            jq -r '[.[] | select(.tag_name | startswith("jbr-release-21")) | select(.prerelease == false)][0].assets[] | select(.name | test("^jbr-21\\.[0-9.]+-linux-x64-b[0-9.]+\\.tar\\.gz$")) | .browser_download_url' | head -1)
-          [ -n "$url" ] || { echo "JBR 21 release not found"; exit 1; }
+          url=$(curl -s "https://api.foojay.io/disco/v3.0/packages?jdk_version=21&distribution=jetbrains&architecture=x64&operating_system=linux&package_type=jdk&release_status=ga&latest=per_distro" | \
+            jq -r '.result[0].links.pkg_download_redirect // empty')
+          [ -n "$url" ] || { echo "JBR 21 not found"; exit 1; }
           curl -sL "$url" -o /tmp/jbr.tar.gz
           mkdir -p "$HOME/.jbr"
           tar -xzf /tmp/jbr.tar.gz -C "$HOME/.jbr" --strip-components=1
