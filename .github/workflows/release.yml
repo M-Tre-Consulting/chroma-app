@@ -74,6 +74,9 @@ jobs:
 
       - uses: dtolnay/rust-toolchain@stable
 
+      - name: Add x86_64 macOS target
+        run: rustup target add x86_64-apple-darwin
+
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: apps/desktop/src-tauri -> target
@@ -91,14 +94,14 @@ jobs:
         working-directory: apps/desktop
         run: pnpm tauri icon ../ios/Chroma/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png
 
-      - name: Build Tauri (macOS)
+      - name: Build Tauri (macOS universal)
         working-directory: apps/desktop
-        run: pnpm tauri build
+        run: pnpm tauri build --target universal-apple-darwin
 
       - uses: actions/upload-artifact@v4
         with:
           name: tauri-macos
-          path: apps/desktop/src-tauri/target/release/bundle/dmg/*.dmg
+          path: apps/desktop/src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
 
   tauri-windows:
     runs-on: windows-latest
@@ -142,8 +145,53 @@ jobs:
           name: tauri-windows
           path: apps/desktop/src-tauri/target/release/bundle/nsis/*.exe
 
+  tauri-windows-arm:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Add ARM64 Windows target
+        run: rustup target add aarch64-pc-windows-msvc
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri -> target
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Set version from tag
+        run: node -e "const fs=require('fs'); fs.appendFileSync(process.env.GITHUB_ENV, 'VERSION=' + process.env.GITHUB_REF_NAME.replace(/^v/,'') + '\n')"
+
+      - name: Inject version into tauri.conf.json
+        working-directory: apps/desktop
+        run: node -e "const fs=require('fs'); const c=JSON.parse(fs.readFileSync('src-tauri/tauri.conf.json','utf8')); c.version=process.env.VERSION; fs.writeFileSync('src-tauri/tauri.conf.json', JSON.stringify(c,null,2)+'\n')"
+
+      - name: Generate icons from iOS source
+        working-directory: apps/desktop
+        run: pnpm tauri icon ../ios/Chroma/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png
+
+      - name: Build Tauri (Windows ARM)
+        working-directory: apps/desktop
+        run: pnpm tauri build --target aarch64-pc-windows-msvc
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tauri-windows-arm
+          path: apps/desktop/src-tauri/target/aarch64-pc-windows-msvc/release/bundle/nsis/*.exe
+
   release:
-    needs: [android, tauri-macos, tauri-windows]
+    needs: [android, tauri-macos, tauri-windows, tauri-windows-arm]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -156,3 +204,15 @@ jobs:
         with:
           files: artifacts/**/*
           generate_release_notes: true
+          body: |
+            ## Installation
+
+            **macOS** — Gatekeeper will block the app on first launch since it is not notarized. After dragging Chroma to `/Applications`, run:
+            ```bash
+            xattr -dr com.apple.quarantine /Applications/Chroma.app
+            ```
+            Or go to **System Settings → Privacy & Security → Open Anyway** after the first blocked attempt.
+
+            **Android** — Install the APK directly or add this repo to [Obtainium](https://github.com/ImranR98/Obtainium) for automatic updates.
+
+            **Windows** — Windows Defender SmartScreen may warn on first launch. Click **More info → Run anyway**.
