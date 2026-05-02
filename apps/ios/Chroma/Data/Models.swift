@@ -20,7 +20,7 @@ struct ColourHsl: Codable {
 }
 
 /// A single colour entry inside a palette, carrying its value in multiple formats.
-struct Colour: Codable {
+struct Colour: Codable, Identifiable {
     let id: String
     let name: String
     let hex: String
@@ -29,7 +29,7 @@ struct Colour: Codable {
 }
 
 /// A named collection of colours created by the user.
-struct Palette: Codable {
+struct Palette: Codable, Identifiable {
     let id: String
     let name: String
     var colours: [Colour]
@@ -44,7 +44,7 @@ struct TokenValue: Codable {
 }
 
 /// A named design token that maps a semantic role to a palette colour.
-struct Token: Codable {
+struct Token: Codable, Identifiable {
     let id: String
     let name: String
     var description: String = ""
@@ -52,7 +52,7 @@ struct Token: Codable {
 }
 
 /// A named group of tokens that maps an identifier to a list of Tokens
-struct TokenGroup: Codable {
+struct TokenGroup: Codable, Identifiable {
     let id: String
     let name: String
     var tokens: [Token]

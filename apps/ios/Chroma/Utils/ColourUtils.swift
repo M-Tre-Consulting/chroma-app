@@ -148,6 +148,14 @@ func wcagLabel(level: WcagLevel) -> String {
     }
 }
 
+/// Classifies a WCAG contrast ratio into a conformance level.
+func wcagLevel(_ ratio: Double) -> WcagLevel {
+    if ratio >= 7.0 { return .AAA }
+    if ratio >= 4.5 { return .AA }
+    if ratio >= 3.0 { return .AA_LARGE }
+    return .FAIL
+}
+
 /// Generates a unique ID combining 9 random alphanumeric characters and a base-36 millisecond timestamp.
 func generateId() -> String {
     let chars = Array("abcdefghijklmnopqrstuvwxyz0123456789")
