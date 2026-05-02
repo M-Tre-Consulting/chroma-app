@@ -7,6 +7,7 @@ import SwiftUI
 
 struct PalettesView: View {
     @Environment(AppViewModel.self) private var vm
+    @State private var showAddAlert = false
     @State private var newName = ""
     @State private var showAbout = false
 
@@ -34,45 +35,37 @@ struct PalettesView: View {
                 ContentUnavailableView(
                     "No Palettes",
                     systemImage: "swatchpalette",
-                    description: Text("Create your first palette below")
+                    description: Text("Tap + to create your first palette")
                 )
             }
         }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button { showAbout = true } label: {
-                    Image(systemName: "info.circle")
+                Button("New Palette", systemImage: "plus") {
+                    showAddAlert = true
+                }
+            }
+            ToolbarItem(placement: .topBarLeading) {
+                Button("About", systemImage: "info.circle") {
+                    showAbout = true
                 }
             }
         }
-        .safeAreaInset(edge: .bottom) {
-            HStack(spacing: 10) {
-                TextField("New palette…", text: $newName)
-                    .textFieldStyle(.roundedBorder)
-                    .onSubmit { doAdd() }
-                Button(action: doAdd) {
-                    Image(systemName: "plus")
-                        .fontWeight(.semibold)
-                        .frame(width: 44, height: 44)
-                        .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 14))
-                        .foregroundStyle(.white)
-                }
+        .alert("New Palette", isPresented: $showAddAlert) {
+            TextField("Palette name", text: $newName)
+                .autocorrectionDisabled()
+            Button("Add") {
+                let trimmed = newName.trimmingCharacters(in: .whitespaces)
+                guard !trimmed.isEmpty else { return }
+                vm.addPalette(name: trimmed)
+                newName = ""
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(.bar)
+            Button("Cancel", role: .cancel) { newName = "" }
         }
         .sheet(isPresented: $showAbout) {
             AboutView()
                 .presentationDetents([.medium])
         }
-    }
-
-    private func doAdd() {
-        let trimmed = newName.trimmingCharacters(in: .whitespaces)
-        guard !trimmed.isEmpty else { return }
-        vm.addPalette(name: trimmed)
-        newName = ""
     }
 }
 

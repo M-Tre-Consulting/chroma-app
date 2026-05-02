@@ -8,7 +8,6 @@ import SwiftUI
 struct ExportView: View {
     @Environment(AppViewModel.self) private var vm
     @State private var format: ExportFormat = .css
-    @State private var showFormatPicker = false
     @State private var copied = false
 
     private var isEmpty: Bool {
@@ -26,56 +25,36 @@ struct ExportView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Format selector
-            Button { showFormatPicker = true } label: {
-                HStack(spacing: 12) {
-                    Image(systemName: "chevron.left.forwardslash.chevron.right")
-                        .frame(width: 36, height: 36)
-                        .background(Color.accentColor.opacity(0.15), in: RoundedRectangle(cornerRadius: 10))
-                        .foregroundStyle(Color.accentColor)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(format.label)
-                            .fontWeight(.medium)
-                            .foregroundStyle(.primary)
-                        Text(".\(format.ext)")
-                            .font(.system(.caption, design: .monospaced))
-                            .foregroundStyle(.secondary)
+        Form {
+            Section("Format") {
+                Picker("Format", selection: $format) {
+                    ForEach(ExportFormat.allCases) { f in
+                        Text(f.label).tag(f)
                     }
-                    Spacer()
-                    Image(systemName: "chevron.up.chevron.down")
-                        .foregroundStyle(.secondary)
-                        .font(.caption)
                 }
-                .padding(14)
-                .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14))
+                .pickerStyle(.menu)
+                Text(format.description)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
-            .buttonStyle(.plain)
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .padding(.bottom, 8)
 
-            // Code preview or empty state
             if isEmpty {
-                ContentUnavailableView(
-                    "Nothing to Export",
-                    systemImage: "square.and.arrow.up",
-                    description: Text("Add tokens in the Tokens tab to generate exports")
-                )
-                .frame(maxHeight: .infinity)
-            } else {
-                ScrollView {
-                    Text(output)
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundStyle(Color(.label).opacity(0.75))
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(14)
+                Section {
+                    Text("Add tokens in the Tokens tab to generate exports.")
+                        .foregroundStyle(.secondary)
+                        .font(.callout)
                 }
-                .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 12))
-                .padding(.horizontal, 16)
+            } else {
+                Section("Preview") {
+                    ScrollView {
+                        Text(output)
+                            .font(.system(.caption, design: .monospaced))
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .frame(height: 260)
+                }
 
-                // Actions
-                HStack(spacing: 10) {
+                Section {
                     Button {
                         UIPasteboard.general.string = output
                         withAnimation { copied = true }
@@ -84,32 +63,23 @@ struct ExportView: View {
                             withAnimation { copied = false }
                         }
                     } label: {
-                        Label(copied ? "Copied!" : "Copy", systemImage: copied ? "checkmark" : "doc.on.doc")
-                            .frame(maxWidth: .infinity)
+                        Label(
+                            copied ? "Copied!" : "Copy to Clipboard",
+                            systemImage: copied ? "checkmark" : "doc.on.doc"
+                        )
                     }
-                    .buttonStyle(.borderedProminent)
                     .animation(.default, value: copied)
 
                     ShareLink(
                         item: output,
                         subject: Text("chroma-tokens.\(format.ext)")
                     ) {
-                        Label("Share .\(format.ext)", systemImage: "square.and.arrow.up")
-                            .frame(maxWidth: .infinity)
+                        Label("Share as .\(format.ext)", systemImage: "square.and.arrow.up")
                     }
-                    .buttonStyle(.bordered)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
             }
         }
-        .frame(maxHeight: .infinity, alignment: .top)
-        .background(Color(.systemGroupedBackground))
         .navigationTitle("Export")
-        .sheet(isPresented: $showFormatPicker) {
-            FormatPickerSheet(selected: $format, isPresented: $showFormatPicker)
-                .presentationDetents([.medium])
-        }
     }
 }
 
@@ -147,53 +117,6 @@ private enum ExportFormat: CaseIterable, Identifiable {
         case .json:       "Amazon Style Dictionary format"
         case .tailwind:   "Paste into tailwind.config.ts"
         case .androidXml: "Drop into res/values/colors.xml"
-        }
-    }
-}
-
-// MARK: - Format picker sheet
-
-private struct FormatPickerSheet: View {
-    @Binding var selected: ExportFormat
-    @Binding var isPresented: Bool
-
-    var body: some View {
-        NavigationStack {
-            List {
-                ForEach(ExportFormat.allCases) { format in
-                    Button {
-                        selected = format
-                        isPresented = false
-                    } label: {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(format.label)
-                                    .fontWeight(.medium)
-                                    .foregroundStyle(.primary)
-                                Text(format.description)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                            Spacer()
-                            Text(".\(format.ext)")
-                                .font(.system(.caption, design: .monospaced))
-                                .foregroundStyle(.secondary)
-                            if selected == format {
-                                Image(systemName: "checkmark")
-                                    .foregroundStyle(Color.accentColor)
-                                    .fontWeight(.semibold)
-                            }
-                        }
-                    }
-                }
-            }
-            .navigationTitle("Select Format")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { isPresented = false }
-                }
-            }
         }
     }
 }
