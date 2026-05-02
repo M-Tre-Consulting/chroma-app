@@ -35,13 +35,20 @@ jobs:
             echo "ANDROID_KEYSTORE_PATH=/tmp/release.keystore" >> "$GITHUB_ENV"
           fi
 
+      - name: Set version from tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          IFS='.' read -r major minor patch <<< "$VERSION"
+          echo "VERSION_CODE=$(( major * 10000 + minor * 100 + patch ))" >> "$GITHUB_ENV"
+
       - name: Build release APK
         working-directory: apps/android
         env:
           ANDROID_STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: gradle assembleRelease
+        run: gradle assembleRelease -PversionName="$VERSION" -PversionCode="$VERSION_CODE"
 
       - uses: actions/upload-artifact@v4
         with:
@@ -70,9 +77,23 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - name: Set version from tag
+        run: node -e "const fs=require('fs'); fs.appendFileSync(process.env.GITHUB_ENV, 'VERSION=' + process.env.GITHUB_REF_NAME.replace(/^v/,'') + '\n')"
+
+      - name: Inject version into tauri.conf.json
+        working-directory: apps/desktop
+        run: node -e "const fs=require('fs'); const c=JSON.parse(fs.readFileSync('src-tauri/tauri.conf.json','utf8')); c.version=process.env.VERSION; fs.writeFileSync('src-tauri/tauri.conf.json', JSON.stringify(c,null,2)+'\n')"
+
+      - name: Generate icons from iOS source
+        working-directory: apps/desktop
+        run: pnpm tauri icon ../ios/Chroma/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png
+
       - name: Build Tauri (macOS)
         working-directory: apps/desktop
         run: pnpm tauri build
+
+      - name: Ad-hoc sign app
+        run: codesign --deep --force --sign - apps/desktop/src-tauri/target/release/bundle/macos/Chroma.app
 
       - uses: actions/upload-artifact@v4
         with:
@@ -100,6 +121,17 @@ jobs:
           workspaces: apps/desktop/src-tauri -> target
 
       - run: pnpm install --frozen-lockfile
+
+      - name: Set version from tag
+        run: node -e "const fs=require('fs'); fs.appendFileSync(process.env.GITHUB_ENV, 'VERSION=' + process.env.GITHUB_REF_NAME.replace(/^v/,'') + '\n')"
+
+      - name: Inject version into tauri.conf.json
+        working-directory: apps/desktop
+        run: node -e "const fs=require('fs'); const c=JSON.parse(fs.readFileSync('src-tauri/tauri.conf.json','utf8')); c.version=process.env.VERSION; fs.writeFileSync('src-tauri/tauri.conf.json', JSON.stringify(c,null,2)+'\n')"
+
+      - name: Generate icons from iOS source
+        working-directory: apps/desktop
+        run: pnpm tauri icon ../ios/Chroma/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png
 
       - name: Build Tauri (Windows)
         working-directory: apps/desktop

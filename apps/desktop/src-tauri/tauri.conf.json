@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "chroma-app",
+  "productName": "Chroma",
   "version": "0.1.0",
   "identifier": "it.mtre-consulting.chroma-app",
   "build": {
