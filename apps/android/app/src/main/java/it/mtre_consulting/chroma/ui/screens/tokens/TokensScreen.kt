@@ -49,6 +49,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -82,6 +84,8 @@ fun TokensScreen(vm: AppViewModel) {
         newGroupName = ""
     }
 
+    val navBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -104,9 +108,10 @@ fun TokensScreen(vm: AppViewModel) {
             )
         }
 
+        Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
         LazyColumn(
-            modifier = Modifier.weight(1f),
-            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(horizontal = 12.dp, top = 8.dp, bottom = navBarPadding + PILL_GAP + PILL_HEIGHT + 72.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             if (groups.isEmpty()) {
@@ -274,42 +279,51 @@ fun TokensScreen(vm: AppViewModel) {
             }
         }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Background)
-                .navigationBarsPadding()
-                .padding(start = 12.dp, end = 12.dp, top = 10.dp, bottom = 10.dp + PILL_HEIGHT + PILL_GAP),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            OutlinedTextField(
-                value = newGroupName,
-                onValueChange = { newGroupName = it },
-                placeholder = { Text("New group…", color = TextSecondary) },
-                singleLine = true,
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(14.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Primary,
-                    unfocusedBorderColor = Outline,
-                    focusedTextColor = OnSurface,
-                    unfocusedTextColor = OnSurface,
-                    cursorColor = Primary,
-                    focusedContainerColor = SurfaceVariant,
-                    unfocusedContainerColor = SurfaceVariant,
-                ),
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                keyboardActions = KeyboardActions(onDone = { doAddGroup() }),
+        // Floating add bar — token groups scroll behind gradient scrim
+        Column(modifier = Modifier.fillMaxWidth().align(Alignment.BottomStart)) {
+            Spacer(
+                modifier = Modifier.fillMaxWidth().height(40.dp)
+                    .background(Brush.verticalGradient(listOf(Color.Transparent, Background))),
             )
-            FilledIconButton(
-                onClick = { doAddGroup() },
-                modifier = Modifier.size(52.dp),
-                shape = RoundedCornerShape(14.dp),
-                colors = IconButtonDefaults.filledIconButtonColors(containerColor = Primary),
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Background)
+                    .navigationBarsPadding()
+                    .padding(bottom = PILL_GAP + PILL_HEIGHT)
+                    .padding(start = 12.dp, end = 12.dp, vertical = 10.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(Icons.Rounded.Add, contentDescription = "Add", tint = Color.White)
+                OutlinedTextField(
+                    value = newGroupName,
+                    onValueChange = { newGroupName = it },
+                    placeholder = { Text("New group…", color = TextSecondary) },
+                    singleLine = true,
+                    modifier = Modifier.weight(1f),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Primary,
+                        unfocusedBorderColor = Outline,
+                        focusedTextColor = OnSurface,
+                        unfocusedTextColor = OnSurface,
+                        cursorColor = Primary,
+                        focusedContainerColor = SurfaceVariant,
+                        unfocusedContainerColor = SurfaceVariant,
+                    ),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { doAddGroup() }),
+                )
+                FilledIconButton(
+                    onClick = { doAddGroup() },
+                    modifier = Modifier.size(52.dp),
+                    shape = RoundedCornerShape(14.dp),
+                    colors = IconButtonDefaults.filledIconButtonColors(containerColor = Primary),
+                ) {
+                    Icon(Icons.Rounded.Add, contentDescription = "Add", tint = Color.White)
+                }
             }
         }
+        } // end Box
     }
 }

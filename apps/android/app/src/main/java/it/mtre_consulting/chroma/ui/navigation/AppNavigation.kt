@@ -82,7 +82,7 @@ private val tabRoutes = navItems.map { it.route }
 
 // Pill geometry: 4dp outer padding × 2 + 14dp item padding × 2 + 22dp icon = 58dp tall
 internal val PILL_HEIGHT: Dp = 58.dp
-internal val PILL_GAP: Dp = 8.dp
+internal val PILL_GAP: Dp = 24.dp
 
 @Composable
 fun AppNavigation(vm: AppViewModel) {
@@ -112,17 +112,24 @@ fun AppNavigation(vm: AppViewModel) {
             navController = navController,
             startDestination = Screen.Palettes.route,
             modifier = Modifier.fillMaxSize(),
-            // Tab switches → crossfade only (no slide — slides look like a reload)
+            // Tab switches → slide up from pill + fade, matching the pill's bottom position
             // Stack push/pop → subtle upward slide
             enterTransition = {
                 val tabSwitch = initialState.destination.route in tabRoutes &&
                         targetState.destination.route in tabRoutes
-                if (tabSwitch) fadeIn(tween(180))
+                if (tabSwitch)
+                    fadeIn(tween(250, easing = EaseOut)) +
+                            slideInVertically(tween(300, easing = EaseOut)) { it / 3 }
                 else fadeIn(tween(200, easing = EaseOut)) +
                         slideInVertically(tween(200, easing = EaseOut)) { (it * 0.04f).toInt() }
             },
             exitTransition = {
-                fadeOut(tween(130, easing = EaseIn))
+                val tabSwitch = initialState.destination.route in tabRoutes &&
+                        targetState.destination.route in tabRoutes
+                if (tabSwitch)
+                    fadeOut(tween(150, easing = EaseIn)) +
+                            slideOutVertically(tween(150, easing = EaseIn)) { -(it * 0.04f).toInt() }
+                else fadeOut(tween(130, easing = EaseIn))
             },
             popEnterTransition = {
                 fadeIn(tween(180, easing = EaseOut))

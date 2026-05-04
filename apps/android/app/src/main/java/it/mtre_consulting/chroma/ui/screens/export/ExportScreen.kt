@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -47,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import it.mtre_consulting.chroma.ui.theme.Background
@@ -162,10 +164,11 @@ fun ExportScreen(vm: AppViewModel) {
             }
         }
 
-        // Output preview
+        // Output preview + floating action bar in a shared Box
+        Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
         Box(
             modifier = Modifier
-                .weight(1f)
+                .fillMaxSize()
                 .padding(horizontal = 12.dp),
         ) {
             if (isEmpty) {
@@ -193,50 +196,58 @@ fun ExportScreen(vm: AppViewModel) {
             }
         }
 
-        // Actions — sits above the pill
+        // Floating action bar — export preview scrolls behind gradient scrim
         if (!isEmpty) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Background)
-                    .navigationBarsPadding()
-                    .padding(start = 12.dp, end = 12.dp, top = 10.dp, bottom = 10.dp + PILL_HEIGHT + PILL_GAP),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-            ) {
-                Button(
-                    onClick = {
-                        val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                        cm.setPrimaryClip(ClipData.newPlainText("chroma-export", output))
-                        scope.launch { copied = true; delay(2000); copied = false }
-                    },
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(999.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = Primary),
+            Column(modifier = Modifier.fillMaxWidth().align(Alignment.BottomStart)) {
+                Spacer(
+                    modifier = Modifier.fillMaxWidth().height(40.dp)
+                        .background(Brush.verticalGradient(listOf(Color.Transparent, Background))),
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Background)
+                        .navigationBarsPadding()
+                        .padding(bottom = PILL_GAP + PILL_HEIGHT)
+                        .padding(start = 12.dp, end = 12.dp, vertical = 10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
-                    Text(if (copied) "Copied!" else "Copy", fontWeight = FontWeight.SemiBold)
-                }
-                OutlinedButton(
-                    onClick = {
-                        context.startActivity(
-                            Intent.createChooser(
-                                Intent(Intent.ACTION_SEND).apply {
-                                    type = "text/plain"
-                                    putExtra(Intent.EXTRA_TEXT, output)
-                                    putExtra(Intent.EXTRA_TITLE, "chroma-tokens.${format.ext}")
-                                },
-                                "Share as .${format.ext}",
+                    Button(
+                        onClick = {
+                            val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            cm.setPrimaryClip(ClipData.newPlainText("chroma-export", output))
+                            scope.launch { copied = true; delay(2000); copied = false }
+                        },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(999.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Primary),
+                    ) {
+                        Text(if (copied) "Copied!" else "Copy", fontWeight = FontWeight.SemiBold)
+                    }
+                    OutlinedButton(
+                        onClick = {
+                            context.startActivity(
+                                Intent.createChooser(
+                                    Intent(Intent.ACTION_SEND).apply {
+                                        type = "text/plain"
+                                        putExtra(Intent.EXTRA_TEXT, output)
+                                        putExtra(Intent.EXTRA_TITLE, "chroma-tokens.${format.ext}")
+                                    },
+                                    "Share as .${format.ext}",
+                                )
                             )
-                        )
-                    },
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(999.dp),
-                    border = androidx.compose.foundation.BorderStroke(1.dp, Primary),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Primary),
-                ) {
-                    Text("Share .${format.ext}", fontWeight = FontWeight.SemiBold)
+                        },
+                        modifier = Modifier.weight(1f),
+                        shape = RoundedCornerShape(999.dp),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, Primary),
+                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Primary),
+                    ) {
+                        Text("Share .${format.ext}", fontWeight = FontWeight.SemiBold)
+                    }
                 }
             }
         }
+        } // end Box
     }
 
     if (showDropdown) {
