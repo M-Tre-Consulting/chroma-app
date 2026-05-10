@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -290,8 +289,6 @@ fun TokensScreen(vm: AppViewModel) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Background)
-                    .navigationBarsPadding()
-                    .padding(bottom = PILL_GAP + PILL_HEIGHT)
                     .padding(horizontal = 12.dp, vertical = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -324,6 +321,9 @@ fun TokensScreen(vm: AppViewModel) {
                     Icon(Icons.Rounded.Add, contentDescription = "Add", tint = Color.White)
                 }
             }
+            // Transparent spacer so the Row background stops above the pill.
+            // The root Box background (Background) fills the area behind the pill.
+            Spacer(modifier = Modifier.fillMaxWidth().height(navBarPadding + PILL_GAP + PILL_HEIGHT))
         }
         } // end Box
     }

@@ -112,14 +112,12 @@ fun AppNavigation(vm: AppViewModel) {
             navController = navController,
             startDestination = Screen.Palettes.route,
             modifier = Modifier.fillMaxSize(),
-            // Tab switches → slide up from pill + fade, matching the pill's bottom position
-            // Stack push/pop → subtle upward slide
+            // Tab switches → clean crossfade; stack push/pop → subtle upward slide
             enterTransition = {
                 val tabSwitch = initialState.destination.route in tabRoutes &&
                         targetState.destination.route in tabRoutes
                 if (tabSwitch)
-                    fadeIn(tween(250, easing = EaseOut)) +
-                            slideInVertically(tween(300, easing = EaseOut)) { it / 3 }
+                    fadeIn(tween(220, easing = EaseOut))
                 else fadeIn(tween(200, easing = EaseOut)) +
                         slideInVertically(tween(200, easing = EaseOut)) { (it * 0.04f).toInt() }
             },
@@ -127,16 +125,25 @@ fun AppNavigation(vm: AppViewModel) {
                 val tabSwitch = initialState.destination.route in tabRoutes &&
                         targetState.destination.route in tabRoutes
                 if (tabSwitch)
-                    fadeOut(tween(150, easing = EaseIn)) +
-                            slideOutVertically(tween(150, easing = EaseIn)) { -(it * 0.04f).toInt() }
+                    fadeOut(tween(160, easing = EaseIn))
                 else fadeOut(tween(130, easing = EaseIn))
             },
             popEnterTransition = {
-                fadeIn(tween(180, easing = EaseOut))
+                val tabPop = initialState.destination.route in tabRoutes &&
+                        targetState.destination.route in tabRoutes
+                if (tabPop)
+                    fadeIn(tween(220, easing = EaseOut))
+                else
+                    fadeIn(tween(180, easing = EaseOut))
             },
             popExitTransition = {
-                fadeOut(tween(130, easing = EaseIn)) +
-                        slideOutVertically(tween(130, easing = EaseIn)) { (it * 0.04f).toInt() }
+                val tabPop = initialState.destination.route in tabRoutes &&
+                        targetState.destination.route in tabRoutes
+                if (tabPop)
+                    fadeOut(tween(160, easing = EaseIn))
+                else
+                    fadeOut(tween(130, easing = EaseIn)) +
+                            slideOutVertically(tween(130, easing = EaseIn)) { (it * 0.04f).toInt() }
             },
         ) {
             composable(Screen.Palettes.route) {
