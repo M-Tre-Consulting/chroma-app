@@ -10,7 +10,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -57,7 +56,6 @@ import it.mtre_consulting.chroma.ui.theme.OnSurface
 import it.mtre_consulting.chroma.ui.theme.Outline
 import it.mtre_consulting.chroma.ui.theme.Primary
 import it.mtre_consulting.chroma.ui.theme.Surface
-import it.mtre_consulting.chroma.ui.theme.SurfaceVariant
 import it.mtre_consulting.chroma.ui.theme.TextDisabled
 import it.mtre_consulting.chroma.ui.theme.TextSecondary
 import it.mtre_consulting.chroma.ui.navigation.PILL_GAP
@@ -270,7 +268,7 @@ fun ExportScreen(vm: AppViewModel) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { format = f; showDropdown = false }
+                            .clickable { format = f; showDropdown = false; }
                             .padding(vertical = 14.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,

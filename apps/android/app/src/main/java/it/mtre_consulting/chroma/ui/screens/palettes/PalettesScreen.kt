@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -49,7 +48,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
@@ -67,6 +65,7 @@ import it.mtre_consulting.chroma.ui.theme.TextSecondary
 import it.mtre_consulting.chroma.ui.navigation.PILL_GAP
 import it.mtre_consulting.chroma.ui.navigation.PILL_HEIGHT
 import it.mtre_consulting.chroma.viewmodel.AppViewModel
+import androidx.core.graphics.toColorInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -163,7 +162,7 @@ fun PalettesScreen(vm: AppViewModel, onSelectPalette: (String) -> Unit) {
                                         .clip(RoundedCornerShape(8.dp))
                                         .background(
                                             runCatching {
-                                                Color(android.graphics.Color.parseColor(colour.hex))
+                                                Color(colour.hex.toColorInt())
                                             }.getOrDefault(Color(0xFF2E2E2E))
                                         ),
                                 )
