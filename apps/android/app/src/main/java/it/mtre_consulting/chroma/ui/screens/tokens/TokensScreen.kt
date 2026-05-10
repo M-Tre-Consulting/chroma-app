@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -111,7 +112,7 @@ fun TokensScreen(vm: AppViewModel) {
         Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 12.dp, top = 8.dp, bottom = navBarPadding + PILL_GAP + PILL_HEIGHT + 72.dp),
+            contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 8.dp, bottom = navBarPadding + PILL_GAP + PILL_HEIGHT + 72.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             if (groups.isEmpty()) {
@@ -291,7 +292,7 @@ fun TokensScreen(vm: AppViewModel) {
                     .background(Background)
                     .navigationBarsPadding()
                     .padding(bottom = PILL_GAP + PILL_HEIGHT)
-                    .padding(start = 12.dp, end = 12.dp, vertical = 10.dp),
+                    .padding(horizontal = 12.dp, vertical = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {

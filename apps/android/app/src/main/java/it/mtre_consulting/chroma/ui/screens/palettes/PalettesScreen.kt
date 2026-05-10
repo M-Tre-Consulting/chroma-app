@@ -123,7 +123,7 @@ fun PalettesScreen(vm: AppViewModel, onSelectPalette: (String) -> Unit) {
         Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 12.dp, top = 8.dp, bottom = navBarPadding + PILL_GAP + PILL_HEIGHT + 72.dp),
+            contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 8.dp, bottom = navBarPadding + PILL_GAP + PILL_HEIGHT + 72.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             if (palettes.isEmpty()) {
@@ -199,7 +199,7 @@ fun PalettesScreen(vm: AppViewModel, onSelectPalette: (String) -> Unit) {
                     .background(Background)
                     .navigationBarsPadding()
                     .padding(bottom = PILL_GAP + PILL_HEIGHT)
-                    .padding(start = 12.dp, end = 12.dp, vertical = 10.dp),
+                    .padding(horizontal = 12.dp, vertical = 10.dp),
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
