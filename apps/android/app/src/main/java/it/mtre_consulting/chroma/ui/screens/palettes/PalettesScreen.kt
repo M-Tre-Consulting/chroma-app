@@ -66,6 +66,7 @@ import it.mtre_consulting.chroma.ui.navigation.PILL_GAP
 import it.mtre_consulting.chroma.ui.navigation.PILL_HEIGHT
 import it.mtre_consulting.chroma.viewmodel.AppViewModel
 import androidx.core.graphics.toColorInt
+import it.mtre_consulting.chroma.BuildConfig
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -267,7 +268,7 @@ private fun AboutContent() {
             }
             Column {
                 Text("Chroma", fontSize = 20.sp, fontWeight = FontWeight.SemiBold, color = OnSurface)
-                Text("Version 1.0", fontSize = 13.sp, color = TextSecondary)
+                Text("Version ${BuildConfig.VERSION_NAME}", fontSize = 13.sp, color = TextSecondary)
             }
         }
 
