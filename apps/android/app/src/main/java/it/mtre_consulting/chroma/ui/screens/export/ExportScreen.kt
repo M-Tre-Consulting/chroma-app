@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -91,6 +93,7 @@ fun ExportScreen(vm: AppViewModel) {
     val sheetState = rememberModalBottomSheetState()
 
     val isEmpty = groups.isEmpty() || groups.all { it.tokens.isEmpty() }
+    val navBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val output = when (format) {
         ExportFormat.CSS -> exportCSS(groups, palettes)
         ExportFormat.SCSS -> exportSCSS(groups, palettes)
@@ -206,8 +209,6 @@ fun ExportScreen(vm: AppViewModel) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Background)
-                        .navigationBarsPadding()
-                        .padding(bottom = PILL_GAP + PILL_HEIGHT)
                         .padding(horizontal = 12.dp, vertical = 10.dp),
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
@@ -244,6 +245,7 @@ fun ExportScreen(vm: AppViewModel) {
                         Text("Share .${format.ext}", fontWeight = FontWeight.SemiBold)
                     }
                 }
+                Spacer(modifier = Modifier.fillMaxWidth().height(navBarPadding + PILL_GAP + PILL_HEIGHT + PILL_GAP))
             }
         }
         } // end Box

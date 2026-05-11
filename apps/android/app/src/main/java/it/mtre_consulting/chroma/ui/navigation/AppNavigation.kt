@@ -15,6 +15,7 @@ import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -196,13 +197,14 @@ private fun NavigationPill(
     Row(
         modifier = modifier
             .shadow(
-                elevation = 16.dp,
+                elevation = 24.dp,
                 shape = RoundedCornerShape(999.dp),
-                ambientColor = Color.Black.copy(alpha = 0.55f),
-                spotColor = Color.Black.copy(alpha = 0.55f),
+                ambientColor = Color.Black.copy(alpha = 0.8f),
+                spotColor = Color.Black.copy(alpha = 0.8f),
             )
             .clip(RoundedCornerShape(999.dp))
             .background(Surface)
+            .border(0.5.dp, Color.White.copy(alpha = 0.08f), RoundedCornerShape(999.dp))
             .padding(4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(2.dp),

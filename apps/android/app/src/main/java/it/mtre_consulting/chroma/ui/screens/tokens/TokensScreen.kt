@@ -111,7 +111,7 @@ fun TokensScreen(vm: AppViewModel) {
         Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 8.dp, bottom = navBarPadding + PILL_GAP + PILL_HEIGHT + 72.dp),
+            contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 8.dp, bottom = navBarPadding + PILL_GAP + PILL_HEIGHT + PILL_GAP + 72.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             if (groups.isEmpty()) {
@@ -323,7 +323,7 @@ fun TokensScreen(vm: AppViewModel) {
             }
             // Transparent spacer so the Row background stops above the pill.
             // The root Box background (Background) fills the area behind the pill.
-            Spacer(modifier = Modifier.fillMaxWidth().height(navBarPadding + PILL_GAP + PILL_HEIGHT))
+            Spacer(modifier = Modifier.fillMaxWidth().height(navBarPadding + PILL_GAP + PILL_HEIGHT + PILL_GAP))
         }
         } // end Box
     }
