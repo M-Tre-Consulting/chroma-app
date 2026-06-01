@@ -817,14 +817,16 @@ fn build_palettes_page(
             if let Some(r) = row {
                 let idx = r.index();
                 if idx >= 0 {
-                    let mut s = state.borrow_mut();
-                    if let Some(p) = s.palettes.get(idx as usize) {
-                        s.active_palette_id = Some(p.id.clone());
-                        Store::new().save(&s);
+                    if let Ok(mut s) = state.try_borrow_mut() {
+                        if let Some(p) = s.palettes.get(idx as usize) {
+                            s.active_palette_id = Some(p.id.clone());
+                            Store::new().save(&s);
+                        }
+                        drop(s);
+                        refresh();
                     }
                 }
             }
-            refresh();
         });
     }
 
