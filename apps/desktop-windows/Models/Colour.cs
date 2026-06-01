@@ -35,19 +35,19 @@ namespace Chroma.Models
         /// Gets or sets the Hue component value (0 to 360).
         /// </summary>
         [JsonPropertyName("h")]
-        public ushort H { get; set; }
+        public int H { get; set; }
 
         /// <summary>
         /// Gets or sets the Saturation component value (0 to 100).
         /// </summary>
         [JsonPropertyName("s")]
-        public byte S { get; set; }
+        public int S { get; set; }
 
         /// <summary>
         /// Gets or sets the Lightness component value (0 to 100).
         /// </summary>
         [JsonPropertyName("l")]
-        public byte L { get; set; }
+        public int L { get; set; }
     }
 
     /// <summary>
