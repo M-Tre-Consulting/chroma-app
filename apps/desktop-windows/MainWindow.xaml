@@ -43,7 +43,7 @@
 
                 <!-- App Info Footer -->
                 <StackPanel Grid.Row="3" Margin="0,12,0,0">
-                    <TextBlock Text="Status: Connected" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock Text="Status: Sync Active" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
                     <TextBlock Text="WPF C# Native Core" FontSize="10" Foreground="{StaticResource TextDimBrush}" Margin="0,2,0,0"/>
                 </StackPanel>
             </Grid>
@@ -86,36 +86,48 @@
                             
                             <TextBlock Grid.Row="0" Text="MY PALETTES" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextDimBrush}" Margin="4,6,0,8"/>
 
-                            <!-- Palettes list box -->
-                            <ListBox Grid.Row="1" Background="Transparent" BorderThickness="0" Foreground="{StaticResource TextBrush}">
-                                <ListBoxItem HorizontalContentAlignment="Stretch" Margin="0,2">
-                                    <Border CornerRadius="6" Background="{StaticResource AccentSoftBrush}" Padding="8,6">
+                            <!-- Palettes list box (Bound to Viewmodel) -->
+                            <ListBox Grid.Row="1" Background="Transparent" BorderThickness="0" Foreground="{StaticResource TextBrush}"
+                                     ItemsSource="{Binding Palettes}" SelectedItem="{Binding ActivePalette}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Margin" Value="0,2"/>
+                                        <Setter Property="Padding" Value="0"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListBoxItem">
+                                                    <Border x:Name="ItemBorder" CornerRadius="6" Background="Transparent" Padding="8,6">
+                                                        <ContentPresenter/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsSelected" Value="True">
+                                                            <Setter TargetName="ItemBorder" Property="Background" Value="{StaticResource AccentSoftBrush}"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="ItemBorder" Property="Background" Value="#0DA374F2"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
-                                            <Border Grid.Column="0" CornerRadius="99" Background="#3584e4" Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                            <TextBlock Grid.Column="1" Text="Default Palette" FontWeight="Bold" VerticalAlignment="Center"/>
-                                            <TextBlock Grid.Column="2" Text="5" Foreground="{StaticResource TextDimBrush}" FontSize="11" VerticalAlignment="Center"/>
+                                            <Border Grid.Column="0" CornerRadius="99" Background="{StaticResource AccentBrush}" Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding Name}" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}" FontWeight="SemiBold"/>
+                                            <TextBlock Grid.Column="2" Text="{Binding Colours.Count}" Foreground="{StaticResource TextDimBrush}" FontSize="11" VerticalAlignment="Center" Margin="8,0,0,0"/>
                                         </Grid>
-                                    </Border>
-                                </ListBoxItem>
-                                <ListBoxItem HorizontalContentAlignment="Stretch" Margin="0,2">
-                                    <Border CornerRadius="6" Background="Transparent" Padding="8,6">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Border Grid.Column="0" CornerRadius="99" Background="#2ec27e" Width="10" Height="10" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                            <TextBlock Grid.Column="1" Text="Material System" VerticalAlignment="Center"/>
-                                            <TextBlock Grid.Column="2" Text="8" Foreground="{StaticResource TextDimBrush}" FontSize="11" VerticalAlignment="Center"/>
-                                        </Grid>
-                                    </Border>
-                                </ListBoxItem>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
                             </ListBox>
 
                             <!-- Sidebar Footer: New Palette -->
@@ -124,8 +136,8 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0" x:Name="TxtNewPaletteName" Tag="New palette…"/>
-                                <Button Grid.Column="1" Content="+" Style="{StaticResource ModernButtonStyle}" Width="32" Margin="6,0,0,0" Padding="0"/>
+                                <TextBox Grid.Column="0" x:Name="TxtNewPaletteName" Padding="8,6" Background="{StaticResource BgSunkenBrush}" BorderBrush="{StaticResource BorderBrush}"/>
+                                <Button Grid.Column="1" Content="+" Style="{StaticResource ModernButtonStyle}" Width="32" Margin="6,0,0,0" Padding="0" Click="BtnAddPalette_Click"/>
                             </Grid>
                         </Grid>
                     </Border>
@@ -142,10 +154,17 @@
 
                         <!-- Header area -->
                         <Border Grid.Row="0" Background="{StaticResource BgRaisedBrush}" Padding="16,14" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
-                            <StackPanel>
-                                <TextBlock Text="Default Palette" FontSize="16" FontWeight="Bold"/>
-                                <TextBlock Text="5 colours • Updated 2 hours ago" FontSize="11" Foreground="{StaticResource TextDimBrush}" Margin="0,2,0,0"/>
-                            </StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{Binding ActivePalette.Name, FallbackValue='No Palette Selected'}" FontSize="16" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding ActivePaletteColoursCountText}" FontSize="11" Foreground="{StaticResource TextDimBrush}" Margin="0,2,0,0"/>
+                                </StackPanel>
+                                <Button Grid.Column="1" Content="Delete Palette" Style="{StaticResource ModernButtonStyle}" Foreground="{StaticResource WcagFailBrush}" Padding="12,6" Click="BtnDeletePalette_Click"/>
+                            </Grid>
                         </Border>
 
                         <!-- Workspace Split Columns -->
@@ -178,19 +197,23 @@
                                                     <GradientStop Color="#FF2EC27E" Offset="1"/>
                                                 </LinearGradientBrush>
                                             </Border.Background>
-                                            <TextBlock Text="Wheel / Color Spectrums" Foreground="#E0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" FontWeight="Bold"/>
+                                            <TextBlock Text="Select via HEX input below" Foreground="#E0FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="11" FontWeight="Bold"/>
                                         </Border>
 
                                         <!-- Live Color Selection preview bar -->
-                                        <Border Grid.Row="1" CornerRadius="4" Height="24" Background="#FFA374F2" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="0,12,0,0"/>
+                                        <Border Grid.Row="1" CornerRadius="4" Height="24" Background="{Binding SelectedColorHex, FallbackValue='#7c6ff7'}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="0,12,0,0"/>
                                     </Grid>
                                 </Border>
 
                                 <!-- Text Entry Name -->
                                 <TextBlock Text="Colour Name" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
-                                <TextBox Margin="0,0,0,12" Text="Accent Purple"/>
+                                <TextBox Margin="0,0,0,12" Text="{Binding SelectedColorName, UpdateSourceTrigger=PropertyChanged}"/>
 
-                                <Button Content="Add to Palette" Style="{StaticResource AccentButtonStyle}" Height="36"/>
+                                <!-- Text Entry Hex -->
+                                <TextBlock Text="Hex Value (e.g. #7c6ff7)" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
+                                <TextBox Margin="0,0,0,12" Text="{Binding SelectedColorHex, UpdateSourceTrigger=PropertyChanged}"/>
+
+                                <Button Content="Add to Palette" Style="{StaticResource AccentButtonStyle}" Height="36" Click="BtnAddColour_Click"/>
                             </StackPanel>
 
                             <!-- Column 2: Color list cards -->
@@ -202,73 +225,53 @@
 
                                 <TextBlock Grid.Row="0" Text="PALETTE COLOUR CARDS" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextDimBrush}" Margin="0,0,0,12"/>
 
-                                <!-- Cards scroll container -->
-                                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                                    <StackPanel x:Name="PaletteCardsStack">
-                                        <!-- Color Card Item -->
-                                        <Border CornerRadius="8" Background="{StaticResource BgRaisedBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="0,0,0,8" Padding="12">
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                </Grid.RowDefinitions>
-                                                
-                                                <!-- Row Header -->
-                                                <Grid Grid.Row="0">
+                                <!-- Bound Colors list box -->
+                                <ListBox Grid.Row="1" Background="Transparent" BorderThickness="0" Foreground="{StaticResource TextBrush}"
+                                         ItemsSource="{Binding ActivePalette.Colours}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Setter Property="Padding" Value="0"/>
+                                            <Setter Property="Margin" Value="0,0,0,8"/>
+                                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ListBoxItem">
+                                                        <ContentPresenter/>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border CornerRadius="8" Background="{StaticResource BgRaisedBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Padding="12">
+                                                <Grid>
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="Auto"/>
                                                         <ColumnDefinition Width="*"/>
                                                         <ColumnDefinition Width="Auto"/>
                                                         <ColumnDefinition Width="Auto"/>
                                                     </Grid.ColumnDefinitions>
-                                                    <Border Grid.Column="0" CornerRadius="6" Background="#A374F2" Width="28" Height="28" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="0,0,12,0"/>
+                                                    <Border Grid.Column="0" CornerRadius="6" Background="{Binding Hex}" Width="28" Height="28" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="0,0,12,0"/>
                                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                        <TextBlock Text="Accent Purple" FontWeight="Bold" FontSize="13"/>
-                                                        <TextBlock Text="#A374F2" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
+                                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="13" Foreground="{StaticResource TextBrush}"/>
+                                                        <TextBlock Text="{Binding Hex}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" FontFamily="Consolas"/>
                                                     </StackPanel>
                                                     
-                                                    <!-- WCAG badge -->
+                                                    <!-- WCAG badge pass indicator -->
                                                     <Border Grid.Column="2" CornerRadius="12" Background="#222EC27E" Padding="10,4" VerticalAlignment="Center" Margin="0,0,12,0">
-                                                        <TextBlock Text="AAA PASS" Foreground="{StaticResource WcagAaaBrush}" FontSize="10" FontWeight="Bold"/>
+                                                        <TextBlock Text="PASS AA" Foreground="{StaticResource WcagAaBrush}" FontSize="10" FontWeight="Bold"/>
                                                     </Border>
                                                     
                                                     <!-- Trash action button -->
-                                                    <Button Grid.Column="3" Content="🗑" Style="{StaticResource ModernButtonStyle}" Width="28" Height="28" Padding="0"/>
+                                                    <Button Grid.Column="3" Content="🗑" Style="{StaticResource ModernButtonStyle}" Width="28" Height="28" Padding="0" Click="BtnDeleteColour_Click" Tag="{Binding}"/>
                                                 </Grid>
-                                            </Grid>
-                                        </Border>
-
-                                        <!-- Card Item 2 -->
-                                        <Border CornerRadius="8" Background="{StaticResource BgRaisedBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="0,0,0,8" Padding="12">
-                                            <Grid>
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="Auto"/>
-                                                    <RowDefinition Height="Auto"/>
-                                                </Grid.RowDefinitions>
-                                                
-                                                <Grid Grid.Row="0">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                        <ColumnDefinition Width="Auto"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <Border Grid.Column="0" CornerRadius="6" Background="#FF3584E4" Width="28" Height="28" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="0,0,12,0"/>
-                                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                                        <TextBlock Text="Theme Blue" FontWeight="Bold" FontSize="13"/>
-                                                        <TextBlock Text="#3584E4" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
-                                                    </StackPanel>
-                                                    
-                                                    <Border Grid.Column="2" CornerRadius="12" Background="#223584E4" Padding="10,4" VerticalAlignment="Center" Margin="0,0,12,0">
-                                                        <TextBlock Text="AA PASS" Foreground="{StaticResource WcagAaBrush}" FontSize="10" FontWeight="Bold"/>
-                                                    </Border>
-                                                    
-                                                    <Button Grid.Column="3" Content="🗑" Style="{StaticResource ModernButtonStyle}" Width="28" Height="28" Padding="0"/>
-                                                </Grid>
-                                            </Grid>
-                                        </Border>
-                                    </StackPanel>
-                                </ScrollViewer>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
                             </Grid>
                         </Grid>
                     </Grid>
@@ -300,31 +303,46 @@
                             
                             <TextBlock Grid.Row="0" Text="TOKEN GROUPS" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextDimBrush}" Margin="4,6,0,8"/>
 
-                            <ListBox Grid.Row="1" Background="Transparent" BorderThickness="0" Foreground="{StaticResource TextBrush}">
-                                <ListBoxItem HorizontalContentAlignment="Stretch" Margin="0,2">
-                                    <Border CornerRadius="6" Background="{StaticResource AccentSoftBrush}" Padding="8,6">
+                            <!-- Bound TokenGroups list box -->
+                            <ListBox Grid.Row="1" Background="Transparent" BorderThickness="0" Foreground="{StaticResource TextBrush}"
+                                     ItemsSource="{Binding TokenGroups}" SelectedItem="{Binding ActiveTokenGroup}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Margin" Value="0,2"/>
+                                        <Setter Property="Padding" Value="0"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ListBoxItem">
+                                                    <Border x:Name="ItemBorder" CornerRadius="6" Background="Transparent" Padding="8,6">
+                                                        <ContentPresenter/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsSelected" Value="True">
+                                                            <Setter TargetName="ItemBorder" Property="Background" Value="{StaticResource AccentSoftBrush}"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="ItemBorder" Property="Background" Value="#0DA374F2"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="Brand Guidelines" FontWeight="Bold" VerticalAlignment="Center"/>
-                                            <TextBlock Grid.Column="1" Text="4" Foreground="{StaticResource TextDimBrush}" FontSize="11" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="0" Text="{Binding Name}" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}" FontWeight="SemiBold"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding Tokens.Count}" Foreground="{StaticResource TextDimBrush}" FontSize="11" VerticalAlignment="Center" Margin="8,0,0,0"/>
                                         </Grid>
-                                    </Border>
-                                </ListBoxItem>
-                                <ListBoxItem HorizontalContentAlignment="Stretch" Margin="0,2">
-                                    <Border CornerRadius="6" Background="Transparent" Padding="8,6">
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" Text="Application Backgrounds" VerticalAlignment="Center"/>
-                                            <TextBlock Grid.Column="1" Text="3" Foreground="{StaticResource TextDimBrush}" FontSize="11" VerticalAlignment="Center"/>
-                                        </Grid>
-                                    </Border>
-                                </ListBoxItem>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
                             </ListBox>
 
                             <Grid Grid.Row="2" Margin="0,8,0,0">
@@ -332,8 +350,8 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0" Tag="New group…"/>
-                                <Button Grid.Column="1" Content="+" Style="{StaticResource ModernButtonStyle}" Width="32" Margin="6,0,0,0" Padding="0"/>
+                                <TextBox Grid.Column="0" x:Name="TxtNewGroupName" Padding="8,6" Background="{StaticResource BgSunkenBrush}" BorderBrush="{StaticResource BorderBrush}"/>
+                                <Button Grid.Column="1" Content="+" Style="{StaticResource ModernButtonStyle}" Width="32" Margin="6,0,0,0" Padding="0" Click="BtnAddTokenGroup_Click"/>
                             </Grid>
                         </Grid>
                     </Border>
@@ -357,83 +375,75 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0">
-                                    <TextBlock Text="Brand Guidelines" FontSize="16" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding ActiveTokenGroup.Name, FallbackValue='No Token Group'}" FontSize="16" FontWeight="Bold"/>
                                     <TextBlock Text="Active Token mapping configurations" FontSize="11" Foreground="{StaticResource TextDimBrush}" Margin="0,2,0,0"/>
                                 </StackPanel>
-                                <Button Grid.Column="1" Content="Remove Group" Style="{StaticResource ModernButtonStyle}" Foreground="{StaticResource WcagFailBrush}" Padding="12,6"/>
+                                <Button Grid.Column="1" Content="Remove Group" Style="{StaticResource ModernButtonStyle}" Foreground="{StaticResource WcagFailBrush}" Padding="12,6" Click="BtnDeleteTokenGroup_Click"/>
                             </Grid>
                         </Border>
 
-                        <!-- Scrollable table of tokens -->
-                        <ScrollViewer Grid.Row="1" Margin="16" VerticalScrollBarVisibility="Auto">
-                            <StackPanel>
-                                <!-- Token Row Item -->
-                                <Border CornerRadius="8" Background="{StaticResource BgRaisedBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="0,0,0,8" Padding="12">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="180"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        
-                                        <!-- Mapped color dot -->
-                                        <Border Grid.Column="0" CornerRadius="6" Background="#A374F2" Width="20" Height="20" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="0,0,16,0" VerticalAlignment="Center"/>
-                                        
-                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                            <TextBlock Text="color-brand-primary" FontFamily="Consolas" FontWeight="Bold" FontSize="13"/>
-                                            <TextBlock Text="Primary accent brand color token" FontSize="11" Foreground="{StaticResource TextDimBrush}"/>
-                                        </StackPanel>
-                                        
-                                        <!-- Palette color selection dropdown -->
-                                        <ComboBox Grid.Column="2" SelectedIndex="0" VerticalAlignment="Center" Margin="0,0,16,0" Padding="8,4">
-                                            <ComboBoxItem Content="Default Palette : Accent Purple"/>
-                                            <ComboBoxItem Content="Material System : Light Green"/>
-                                            <ComboBoxItem Content="— none —"/>
-                                        </ComboBox>
-                                        
-                                        <Button Grid.Column="3" Content="🗑" Style="{StaticResource ModernButtonStyle}" Width="28" Height="28" Padding="0"/>
-                                    </Grid>
-                                </Border>
-
-                                <!-- Token Row Item 2 -->
-                                <Border CornerRadius="8" Background="{StaticResource BgRaisedBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="0,0,0,8" Padding="12">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="180"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        
-                                        <Border Grid.Column="0" CornerRadius="6" Background="#FF3584E4" Width="20" Height="20" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="0,0,16,0" VerticalAlignment="Center"/>
-                                        
-                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                                            <TextBlock Text="color-brand-secondary" FontFamily="Consolas" FontWeight="Bold" FontSize="13"/>
-                                            <TextBlock Text="Secondary system brand color token" FontSize="11" Foreground="{StaticResource TextDimBrush}"/>
-                                        </StackPanel>
-                                        
-                                        <ComboBox Grid.Column="2" SelectedIndex="0" VerticalAlignment="Center" Margin="0,0,16,0" Padding="8,4">
-                                            <ComboBoxItem Content="Default Palette : Theme Blue"/>
-                                            <ComboBoxItem Content="Material System : Orange"/>
-                                            <ComboBoxItem Content="— none —"/>
-                                        </ComboBox>
-                                        
-                                        <Button Grid.Column="3" Content="🗑" Style="{StaticResource ModernButtonStyle}" Width="28" Height="28" Padding="0"/>
-                                    </Grid>
-                                </Border>
-                            </StackPanel>
-                        </ScrollViewer>
+                        <!-- Scrollable list of tokens in active group -->
+                        <ListBox Grid.Row="1" Background="Transparent" BorderThickness="0" Foreground="{StaticResource TextBrush}" Margin="16"
+                                 ItemsSource="{Binding ActiveTokenGroup.Tokens}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                    <Setter Property="Background" Value="Transparent"/>
+                                    <Setter Property="Padding" Value="0"/>
+                                    <Setter Property="Margin" Value="0,0,0,8"/>
+                                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ListBoxItem">
+                                                <ContentPresenter/>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border CornerRadius="8" Background="{StaticResource BgRaisedBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Padding="12">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="220"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            
+                                            <!-- Color dot icon -->
+                                            <Border Grid.Column="0" CornerRadius="6" Background="{StaticResource AccentBrush}" Width="20" Height="20" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="0,0,16,0" VerticalAlignment="Center"/>
+                                            
+                                            <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding Name}" FontFamily="Consolas" FontWeight="Bold" FontSize="13" Foreground="{StaticResource TextBrush}"/>
+                                                <TextBlock Text="{Binding Description}" FontSize="11" Foreground="{StaticResource TextDimBrush}"/>
+                                            </StackPanel>
+                                            
+                                            <!-- Color selection or mapping details -->
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0">
+                                                <TextBlock Text="Palette Value ID: " Foreground="{StaticResource TextDimBrush}" FontSize="11" VerticalAlignment="Center"/>
+                                                <TextBlock Text="{Binding Value.ColourId, FallbackValue='Unassigned'}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" FontWeight="SemiBold" VerticalAlignment="Center" FontFamily="Consolas"/>
+                                            </StackPanel>
+                                            
+                                            <Button Grid.Column="3" Content="🗑" Style="{StaticResource ModernButtonStyle}" Width="28" Height="28" Padding="0" Click="BtnDeleteToken_Click" Tag="{Binding}"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
 
                         <!-- Footer: Add token entry -->
                         <Border Grid.Row="2" Background="{StaticResource BgSunkenBrush}" Padding="16" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="200"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0" Tag="Token name…"/>
-                                <Button Grid.Column="1" Content="Add Token" Style="{StaticResource AccentButtonStyle}" Width="120" Margin="12,0,0,0" Height="32"/>
+                                <TextBox Grid.Column="0" x:Name="TxtNewTokenName" Padding="8,6" Background="{StaticResource BgRaisedBrush}"/>
+                                <TextBox Grid.Column="1" x:Name="TxtNewTokenDesc" Margin="12,0,0,0" Padding="8,6" Background="{StaticResource BgRaisedBrush}"/>
+                                <Button Grid.Column="2" Content="Add Token" Style="{StaticResource AccentButtonStyle}" Width="120" Margin="12,0,0,0" Height="32" Click="BtnAddToken_Click"/>
                             </Grid>
                         </Border>
                     </Grid>
@@ -453,26 +463,17 @@
 
                     <!-- Header switcher formatting -->
                     <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,16">
-                        <Button Content="CSS Variables" Style="{StaticResource AccentButtonStyle}" Margin="4,0" Padding="14,6"/>
-                        <Button Content="SCSS Variables" Style="{StaticResource ModernButtonStyle}" Margin="4,0" Padding="14,6"/>
-                        <Button Content="Style Dictionary" Style="{StaticResource ModernButtonStyle}" Margin="4,0" Padding="14,6"/>
-                        <Button Content="Tailwind TS" Style="{StaticResource ModernButtonStyle}" Margin="4,0" Padding="14,6"/>
-                        <Button Content="Android XML" Style="{StaticResource ModernButtonStyle}" Margin="4,0" Padding="14,6"/>
+                        <Button Content="CSS Variables" Style="{StaticResource ModernButtonStyle}" Margin="4,0" Padding="14,6" Click="BtnExportFormat_Click" Tag="css"/>
+                        <Button Content="SCSS Variables" Style="{StaticResource ModernButtonStyle}" Margin="4,0" Padding="14,6" Click="BtnExportFormat_Click" Tag="scss"/>
+                        <Button Content="Style Dictionary" Style="{StaticResource ModernButtonStyle}" Margin="4,0" Padding="14,6" Click="BtnExportFormat_Click" Tag="json"/>
+                        <Button Content="Tailwind TS" Style="{StaticResource ModernButtonStyle}" Margin="4,0" Padding="14,6" Click="BtnExportFormat_Click" Tag="tailwind"/>
+                        <Button Content="Android XML" Style="{StaticResource ModernButtonStyle}" Margin="4,0" Padding="14,6" Click="BtnExportFormat_Click" Tag="android"/>
                     </StackPanel>
 
-                    <!-- Scrollable Monospace Read-Only preview -->
+                    <!-- Scrollable Monospace Read-Only preview (Bound to ExportPreviewText) -->
                     <Border Grid.Row="1" CornerRadius="8" Background="{StaticResource BgSunkenBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
-                        <TextBox Background="Transparent" BorderThickness="0" FontFamily="Consolas" FontSize="13" Foreground="#B0B3C6" IsReadOnly="True" AcceptsReturn="True" AcceptsTab="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="16">
-                            <TextBox.Text>
-:root {
-  --color-brand-primary: #a374f2;
-  --color-brand-secondary: #3584e4;
-  --color-system-success: #2ec27e;
-  --color-system-warning: #e6c000;
-  --color-system-danger: #e01b24;
-}
-                            </TextBox.Text>
-                        </TextBox>
+                        <TextBox Background="Transparent" BorderThickness="0" FontFamily="Consolas" FontSize="13" Foreground="#B0B3C6" IsReadOnly="True" AcceptsReturn="True" AcceptsTab="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="16"
+                                 Text="{Binding ExportPreviewText, Mode=OneWay}"/>
                     </Border>
 
                     <!-- Copy / Save actions -->
@@ -481,8 +482,8 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0" Content="Copy to Clipboard" Style="{StaticResource AccentButtonStyle}" Height="36" Margin="0,0,8,0"/>
-                        <Button Grid.Column="1" Content="Save as File…" Style="{StaticResource ModernButtonStyle}" Height="36" Margin="8,0,0,0"/>
+                        <Button Grid.Column="0" Content="Copy to Clipboard" Style="{StaticResource AccentButtonStyle}" Height="36" Margin="0,0,8,0" Click="BtnCopyClipboard_Click"/>
+                        <Button Grid.Column="1" Content="Save as File…" Style="{StaticResource ModernButtonStyle}" Height="36" Margin="8,0,0,0" Click="BtnSaveFile_Click"/>
                     </Grid>
                 </Grid>
             </TabItem>
