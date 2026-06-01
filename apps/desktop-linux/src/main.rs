@@ -28,6 +28,7 @@ fn main() {
     app.run();
 }
 
+#[allow(deprecated)]
 fn build_ui(app: &adw::Application) {
     let store = Store::new();
     let state = Rc::new(RefCell::new(store.load()));

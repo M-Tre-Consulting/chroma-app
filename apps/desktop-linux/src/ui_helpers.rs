@@ -2,6 +2,7 @@ use gtk4 as gtk;
 use gtk::glib;
 use gtk::prelude::*;
 
+#[allow(deprecated)]
 pub fn apply_widget_css(widget: &impl glib::object::IsA<gtk::Widget>, css: &str) {
     let provider = gtk::CssProvider::new();
     provider.load_from_string(css);

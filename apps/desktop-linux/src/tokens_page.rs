@@ -8,6 +8,7 @@ use crate::types::{AppState, TokenGroup, Token, TokenValue};
 use crate::store::Store;
 use crate::ui_helpers::{apply_widget_css, set_margin_all};
 
+#[allow(deprecated)]
 pub fn build_tokens_page(
     state: Rc<RefCell<AppState>>,
     refresh_tokens_view: Rc<RefCell<Option<Rc<dyn Fn()>>>>,

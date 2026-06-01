@@ -12,6 +12,7 @@ use crate::colour_math::{
 use crate::store::Store;
 use crate::ui_helpers::{apply_widget_css, set_margin_all};
 
+#[allow(deprecated)]
 pub fn build_palettes_page(
     state: Rc<RefCell<AppState>>,
     refresh_palettes_view: Rc<RefCell<Option<Rc<dyn Fn()>>>>,
