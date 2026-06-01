@@ -4,7 +4,7 @@ use gtk::prelude::*;
 
 pub fn apply_widget_css(widget: &impl glib::object::IsA<gtk::Widget>, css: &str) {
     let provider = gtk::CssProvider::new();
-    provider.load_from_data(css);
+    provider.load_from_string(css);
     widget.style_context().add_provider(&provider, gtk::STYLE_PROVIDER_PRIORITY_APPLICATION);
 }
 

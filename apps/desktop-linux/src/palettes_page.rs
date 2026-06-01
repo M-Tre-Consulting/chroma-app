@@ -177,8 +177,20 @@ pub fn build_palettes_page(
         let refresh_export = refresh_export_view.clone();
 
         move || {
-            let s = state.borrow();
-            let active_id = s.active_palette_id.clone();
+            let mut s = state.borrow();
+            let mut active_id = s.active_palette_id.clone();
+            if active_id.is_none() {
+                if let Some(first_p) = s.palettes.first() {
+                    let first_id = first_p.id.clone();
+                    active_id = Some(first_id.clone());
+                    drop(s);
+                    if let Ok(mut mut_s) = state.try_borrow_mut() {
+                        mut_s.active_palette_id = Some(first_id);
+                        Store::new().save(&mut_s);
+                    }
+                    s = state.borrow();
+                }
+            }
             *active_palette_id_ref.borrow_mut() = active_id.clone();
 
             // Clear palette sidebar list
@@ -247,14 +259,9 @@ pub fn build_palettes_page(
                 let row = gtk::ListBoxRow::new();
                 row.set_child(Some(&row_box));
                 palette_list_box.append(&row);
-            }
 
-            // Sync selections in sidebar list box
-            if let Some(ref_active_id) = &active_id {
-                if let Some(idx) = s.palettes.iter().position(|x| x.id == *ref_active_id) {
-                    if let Some(row) = palette_list_box.row_at_index(idx as i32) {
-                        palette_list_box.select_row(Some(&row));
-                    }
+                if active_id.as_ref() == Some(&p.id) {
+                    palette_list_box.select_row(Some(&row));
                 }
             }
 

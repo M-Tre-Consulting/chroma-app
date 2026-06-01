@@ -34,7 +34,7 @@ fn build_ui(app: &adw::Application) {
 
     // Custom global styling
     let provider = gtk::CssProvider::new();
-    provider.load_from_data(r#"
+    provider.load_from_string(r#"
         .color-dot {
             border-radius: 9999px;
             border: 1px solid rgba(0, 0, 0, 0.15);
@@ -103,8 +103,8 @@ fn build_ui(app: &adw::Application) {
     let window = adw::ApplicationWindow::builder()
         .application(app)
         .title("Chroma")
-        .default_width(900)
-        .default_height(600)
+        .default_width(1024)
+        .default_height(700)
         .build();
 
     let main_layout = gtk::Box::new(gtk::Orientation::Vertical, 0);

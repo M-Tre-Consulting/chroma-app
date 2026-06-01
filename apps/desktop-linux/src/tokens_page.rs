@@ -132,7 +132,14 @@ pub fn build_tokens_page(
 
         move || {
             let s = state.borrow();
-            let active_id = active_group_id_ref.borrow().clone();
+            let mut active_id = active_group_id_ref.borrow().clone();
+            if active_id.is_none() {
+                if let Some(first_g) = s.token_groups.first() {
+                    let first_id = first_g.id.clone();
+                    active_id = Some(first_id.clone());
+                    *active_group_id_ref.borrow_mut() = Some(first_id);
+                }
+            }
 
             // Clear Group List
             while let Some(child) = group_list_box.first_child() {
@@ -162,14 +169,9 @@ pub fn build_tokens_page(
                 let row = gtk::ListBoxRow::new();
                 row.set_child(Some(&row_box));
                 group_list_box.append(&row);
-            }
 
-            // Sync selections
-            if let Some(ref_g_id) = &active_id {
-                if let Some(idx) = s.token_groups.iter().position(|x| x.id == *ref_g_id) {
-                    if let Some(row) = group_list_box.row_at_index(idx as i32) {
-                        group_list_box.select_row(Some(&row));
-                    }
+                if active_id.as_ref() == Some(&g.id) {
+                    group_list_box.select_row(Some(&row));
                 }
             }
 
