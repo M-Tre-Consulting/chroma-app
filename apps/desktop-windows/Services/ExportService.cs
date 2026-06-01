@@ -69,8 +69,9 @@ namespace Chroma.Services
         /// <returns>A formatted CSS stylesheet variables block string.</returns>
         public static string ExportCSS(List<TokenGroup> groups, List<Palette> palettes)
         {
-            // TODO: Format tokens into a CSS custom properties block
-            return ":root {\n  /* TODO: Exporter values */\n}";
+            List<ResolvedToken> tokens = ResolveTokens(groups, palettes);
+            List<string> entries = [.. tokens.Select(t => $"  --{t.Name}: {t.Hex};")];
+            return $":root {{\n{string.Join("\n", entries)}\n}}";
         }
 
         /// <summary>
