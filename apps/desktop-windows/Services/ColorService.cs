@@ -137,14 +137,15 @@ namespace Chroma.Services
         /// </summary>
         /// <param name="ratio">The calculated contrast ratio to evaluate.</param>
         /// <returns>A rating string (e.g., AAA, AA, AA Large, or Fail).</returns>
-        public static string WcagLevel(float ratio)
+        public static string WcagLevel(double ratio)
         {
-            // TODO: Return standard WCAG 2.1 compliance level:
-            // - Ratio >= 7.0: "AAA"
-            // - Ratio >= 4.5: "AA"
-            // - Ratio >= 3.0: "AA Large"
-            // - Else: "Fail"
-            return "AA";
+            return ratio switch
+            {
+                >= 7.0 => "AAA",
+                >= 4.5 => "AA",
+                >= 3.0 => "AA Large",
+                _ => "Fail"
+            };
         }
 
         /// <summary>
