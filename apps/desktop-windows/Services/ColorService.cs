@@ -34,11 +34,36 @@ namespace Chroma.Services
         /// <returns>A new <see cref="Hsl"/> structure containing Hue, Saturation, and Lightness components.</returns>
         public static Hsl RgbToHsl(Rgb rgb)
         {
-            // TODO: Convert RGB values (0-255) to HSL components:
-            // - H (Hue): 0 to 360
-            // - S (Saturation): 0 to 100
-            // - L (Lightness): 0 to 100
-            return new Hsl { H = 246, S = 89, L = 70 };
+            double rn = rgb.R / 255.0;
+            double gn = rgb.G / 255.0;
+            double bn = rgb.B / 255.0;
+
+            double max = Math.Max(rn, Math.Max(gn, bn));
+            double min = Math.Min(rn, Math.Min(gn, bn));
+
+            double h = 0.0;
+            double s = 0.0;
+            double l = (max + min) / 2.0;
+
+            if (Math.Abs(max - min) > 1e9)
+            {
+                double d = max - min;
+                s = l > 0.5 ? d / (2.0 - max - min) : d / (max + min);
+
+                if (Math.Abs(max - rn) < 1e9)
+                    h = ((gn - bn) / d + (gn < bn ? 6.0 : 0.0)) / 6.0;
+                else if (Math.Abs(max - gn) < 1e9)
+                    h = ((bn - rn) / d + 2.0) / 6.0;
+                else
+                    h = ((rn - gn) / d + 4.0) / 6.0;
+            }
+
+            return new Hsl
+            {
+                H = (ushort)Math.Round(h * 360.0),
+                S = (byte)Math.Round(s * 100.0),
+                L = (byte)Math.Round(l * 100.0)
+            };
         }
 
         /// <summary>
