@@ -60,9 +60,9 @@ namespace Chroma.Services
 
             return new Hsl
             {
-                H = (ushort)Math.Round(h * 360.0),
-                S = (byte)Math.Round(s * 100.0),
-                L = (byte)Math.Round(l * 100.0)
+                H = (int)Math.Round(h * 360.0),
+                S = (int)Math.Round(s * 100.0),
+                L = (int)Math.Round(l * 100.0)
             };
         }
 
@@ -73,7 +73,7 @@ namespace Chroma.Services
         /// <param name="s">The Saturation component (0 to 100).</param>
         /// <param name="l">The Lightness component (0 to 100).</param>
         /// <returns>A formatted hex color string starting with a hash (e.g. #7c6ff7).</returns>
-        public static string HslToHex(ushort h, byte s, byte l)
+        public static string HslToHex(int h, int s, int l)
         {
             double sn = s / 100.0;
             double ln = l / 100.0;
@@ -153,12 +153,36 @@ namespace Chroma.Services
         /// </summary>
         /// <param name="hex">The original foreground color hex code.</param>
         /// <param name="background">The background color hex code to contrast against.</param>
-        /// <param name="target">The minimum contrast ratio required (default is 4.5f for AA).</param>
+        /// <param name="target">The minimum contrast ratio required (default is 4.5 for AA).</param>
         /// <returns>The adjusted hex color code meeting the target contrast ratio, or the original if unchanged.</returns>
-        public static string SuggestFix(string hex, string background, float target = 4.5f)
+        public static string SuggestFix(string hex, string background, double target = 4.5)
         {
-            // TODO: Adjust lightness incrementally up and down until contrast target is achieved
-            return hex;
+            Rgb? rgb = HexToRgb(hex);
+
+            if (rgb is null) return "#FFFFFFFF";
+
+            Hsl hsl = RgbToHsl(rgb);
+
+            for (int i = 1; i <= 100; ++i)
+            {
+                int darkerL = Math.Max(hsl.L - i, 0);
+                int lighterL = Math.Min(hsl.L + i, 100);
+
+                string darker = HslToHex(hsl.H, hsl.S, darkerL);
+                string lighter = HslToHex(hsl.H, hsl.S, lighterL);
+
+                if (ContrastRatio(darker, background) >= target)
+                    return darker;
+
+                if (ContrastRatio(lighter, background) >= target)
+                {
+                    int lDist = Math.Abs(lighterL - hsl.L);
+                    int dDist = Math.Abs(hsl.L - darkerL);
+                    return lDist < dDist ? lighter : darker;
+                }
+            }
+
+            return hex.ToString();
         }
     }
 }
