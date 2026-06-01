@@ -94,7 +94,7 @@ namespace Chroma.Services
         /// Computes the relative luminance of a given RGB color structure.
         /// </summary>
         /// <param name="rgb">The source color components.</param>
-        /// <returns>The calculated relative luminance value as a float.</returns>
+        /// <returns>The calculated relative luminance value as a double.</returns>
         public static double RelativeLuminance(Rgb rgb)
         {
             double rs = rgb.R / 255.0;
@@ -115,12 +115,21 @@ namespace Chroma.Services
         /// </summary>
         /// <param name="hex1">The first color hex value string.</param>
         /// <param name="hex2">The second color hex value string.</param>
-        /// <returns>The contrast ratio (between 1.0 and 21.0) as a float, or null if parsing fails.</returns>
-        public static float? ContrastRatio(string hex1, string hex2)
+        /// <returns>The contrast ratio (between 1.0 and 21.0) as a double, or null if parsing fails.</returns>
+        public static double? ContrastRatio(string hex1, string hex2)
         {
-            // TODO: Calculate contrast ratio between two hex colors:
-            // (Lighter_Luminance + 0.05) / (Darker_Luminance + 0.05)
-            return 4.5f;
+            Rgb? rgb1 = HexToRgb(hex1);
+            Rgb? rgb2 = HexToRgb(hex2);
+
+            if (rgb1 is null || rgb2 is null) return null;
+
+            double l1 = RelativeLuminance(rgb1);
+            double l2 = RelativeLuminance(rgb2);
+
+            double lighter = Math.Max(l1, l2);
+            double darker = Math.Min(l1, l2);
+
+            return Math.Round(((lighter + 0.05) / (darker + 0.05) * 100.0)) / 100.0;
         }
 
         /// <summary>
