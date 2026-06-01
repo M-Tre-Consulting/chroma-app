@@ -475,12 +475,31 @@ pub fn build_palettes_page(
                     revealer.set_transition_type(gtk::RevealerTransitionType::SlideDown);
                     revealer.set_transition_duration(250);
 
-                    let rev_clone = revealer.clone();
-                    expander.connect_activated(move |_| {
-                        let is_rev = rev_clone.reveals_child();
-                        rev_clone.set_reveal_child(!is_rev);
-                    });
+                    let toggle_revealer = {
+                        let rev_clone = revealer.clone();
+                        move || {
+                            let is_rev = rev_clone.reveals_child();
+                            rev_clone.set_reveal_child(!is_rev);
+                        }
+                    };
+
+                    {
+                        let toggle = toggle_revealer.clone();
+                        expander.connect_activated(move |_| {
+                            toggle();
+                        });
+                    }
                     expander.set_activatable(true);
+
+                    // Robust click gesture to ensure row expands/collapses when clicked or tapped
+                    let click_gesture = gtk::GestureClick::new();
+                    {
+                        let toggle = toggle_revealer.clone();
+                        click_gesture.connect_released(move |_, _, _, _| {
+                            toggle();
+                        });
+                    }
+                    expander.add_controller(click_gesture);
 
                     revealer.set_child(Some(&expander_box));
 
