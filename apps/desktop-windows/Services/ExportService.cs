@@ -82,8 +82,28 @@ namespace Chroma.Services
         /// <returns>A formatted SCSS stylesheet variables block string.</returns>
         public static string ExportSCSS(List<TokenGroup> groups, List<Palette> palettes)
         {
-            // TODO: Format tokens into SCSS variable declarations
-            return "// SCSS Export\n// TODO: Exporter values";
+            List<ResolvedToken> tokens = ResolveTokens(groups, palettes);
+            SortedDictionary<string, List<ResolvedToken>> grouped = [];
+
+            foreach (ResolvedToken t in tokens)
+            {
+                if (!grouped.ContainsKey(t.GroupName))
+                    grouped.Add(t.GroupName, []);
+
+                grouped[t.GroupName].Add(t);
+            }
+
+            List<string> sections = [.. grouped
+                .Select(group =>
+                {
+                    var vars = group.Value
+                        .Select(t => $"${t.Name}: {t.Hex};")
+                        .ToList();
+
+                    return $"// {group.Key}\n{string.Join("\n", vars)}";
+                })];
+
+            return string.Join("\n\n", sections);
         }
 
         /// <summary>
