@@ -5,81 +5,80 @@ This file provides guidance to AI agents when working with code in this reposito
 ## Commands
 
 ```bash
-# Install dependencies
-pnpm install
+# ==========================================
+# 1. WINDOWS PORT (C# / WPF .NET 8)
+# ==========================================
 
-# Desktop dev server (Vite + Tauri, port 1420)
-pnpm desktop
+# Restore and build the project
+dotnet build apps/desktop-windows/Chroma.csproj
 
-# Desktop frontend build only
-pnpm --filter desktop build
+# Run the project
+dotnet run --project apps/desktop-windows/Chroma.csproj
 
-# Desktop Tauri production build
-pnpm --filter desktop tauri build
+# ==========================================
+# 2. LINUX PORT (Rust / GTK / Relm4)
+# ==========================================
 
-# Android debug build
+# Build the project
+cargo build --manifest-path apps/desktop-linux/Cargo.toml
+
+# Run the project
+cargo run --manifest-path apps/desktop-linux/Cargo.toml
+
+# ==========================================
+# 3. ANDROID APP (Kotlin / Jetpack Compose)
+# ==========================================
+
+# Android debug build & install
 cd apps/android && ./gradlew installDebug
 
 # Android release build
 cd apps/android && ./gradlew assembleRelease
 
+# ==========================================
+# 4. IOS APP (Swift / SwiftUI)
+# ==========================================
+
 # iOS project regeneration (after adding source files)
 cd apps/ios && xcodegen generate
 ```
 
-There are no tests or linters configured (`.eslintrc.js` is an empty root marker).
-
 ## Architecture
 
-### Monorepo structure (pnpm workspace)
+### Project Structure
 
 ```
-packages/core/     # @chroma/core — shared types, color math, Zustand stores, export formatters
-apps/desktop/      # Tauri 2 + React 19 + Vite + Tailwind CSS 4 — depends on @chroma/core
-apps/android/      # Native Kotlin + Jetpack Compose
-apps/ios/          # Native Swift + SwiftUI
+apps/desktop-windows/    # Native C# (.NET 8 WPF) desktop application for Windows
+  ├── Models/            # Domain models (Colour, Palette, Token, etc.)
+  ├── Services/          # Color math, JSON storage, and dynamic format exporters
+  ├── ViewModels/        # MainWindowViewModel state store (INotifyPropertyChanged)
+  └── MainWindow.xaml    # Modern WPF styles & bound UI views
+
+apps/desktop-linux/      # Native Rust + GTK 4 + Relm4 desktop application for Linux
+apps/android/            # Native Kotlin + Jetpack Compose mobile application
+apps/ios/                # Native Swift + SwiftUI mobile application
 ```
 
-### Data model
+### Data Model
 
-`Palette` → contains `Colour[]` → each `Colour` has `id`, `name`, `hex`, `rgb`, `hsl`
-`TokenGroup` → contains `Token[]` → each `Token` has a `TokenValue` referencing `paletteId` + `colourId`
+- `Palette` → contains `Colour[]` → each `Colour` has `id`, `name`, `hex`, `rgb`, `hsl`
+- `TokenGroup` → contains `Token[]` → each `Token` has a `TokenValue` referencing `paletteId` + `colourId`
 
 Tokens are *assigned* to colours from palettes; they resolve to hex values at export time.
 
-### Store factory pattern
+### State Persistence & Storage
 
-`@chroma/core` exports **store creators**, not pre-instantiated stores:
+- **Windows Desktop (C#)**: State is managed via `MainWindowViewModel` and serialized natively in `StorageService` to JSON files stored in the user's local application data folder (`AppData/Local/Chroma/`).
+- **Linux Desktop (Rust)**: State is handled via `store.rs` saving configuration/JSON files.
+- **Mobile (Android/iOS)**: Native state persistence implements equivalent offline data stores (SQLite or standard platform preference storage).
 
-- `createPaletteStore(storage: StateStorage)` — returns a Zustand store persisted under key `"chroma-palettes"`
-- `createTokenStore(storage: StateStorage)` — returns a Zustand store persisted under key `"chroma-tokens"`
+### Styling & Theme Systems
 
-The desktop app calls `createPaletteStore(localStorage)` and exports the result as `usePaletteStore`. On Android/iOS, the native apps implement equivalent state persistence natively (no core stores used).
+- **Windows Desktop (C#)**: Fully customized in `App.xaml` using flat, modern brushes, custom templates for rounded buttons, focused textbox layouts, and WCAG rating indicators (AAA, AA, Fail).
+- **Linux Desktop (Rust)**: Handled using native GTK CSS style sheets.
 
-### Desktop app dual-layout architecture
+### Export Pipeline
 
-`App.tsx` calls `usePlatform()` (from `hooks/usePlatform.ts`), which detects the platform via Tauri's OS plugin. If `"android"`, it renders `<MobileAndroidApp />` — a mobile-first layout with bottom navigation and a Material 3 splash screen. Otherwise, it renders the desktop layout with a sidebar panel system.
-
-The desktop layout has three left-sidebar tabs (Palettes, Tokens, Export) and a main area with a color picker column + color cards column.
-
-### CSS design token system
-
-The app uses CSS custom properties exclusively (no direct Tailwind color classes in markup). Variables are defined in `index.css` with light and dark (`prefers-color-scheme: dark`) variants:
-
-- `--bg`, `--bg-raised`, `--bg-sunken` — surface hierarchy
-- `--border`, `--border-strong` — borders
-- `--ink`, `--ink-2`, `--ink-3`, `--ink-4` — text (decreasing opacity)
-- `--accent`, `--accent-soft`, `--accent-strong` — brand purple
-- `--wcag-aaa-bg`, `--wcag-aa-bg`, etc. — contrast badge colors
-
-Desktop components use inline `style={{ color: "var(--ink)" }}` rather than Tailwind classes for colors. The `react-colorful` library provides the color picker wheel.
-
-### Export pipeline
-
-1. `resolveTokens(groups, palettes)` — joins tokens to their assigned colours across groups and palettes, filtering unassigned tokens
-2. Format-specific exporters (`exportCSS`, `exportSCSS`, `exportJSON`, `exportTailwind`, `exportAndroidXml`) consume the resolved flat list and produce strings
-3. On desktop, Tauri plugins handle clipboard (`writeText`) and file save dialog + write (`@tauri-apps/plugin-fs`)
-
-### Release workflow
-
-Git tags matching `v*` trigger `.github/workflows/release.yml`, which builds Android APK, macOS universal DMG, Windows x64, and Windows ARM64 in parallel, then publishes all artifacts to a GitHub Release. Version numbers are injected into `tauri.conf.json` and Android Gradle properties from the tag.
+1. **Resolution**: Joins tokens to their assigned colours across groups and palettes, filtering unassigned tokens.
+2. **Formatting**: Format-specific engines (`CSS`, `SCSS`, `JSON`, `Tailwind TS`, `Android XML`) consume the resolved flat list and produce strings.
+3. **Execution**: File system writing and Clipboard copies are executed natively by each platform app (e.g. C# uses Microsoft `SaveFileDialog` and standard WPF `Clipboard`).

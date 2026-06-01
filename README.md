@@ -8,7 +8,8 @@ A cross-platform color palette and design token manager for designers and develo
 
 | Platform | Stack |
 |----------|-------|
-| Desktop (Windows, macOS, Linux) | Tauri 2 + React 19 + TypeScript |
+| Desktop (Windows) | Native C# + .NET 8 WPF |
+| Desktop (Linux) | Native Rust + GTK 4 + Relm4 |
 | Android | Kotlin + Jetpack Compose + Material 3 |
 | iOS | Swift + SwiftUI (iOS 17+) |
 
@@ -21,6 +22,7 @@ A cross-platform color palette and design token manager for designers and develo
 - Add colors via hex input or an interactive color picker
 - View hex, RGB, and HSL representations side-by-side
 - WCAG contrast ratio scoring (AAA / AA / AA Large / Fail) for every color
+- Live contrast adjustment recommendations (native fixes)
 
 **Design tokens**
 - Organize tokens into named groups
@@ -33,7 +35,7 @@ A cross-platform color palette and design token manager for designers and develo
 - JSON (Amazon Style Dictionary format)
 - Tailwind CSS color configuration block
 - Android `colors.xml` (snake\_case names)
-- Copy to clipboard or save to a file (desktop)
+- Copy to clipboard or save to a file natively
 
 **Privacy**
 - No backend, no network requests, no telemetry
@@ -45,15 +47,14 @@ A cross-platform color palette and design token manager for designers and develo
 
 ```
 chroma-app/
-├── apps/
-│   ├── desktop/      # Tauri 2 desktop app (React + Vite + TypeScript)
-│   ├── android/      # Native Android app (Kotlin + Jetpack Compose)
-│   └── ios/          # Native iOS app (Swift + SwiftUI)
-└── packages/
-    └── core/         # Shared TypeScript library (color logic, stores, exporters)
+└── apps/
+    ├── desktop-windows/   # Native Windows WPF app (C# / .NET 8)
+    ├── desktop-linux/     # Native Linux GTK app (Rust / Relm4)
+    ├── android/           # Native Android app (Kotlin / Jetpack Compose)
+    └── ios/               # Native iOS app (Swift / SwiftUI)
 ```
 
-`packages/core` contains all color conversion utilities, Zustand state stores, and export formatters. The desktop app depends on it via the pnpm workspace (`@chroma/core`). The Android and iOS apps implement equivalent logic natively in Kotlin and Swift respectively.
+Each platform application implements equivalent state persistence, color mathematics, and export pipelines natively in their respective languages.
 
 ---
 
@@ -61,42 +62,35 @@ chroma-app/
 
 | Requirement | Purpose |
 |-------------|---------|
-| Node.js 18+ | Desktop app runtime |
-| pnpm | Package manager (monorepo workspace) |
-| Rust (stable) | Tauri desktop build |
+| .NET 8 SDK or later | Windows desktop build |
+| Rust (stable) + GTK 4 | Linux desktop build |
 | Android Studio + Android SDK | Android build and emulator |
 | Xcode 16+ (macOS only) | iOS build and simulator |
 | XcodeGen (optional) | Regenerate the iOS `.xcodeproj` from `project.yml` |
-
-Install pnpm if you don't have it:
-
-```bash
-npm install -g pnpm
-```
-
-Install XcodeGen if you need to regenerate the Xcode project:
-
-```bash
-brew install xcodegen
-```
 
 ---
 
 ## Getting Started
 
-**Install JavaScript dependencies:**
+### Windows Port (C#)
 
 ```bash
-pnpm install
+# Restore and build the project
+dotnet build apps/desktop-windows/Chroma.csproj
+
+# Run the project
+dotnet run --project apps/desktop-windows/Chroma.csproj
 ```
 
-### Desktop
+### Linux Port (Rust)
 
 ```bash
-pnpm desktop
-```
+# Build the project
+cargo build --manifest-path apps/desktop-linux/Cargo.toml
 
-Starts the Vite dev server on port 1420 and launches the Tauri window with hot module replacement.
+# Run the project
+cargo run --manifest-path apps/desktop-linux/Cargo.toml
+```
 
 ### Android
 
@@ -120,14 +114,21 @@ xcodegen generate
 
 ## Building for Production
 
-**Desktop:**
+**Windows:**
 
 ```bash
-cd apps/desktop
-pnpm tauri build
+dotnet publish apps/desktop-windows/Chroma.csproj -c Release -r win-x64 --self-contained true -o publish/
 ```
 
-Produces a platform-native installer in `apps/desktop/src-tauri/target/release/bundle/`.
+Produces a standalone application package in `publish/`.
+
+**Linux:**
+
+```bash
+cargo build --release --manifest-path apps/desktop-linux/Cargo.toml
+```
+
+Produces a release binary in `apps/desktop-linux/target/release/`.
 
 **Android:**
 
@@ -141,52 +142,6 @@ Signed APK/AAB is output to `apps/android/app/build/outputs/`.
 **iOS:**
 
 Archive and distribute through Xcode: **Product → Archive**, then use the Organizer to export or upload to App Store Connect.
-
----
-
-## Development Scripts
-
-| Command | Description |
-|---------|-------------|
-| `pnpm desktop` | Start desktop app in development mode |
-| `pnpm --filter desktop build` | Build desktop frontend only |
-| `cd apps/android && ./gradlew installDebug` | Install debug build on Android |
-| `cd apps/android && ./gradlew assembleRelease` | Build release APK/AAB |
-| `cd apps/ios && xcodegen generate` | Regenerate Xcode project from `project.yml` |
-
----
-
-## Tech Stack
-
-**Desktop**
-- React 19, Vite, TypeScript, Tailwind CSS 4
-- Tauri 2 (Rust backend — file system, clipboard, native dialogs)
-- Zustand 5 (state management)
-- `@chroma/core` (shared color logic and exporters)
-
-**Android**
-- Kotlin, Jetpack Compose, Material 3
-- AndroidX Navigation Compose
-- AndroidX DataStore (Preferences)
-- Kotlin Serialization
-
-**iOS**
-- Swift 5.10, SwiftUI (iOS 17+)
-- `@Observable` + `UserDefaults` (state and persistence)
-- XcodeGen (project generation)
-
----
-
-## Data Persistence
-
-All data is stored locally under two keys:
-
-| Key | Contents |
-|-----|----------|
-| `chroma-palettes` | All palette and color data |
-| `chroma-token-groups` | All token groups and assignments |
-
-Desktop uses `localStorage`; Android uses AndroidX DataStore (Preferences); iOS uses `UserDefaults`. No data ever leaves the device.
 
 ---
 

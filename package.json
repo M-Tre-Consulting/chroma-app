@@ -1,9 +1,0 @@
-{
-  "name": "chroma",
-  "private": true,
-  "version": "0.1.0",
-  "scripts": {
-    "desktop": "pnpm --filter desktop dev",
-    "tauri": "pnpm --filter desktop tauri"
-  }
-}
