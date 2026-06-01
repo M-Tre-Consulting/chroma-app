@@ -104,10 +104,31 @@ pub fn build_palettes_page(
     apply_widget_css(&picker_panel, ".picker-panel { border-right: 1px solid rgba(0,0,0,0.1); }");
     picker_panel.add_css_class("picker-panel");
 
+    let btn_back = gtk::Button::builder()
+        .label("← Back to Swatches")
+        .visible(false)
+        .build();
+    btn_back.add_css_class("flat");
+    picker_panel.append(&btn_back);
+
     let color_chooser = gtk::ColorChooserWidget::new();
     color_chooser.set_use_alpha(false);
     color_chooser.set_size_request(240, 240);
     picker_panel.append(&color_chooser);
+
+    {
+        let color_chooser = color_chooser.clone();
+        btn_back.connect_clicked(move |_| {
+            color_chooser.set_show_editor(false);
+        });
+    }
+
+    {
+        let btn_back = btn_back.clone();
+        color_chooser.connect_show_editor_notify(move |cc| {
+            btn_back.set_visible(cc.shows_editor());
+        });
+    }
 
     let entry_col_name = gtk::Entry::builder()
         .placeholder_text("Name (optional)")
