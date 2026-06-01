@@ -91,7 +91,15 @@ namespace Chroma.ViewModels
         public string SelectedColorHex
         {
             get => _selectedColorHex;
-            set { _selectedColorHex = value; OnPropertyChanged(); }
+            set 
+            { 
+                if (_selectedColorHex != value)
+                {
+                    _selectedColorHex = value; 
+                    OnPropertyChanged(); 
+                    SyncFromHex();
+                }
+            }
         }
 
         private string _selectedColorName = "Accent Purple";
@@ -102,6 +110,114 @@ namespace Chroma.ViewModels
         {
             get => _selectedColorName;
             set { _selectedColorName = value; OnPropertyChanged(); }
+        }
+
+        private byte _selectedColorR = 124;
+        /// <summary>
+        /// Gets or sets the Red component (0 to 255) of the selected color.
+        /// </summary>
+        public byte SelectedColorR
+        {
+            get => _selectedColorR;
+            set
+            {
+                if (_selectedColorR != value)
+                {
+                    _selectedColorR = value;
+                    OnPropertyChanged();
+                    SyncFromRgb();
+                }
+            }
+        }
+
+        private byte _selectedColorG = 111;
+        /// <summary>
+        /// Gets or sets the Green component (0 to 255) of the selected color.
+        /// </summary>
+        public byte SelectedColorG
+        {
+            get => _selectedColorG;
+            set
+            {
+                if (_selectedColorG != value)
+                {
+                    _selectedColorG = value;
+                    OnPropertyChanged();
+                    SyncFromRgb();
+                }
+            }
+        }
+
+        private byte _selectedColorB = 247;
+        /// <summary>
+        /// Gets or sets the Blue component (0 to 255) of the selected color.
+        /// </summary>
+        public byte SelectedColorB
+        {
+            get => _selectedColorB;
+            set
+            {
+                if (_selectedColorB != value)
+                {
+                    _selectedColorB = value;
+                    OnPropertyChanged();
+                    SyncFromRgb();
+                }
+            }
+        }
+
+        private ushort _selectedColorH = 246;
+        /// <summary>
+        /// Gets or sets the Hue channel (0 to 360) of the selected color.
+        /// </summary>
+        public ushort SelectedColorH
+        {
+            get => _selectedColorH;
+            set
+            {
+                if (_selectedColorH != value)
+                {
+                    _selectedColorH = value;
+                    OnPropertyChanged();
+                    SyncFromHsl();
+                }
+            }
+        }
+
+        private byte _selectedColorS = 89;
+        /// <summary>
+        /// Gets or sets the Saturation channel (0 to 100) of the selected color.
+        /// </summary>
+        public byte SelectedColorS
+        {
+            get => _selectedColorS;
+            set
+            {
+                if (_selectedColorS != value)
+                {
+                    _selectedColorS = value;
+                    OnPropertyChanged();
+                    SyncFromHsl();
+                }
+            }
+        }
+
+        private byte _selectedColorL = 70;
+        /// <summary>
+        /// Gets or sets the Lightness channel (0 to 100) of the selected color.
+        /// </summary>
+        public byte SelectedColorL
+        {
+            get => _selectedColorL;
+            set
+            {
+                if (_selectedColorL != value)
+                {
+                    _selectedColorL = value;
+                    OnPropertyChanged();
+                    SyncFromHsl();
+                }
+            }
         }
 
         private string _exportFormat = "css";
@@ -128,6 +244,8 @@ namespace Chroma.ViewModels
             get => _exportPreviewText;
             set { _exportPreviewText = value; OnPropertyChanged(); }
         }
+
+        private bool _isSyncing = false;
 
         /// <summary>
         /// Initializes a new instance of <see cref="MainWindowViewModel"/>, loading local mock configurations.
@@ -179,6 +297,48 @@ namespace Chroma.ViewModels
             };
             TokenGroups.Add(defaultGroup);
             ActiveTokenGroup = defaultGroup;
+        }
+
+        private void SyncFromRgb()
+        {
+            if (_isSyncing) return;
+            _isSyncing = true;
+            try
+            {
+                // TODO: Call ColorService to calculate HSL and Hex components from the R, G, B values
+            }
+            finally
+            {
+                _isSyncing = false;
+            }
+        }
+
+        private void SyncFromHsl()
+        {
+            if (_isSyncing) return;
+            _isSyncing = true;
+            try
+            {
+                // TODO: Call ColorService to calculate RGB and Hex components from the H, S, L values
+            }
+            finally
+            {
+                _isSyncing = false;
+            }
+        }
+
+        private void SyncFromHex()
+        {
+            if (_isSyncing) return;
+            _isSyncing = true;
+            try
+            {
+                // TODO: Call ColorService to parse the Hex string and populate the RGB and HSL values
+            }
+            finally
+            {
+                _isSyncing = false;
+            }
         }
 
         /// <summary>

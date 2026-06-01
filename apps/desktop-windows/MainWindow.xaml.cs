@@ -8,10 +8,19 @@ using Chroma.ViewModels;
 
 namespace Chroma
 {
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// Gets the ViewModel data-context bound to this view.
+        /// </summary>
         public MainWindowViewModel ViewModel { get; }
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="MainWindow"/> and sets its DataContext.
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -187,6 +196,23 @@ namespace Chroma
                     MessageBox.Show($"Failed to save file: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        private void BtnPickNativeColor_Click(object sender, RoutedEventArgs e)
+        {
+            // TODO: Open your preferred color picker dialog (e.g., standard WinForms ColorDialog, Win32 common dialog, or a custom WPF picker)
+            // Example:
+            // var dialog = new System.Windows.Forms.ColorDialog();
+            // if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
+            //     ViewModel.SelectedColorHex = $"#{dialog.Color.R:X2}{dialog.Color.B:X2}{dialog.Color.G:X2}";
+            // }
+
+            MessageBox.Show(
+                "TODO: Implement opening your native Color Dialog or Picker in your code-behind here!", 
+                "Native Color Picker Stub", 
+                MessageBoxButton.OK, 
+                MessageBoxImage.Information
+            );
         }
     }
 }
