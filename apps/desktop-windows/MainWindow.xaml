@@ -170,7 +170,7 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0">
-                                    <TextBlock Text="{Binding ActivePalette.Name, FallbackValue='No Palette Selected'}" FontSize="16" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding ActivePalette.Name, FallbackValue='No Palette Selected'}" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextBrush}"/>
                                     <TextBlock Text="{Binding ActivePaletteColoursCountText}" FontSize="11" Foreground="{StaticResource TextDimBrush}" Margin="0,2,0,0"/>
                                 </StackPanel>
                                 <Button Grid.Column="1" Content="Delete Palette" Style="{StaticResource ModernButtonStyle}" Foreground="{StaticResource WcagFailBrush}" Padding="12,6" Click="BtnDeletePalette_Click"/>
@@ -438,7 +438,7 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Grid.Column="0">
-                                    <TextBlock Text="{Binding ActiveTokenGroup.Name, FallbackValue='No Token Group'}" FontSize="16" FontWeight="Bold"/>
+                                    <TextBlock Text="{Binding ActiveTokenGroup.Name, FallbackValue='No Token Group'}" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextBrush}"/>
                                     <TextBlock Text="Active Token mapping configurations" FontSize="11" Foreground="{StaticResource TextDimBrush}" Margin="0,2,0,0"/>
                                 </StackPanel>
                                 <Button Grid.Column="1" Content="Remove Group" Style="{StaticResource ModernButtonStyle}" Foreground="{StaticResource WcagFailBrush}" Padding="12,6" Click="BtnDeleteTokenGroup_Click"/>
