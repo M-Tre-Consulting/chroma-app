@@ -37,8 +37,28 @@ namespace Chroma.Services
         /// <returns>A flat collection of successfully resolved tokens.</returns>
         public static List<ResolvedToken> ResolveTokens(List<TokenGroup> groups, List<Palette> palettes)
         {
-            // TODO: Match token mappings to active palettes and retrieve resolved hex strings
-            return new List<ResolvedToken>();
+            List<ResolvedToken> resolved = [];
+
+            foreach (TokenGroup group in groups)
+            {
+                foreach (Token t in group.Tokens)
+                {
+                    if (!string.IsNullOrEmpty(t.Value.ColourId) && !string.IsNullOrEmpty(t.Value.PaletteId))
+                    {
+                        Palette? palette = palettes.Find(p => p.Id == t.Value.PaletteId);
+                        Colour? colour = palette?.Colours.FirstOrDefault(c => c.Id == t.Value.ColourId);
+
+                        resolved.Add(new ResolvedToken
+                        {
+                            Name = (string)t.Name.Clone(),
+                            Hex = colour?.Hex ?? "#000000",
+                            GroupName = (string)group.Name.Clone()
+                        });
+                    }
+                }
+            }
+
+            return resolved;
         }
 
         /// <summary>
