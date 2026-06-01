@@ -156,6 +156,7 @@ pub fn build_palettes_page(
         .build();
     let cards_list_box = gtk::ListBox::new();
     cards_list_box.set_selection_mode(gtk::SelectionMode::None);
+    cards_list_box.add_css_class("boxed-list");
     scrolled_cards.set_child(Some(&cards_list_box));
     cards_panel.append(&scrolled_cards);
 
@@ -371,12 +372,10 @@ pub fn build_palettes_page(
                     expander_box.append(&contrast_header);
 
                     // Text preview box
-                    let test_frame = gtk::Frame::new(None);
                     let test_lbl = gtk::Label::new(Some("The quick brown fox"));
                     test_lbl.add_css_class("contrast-test-text");
                     apply_widget_css(&test_lbl, &format!("* {{ background-color: #ffffff; color: {}; }}", col.hex));
-                    test_frame.set_child(Some(&test_lbl));
-                    expander_box.append(&test_frame);
+                    expander_box.append(&test_lbl);
 
                     // Suggested Fix row
                     let fix_box = gtk::Box::new(gtk::Orientation::Horizontal, 8);

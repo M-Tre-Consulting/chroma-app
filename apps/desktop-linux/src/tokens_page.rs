@@ -98,6 +98,7 @@ pub fn build_tokens_page(
         .build();
     let token_list_box = gtk::ListBox::new();
     token_list_box.set_selection_mode(gtk::SelectionMode::None);
+    token_list_box.add_css_class("boxed-list");
     scrolled_tokens.set_child(Some(&token_list_box));
     active_group_workspace.append(&scrolled_tokens);
 
