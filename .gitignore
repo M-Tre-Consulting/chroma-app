@@ -44,3 +44,12 @@ DerivedData/
 !default.mode2v3
 *.perspectivev3
 !default.perspectivev3
+
+# Antigravity
+.antigravitycli/
+
+# Editors
+.zed/
+
+# Rust binaries
+target/
