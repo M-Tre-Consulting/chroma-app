@@ -7,15 +7,15 @@
         WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.ColumnDefinitions>
-            <!-- Left Sidebar Navigation Column -->
+            
             <ColumnDefinition Width="220" />
-            <!-- Splitter Column -->
+            
             <ColumnDefinition Width="Auto" />
-            <!-- Main Content Workspace Column -->
+            
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <!-- 1. LEFT SIDEBAR PANEL -->
+        
         <Border Grid.Column="0" Background="{StaticResource BgSunkenBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,1,0">
             <Grid Margin="16,20,16,16">
                 <Grid.RowDefinitions>
@@ -25,13 +25,13 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <!-- App Logo/Header -->
+                
                 <StackPanel Grid.Row="0" Margin="0,0,0,24">
                     <TextBlock Text="Chroma" FontSize="20" FontWeight="Bold" Foreground="{StaticResource AccentBrush}"/>
                     <TextBlock Text="Native Windows Port" FontSize="11" Foreground="{StaticResource TextDimBrush}" Margin="0,2,0,0"/>
                 </StackPanel>
 
-                <!-- Navigations Sidebar Sections -->
+                
                 <StackPanel Grid.Row="1" Margin="0,0,0,16">
                     <TextBlock Text="Workspace Pages" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextDimBrush}" Margin="4,0,0,6"/>
                     <Button x:Name="BtnNavPalettes" Content="🎨  Palettes" Style="{StaticResource SidebarButtonStyle}" Click="BtnNav_Click" Tag="0"/>
@@ -41,7 +41,7 @@
 
                 <Separator Grid.Row="1" VerticalAlignment="Bottom" Background="{StaticResource BorderBrush}"/>
 
-                <!-- App Info Footer -->
+                
                 <StackPanel Grid.Row="3" Margin="0,12,0,0">
                     <TextBlock Text="Status: Sync Active" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
                     <TextBlock Text="WPF C# Native Core" FontSize="10" Foreground="{StaticResource TextDimBrush}" Margin="0,2,0,0"/>
@@ -49,33 +49,33 @@
             </Grid>
         </Border>
 
-        <!-- Vertical Grid Splitter -->
+        
         <GridSplitter Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="1" Background="{StaticResource BorderBrush}"/>
 
-        <!-- 2. MAIN APPLICATION CONTENT VIEWSTACK -->
+        
         <TabControl x:Name="MainViewStack" Grid.Column="2" Background="Transparent" BorderThickness="0" Padding="0" Margin="0">
             <TabControl.Resources>
-                <!-- Hides the default tab headers to act like an AdwViewStack / Stack view -->
+                
                 <Style TargetType="TabItem">
                     <Setter Property="Visibility" Value="Collapsed"/>
                 </Style>
             </TabControl.Resources>
 
-            <!-- ========================================== -->
-            <!-- VIEW 1: PALETTES PAGE                      -->
-            <!-- ========================================== -->
+            
+            
+            
             <TabItem>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <!-- Sidebar: Palettes List -->
+                        
                         <ColumnDefinition Width="220" />
-                        <!-- Workspace Panel Splitter -->
+                        
                         <ColumnDefinition Width="Auto" />
-                        <!-- Workspace editor -->
+                        
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <!-- Sidebar Palettes -->
+                    
                     <Border Grid.Column="0" Background="{StaticResource BgBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,1,0">
                         <Grid Margin="12">
                             <Grid.RowDefinitions>
@@ -86,13 +86,13 @@
                             
                             <TextBlock Grid.Row="0" Text="MY PALETTES" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextDimBrush}" Margin="4,6,0,8"/>
 
-                            <!-- Palettes list box (Bound to Viewmodel) -->
+                            
                             <ListBox Grid.Row="1" Background="Transparent" BorderThickness="0" Foreground="{StaticResource TextBrush}"
                                      ItemsSource="{Binding Palettes}" SelectedItem="{Binding ActivePalette}">
                                 <ListBox.ItemContainerStyle>
                                     <Style TargetType="ListBoxItem">
                                         <Style.Resources>
-                                            <!-- Override system highlight colors to prevent ugly defaults -->
+                                            
                                             <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#22A374F2"/>
                                             <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#FFFFFF"/>
                                             <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#15A374F2"/>
@@ -140,7 +140,7 @@
                                 </ListBox.ItemTemplate>
                             </ListBox>
 
-                            <!-- Sidebar Footer: New Palette -->
+                            
                             <Grid Grid.Row="2" Margin="0,8,0,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -152,17 +152,17 @@
                         </Grid>
                     </Border>
 
-                    <!-- Splitter -->
+                    
                     <GridSplitter Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="1" Background="{StaticResource BorderBrush}"/>
 
-                    <!-- Main Palette Editor Workspace -->
+                    
                     <Grid Grid.Column="2">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
 
-                        <!-- Header area -->
+                        
                         <Border Grid.Row="0" Background="{StaticResource BgRaisedBrush}" Padding="16,14" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -177,35 +177,35 @@
                             </Grid>
                         </Border>
 
-                        <!-- Workspace Split Columns -->
+                        
                         <Grid Grid.Row="1" Margin="16">
                             <Grid.ColumnDefinitions>
-                                <!-- Color Selection area -->
+                                
                                 <ColumnDefinition Width="280"/>
-                                <!-- Color cards area -->
+                                
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <!-- Column 1: Color Picker & Sliders selection -->
+                            
                             <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,8,0">
                                 <StackPanel>
                                     <TextBlock Text="COLOR SPECIFICATION" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextDimBrush}" Margin="0,0,0,12"/>
                                     
-                                    <!-- Live Color Selection preview bar -->
+                                    
                                     <Border CornerRadius="8" Height="40" Background="{Binding SelectedColorHex, FallbackValue='#7c6ff7'}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="0,0,0,12"/>
 
-                                    <!-- Pick color button -->
+                                    
                                     <Button Content="🎨 Native Color Chooser…" Style="{StaticResource ModernButtonStyle}" Margin="0,0,0,12" Height="32" Click="BtnPickNativeColor_Click"/>
 
-                                    <!-- Text Entry Name -->
+                                    
                                     <TextBlock Text="Colour Name" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                                     <TextBox Margin="0,0,0,12" Text="{Binding SelectedColorName, UpdateSourceTrigger=PropertyChanged}"/>
 
-                                    <!-- Text Entry Hex -->
+                                    
                                     <TextBlock Text="Hex Value (e.g. #7c6ff7)" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,4"/>
                                     <TextBox Margin="0,0,0,12" Text="{Binding SelectedColorHex, UpdateSourceTrigger=PropertyChanged}" FontFamily="Consolas"/>
 
-                                    <!-- RGB Sliders Grid -->
+                                    
                                     <TextBlock Text="RGB CHANNELS" FontSize="10" FontWeight="Bold" Foreground="{StaticResource TextDimBrush}" Margin="0,4,0,6"/>
                                     <Grid Margin="0,0,0,12">
                                         <Grid.RowDefinitions>
@@ -219,23 +219,23 @@
                                             <ColumnDefinition Width="35"/>
                                         </Grid.ColumnDefinitions>
                                         
-                                        <!-- Red -->
+                                        
                                         <TextBlock Grid.Row="0" Grid.Column="0" Text="R" VerticalAlignment="Center" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
                                         <Slider Grid.Row="0" Grid.Column="1" Minimum="0" Maximum="255" Value="{Binding SelectedColorR, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="6,0"/>
                                         <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding SelectedColorR}" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}"/>
 
-                                        <!-- Green -->
+                                        
                                         <TextBlock Grid.Row="1" Grid.Column="0" Text="G" VerticalAlignment="Center" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,6,0,0"/>
                                         <Slider Grid.Row="1" Grid.Column="1" Minimum="0" Maximum="255" Value="{Binding SelectedColorG, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="6,6,6,0"/>
                                         <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding SelectedColorG}" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,6,0,0"/>
 
-                                        <!-- Blue -->
+                                        
                                         <TextBlock Grid.Row="2" Grid.Column="0" Text="B" VerticalAlignment="Center" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,6,0,0"/>
                                         <Slider Grid.Row="2" Grid.Column="1" Minimum="0" Maximum="255" Value="{Binding SelectedColorB, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="6,6,6,0"/>
                                         <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding SelectedColorB}" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,6,0,0"/>
                                     </Grid>
 
-                                    <!-- HSL Sliders Grid -->
+                                    
                                     <TextBlock Text="HSL CHANNELS" FontSize="10" FontWeight="Bold" Foreground="{StaticResource TextDimBrush}" Margin="0,4,0,6"/>
                                     <Grid Margin="0,0,0,16">
                                         <Grid.RowDefinitions>
@@ -249,17 +249,17 @@
                                             <ColumnDefinition Width="35"/>
                                         </Grid.ColumnDefinitions>
                                         
-                                        <!-- Hue -->
+                                        
                                         <TextBlock Grid.Row="0" Grid.Column="0" Text="H" VerticalAlignment="Center" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
                                         <Slider Grid.Row="0" Grid.Column="1" Minimum="0" Maximum="360" Value="{Binding SelectedColorH, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="6,0"/>
                                         <TextBlock Grid.Row="0" Grid.Column="2" Text="{Binding SelectedColorH}" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}"/>
 
-                                        <!-- Saturation -->
+                                        
                                         <TextBlock Grid.Row="1" Grid.Column="0" Text="S" VerticalAlignment="Center" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,6,0,0"/>
                                         <Slider Grid.Row="1" Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding SelectedColorS, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="6,6,6,0"/>
                                         <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding SelectedColorS}" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,6,0,0"/>
 
-                                        <!-- Lightness -->
+                                        
                                         <TextBlock Grid.Row="2" Grid.Column="0" Text="L" VerticalAlignment="Center" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,6,0,0"/>
                                         <Slider Grid.Row="2" Grid.Column="1" Minimum="0" Maximum="100" Value="{Binding SelectedColorL, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="6,6,6,0"/>
                                         <TextBlock Grid.Row="2" Grid.Column="2" Text="{Binding SelectedColorL}" FontSize="11" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,6,0,0"/>
@@ -269,7 +269,7 @@
                                 </StackPanel>
                             </ScrollViewer>
 
-                            <!-- Column 2: Color list cards -->
+                            
                             <Grid Grid.Column="1" Margin="16,0,0,0">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -278,7 +278,7 @@
 
                                 <TextBlock Grid.Row="0" Text="PALETTE COLOUR CARDS" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextDimBrush}" Margin="0,0,0,12"/>
 
-                                <!-- Bound Colors list box -->
+                                
                                 <ListBox Grid.Row="1" Background="Transparent" BorderThickness="0" Foreground="{StaticResource TextBrush}"
                                          ItemsSource="{Binding ActivePalette.Colours}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                                     <ListBox.ItemContainerStyle>
@@ -313,12 +313,12 @@
                                                         <TextBlock Text="{Binding Hex}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" FontFamily="Consolas"/>
                                                     </StackPanel>
                                                     
-                                                    <!-- WCAG badge pass indicator -->
+                                                    
                                                     <Border Grid.Column="2" CornerRadius="12" Background="#222EC27E" Padding="10,4" VerticalAlignment="Center" Margin="0,0,12,0">
                                                         <TextBlock Text="PASS AA" Foreground="{StaticResource WcagAaBrush}" FontSize="10" FontWeight="Bold"/>
                                                     </Border>
                                                     
-                                                    <!-- Trash action button -->
+                                                    
                                                     <Button Grid.Column="3" Content="🗑" Style="{StaticResource ModernButtonStyle}" Width="28" Height="28" Padding="0" Click="BtnDeleteColour_Click" Tag="{Binding}"/>
                                                 </Grid>
                                             </Border>
@@ -331,21 +331,21 @@
                 </Grid>
             </TabItem>
 
-            <!-- ========================================== -->
-            <!-- VIEW 2: TOKENS PAGE                        -->
-            <!-- ========================================== -->
+            
+            
+            
             <TabItem>
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <!-- Sidebar: Token Groups -->
+                        
                         <ColumnDefinition Width="220" />
-                        <!-- Splitter -->
+                        
                         <ColumnDefinition Width="Auto" />
-                        <!-- Workspace editor -->
+                        
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <!-- Sidebar Groups -->
+                    
                     <Border Grid.Column="0" Background="{StaticResource BgBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,1,0">
                         <Grid Margin="12">
                             <Grid.RowDefinitions>
@@ -356,13 +356,13 @@
                             
                             <TextBlock Grid.Row="0" Text="TOKEN GROUPS" FontSize="11" FontWeight="Bold" Foreground="{StaticResource TextDimBrush}" Margin="4,6,0,8"/>
 
-                            <!-- Bound TokenGroups list box -->
+                            
                             <ListBox Grid.Row="1" Background="Transparent" BorderThickness="0" Foreground="{StaticResource TextBrush}"
                                      ItemsSource="{Binding TokenGroups}" SelectedItem="{Binding ActiveTokenGroup}">
                                 <ListBox.ItemContainerStyle>
                                     <Style TargetType="ListBoxItem">
                                         <Style.Resources>
-                                            <!-- Override system highlight colors to prevent ugly defaults -->
+                                            
                                             <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#22A374F2"/>
                                             <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#FFFFFF"/>
                                             <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#15A374F2"/>
@@ -419,10 +419,10 @@
                         </Grid>
                     </Border>
 
-                    <!-- Splitter -->
+                    
                     <GridSplitter Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Stretch" Width="1" Background="{StaticResource BorderBrush}"/>
 
-                    <!-- Main Workspace -->
+                    
                     <Grid Grid.Column="2">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
@@ -430,7 +430,7 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <!-- Header row -->
+                        
                         <Border Grid.Row="0" Background="{StaticResource BgRaisedBrush}" Padding="16,14" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,0,0,1">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -445,7 +445,7 @@
                             </Grid>
                         </Border>
 
-                        <!-- Scrollable list of tokens in active group -->
+                        
                         <ListBox Grid.Row="1" Background="Transparent" BorderThickness="0" Foreground="{StaticResource TextBrush}" Margin="16"
                                  ItemsSource="{Binding ActiveTokenGroup.Tokens}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                             <ListBox.ItemContainerStyle>
@@ -475,7 +475,7 @@
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
                                             
-                                            <!-- Color dot icon -->
+                                            
                                             <Border Grid.Column="0" CornerRadius="6" Background="{StaticResource AccentBrush}" Width="20" Height="20" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="0,0,16,0" VerticalAlignment="Center"/>
                                             
                                             <StackPanel Grid.Column="1" VerticalAlignment="Center">
@@ -483,7 +483,7 @@
                                                 <TextBlock Text="{Binding Description}" FontSize="11" Foreground="{StaticResource TextDimBrush}"/>
                                             </StackPanel>
                                             
-                                            <!-- Color selection or mapping details -->
+                                            
                                             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0">
                                                 <TextBlock Text="Palette Value ID: " Foreground="{StaticResource TextDimBrush}" FontSize="11" VerticalAlignment="Center"/>
                                                 <TextBlock Text="{Binding Value.ColourId, FallbackValue='Unassigned'}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" FontWeight="SemiBold" VerticalAlignment="Center" FontFamily="Consolas"/>
@@ -496,7 +496,7 @@
                             </ListBox.ItemTemplate>
                         </ListBox>
 
-                        <!-- Footer: Add token entry -->
+                        
                         <Border Grid.Row="2" Background="{StaticResource BgSunkenBrush}" Padding="16" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -513,9 +513,9 @@
                 </Grid>
             </TabItem>
 
-            <!-- ========================================== -->
-            <!-- VIEW 3: EXPORT PAGE                        -->
-            <!-- ========================================== -->
+            
+            
+            
             <TabItem>
                 <Grid Margin="16">
                     <Grid.RowDefinitions>
@@ -524,7 +524,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <!-- Header switcher formatting -->
+                    
                     <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,16">
                         <Button Content="CSS Variables" Style="{StaticResource ModernButtonStyle}" Margin="4,0" Padding="14,6" Click="BtnExportFormat_Click" Tag="css"/>
                         <Button Content="SCSS Variables" Style="{StaticResource ModernButtonStyle}" Margin="4,0" Padding="14,6" Click="BtnExportFormat_Click" Tag="scss"/>
@@ -533,13 +533,13 @@
                         <Button Content="Android XML" Style="{StaticResource ModernButtonStyle}" Margin="4,0" Padding="14,6" Click="BtnExportFormat_Click" Tag="android"/>
                     </StackPanel>
 
-                    <!-- Scrollable Monospace Read-Only preview (Bound to ExportPreviewText) -->
+                    
                     <Border Grid.Row="1" CornerRadius="8" Background="{StaticResource BgSunkenBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
                         <TextBox Background="Transparent" BorderThickness="0" FontFamily="Consolas" FontSize="13" Foreground="#B0B3C6" IsReadOnly="True" AcceptsReturn="True" AcceptsTab="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="16"
                                  Text="{Binding ExportPreviewText, Mode=OneWay}"/>
                     </Border>
 
-                    <!-- Copy / Save actions -->
+                    
                     <Grid Grid.Row="2" Margin="0,16,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -553,3 +553,4 @@
         </TabControl>
     </Grid>
 </Window>
+
