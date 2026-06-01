@@ -39,12 +39,6 @@
                 </StackPanel>
 
                 <Separator Grid.Row="1" VerticalAlignment="Bottom" Background="{StaticResource BorderBrush}"/>
-
-                
-                <StackPanel Grid.Row="3" Margin="0,12,0,0">
-                    <TextBlock Text="Status: Sync Active" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}"/>
-                    <TextBlock Text="WPF C# Native Core" FontSize="10" Foreground="{StaticResource TextDimBrush}" Margin="0,2,0,0"/>
-                </StackPanel>
             </Grid>
         </Border>
 
