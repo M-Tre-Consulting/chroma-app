@@ -91,8 +91,16 @@
                                      ItemsSource="{Binding Palettes}" SelectedItem="{Binding ActivePalette}">
                                 <ListBox.ItemContainerStyle>
                                     <Style TargetType="ListBoxItem">
+                                        <Style.Resources>
+                                            <!-- Override system highlight colors to prevent ugly defaults -->
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#22A374F2"/>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#FFFFFF"/>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#15A374F2"/>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#FFFFFF"/>
+                                        </Style.Resources>
                                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                         <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
                                         <Setter Property="Margin" Value="0,2"/>
                                         <Setter Property="Padding" Value="0"/>
                                         <Setter Property="Template">
@@ -104,9 +112,11 @@
                                                     <ControlTemplate.Triggers>
                                                         <Trigger Property="IsSelected" Value="True">
                                                             <Setter TargetName="ItemBorder" Property="Background" Value="{StaticResource AccentSoftBrush}"/>
+                                                            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
                                                         </Trigger>
                                                         <Trigger Property="IsMouseOver" Value="True">
                                                             <Setter TargetName="ItemBorder" Property="Background" Value="#0DA374F2"/>
+                                                            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
                                                         </Trigger>
                                                     </ControlTemplate.Triggers>
                                                 </ControlTemplate>
@@ -351,8 +361,16 @@
                                      ItemsSource="{Binding TokenGroups}" SelectedItem="{Binding ActiveTokenGroup}">
                                 <ListBox.ItemContainerStyle>
                                     <Style TargetType="ListBoxItem">
+                                        <Style.Resources>
+                                            <!-- Override system highlight colors to prevent ugly defaults -->
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#22A374F2"/>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#FFFFFF"/>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="#15A374F2"/>
+                                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#FFFFFF"/>
+                                        </Style.Resources>
                                         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                                         <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
                                         <Setter Property="Margin" Value="0,2"/>
                                         <Setter Property="Padding" Value="0"/>
                                         <Setter Property="Template">
@@ -364,9 +382,11 @@
                                                     <ControlTemplate.Triggers>
                                                         <Trigger Property="IsSelected" Value="True">
                                                             <Setter TargetName="ItemBorder" Property="Background" Value="{StaticResource AccentSoftBrush}"/>
+                                                            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
                                                         </Trigger>
                                                         <Trigger Property="IsMouseOver" Value="True">
                                                             <Setter TargetName="ItemBorder" Property="Background" Value="#0DA374F2"/>
+                                                            <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
                                                         </Trigger>
                                                     </ControlTemplate.Triggers>
                                                 </ControlTemplate>
