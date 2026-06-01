@@ -53,3 +53,10 @@ DerivedData/
 
 # Rust binaries
 target/
+
+# C# / Visual Studio
+bin/
+obj/
+.vs/
+*.user
+!*.sln
