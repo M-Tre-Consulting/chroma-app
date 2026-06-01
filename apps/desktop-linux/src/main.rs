@@ -191,10 +191,11 @@ fn build_palettes_page(
     sidebar_box.set_width_request(220);
 
     let sidebar_header = gtk::Label::new(Some("My Palettes"));
-    sidebar_header.set_margin_top(12);
+    sidebar_header.set_margin_top(18);
     sidebar_header.set_margin_bottom(6);
-    sidebar_header.set_margin_start(12);
+    sidebar_header.set_margin_start(16);
     sidebar_header.set_halign(gtk::Align::Start);
+    sidebar_header.add_css_class("heading");
     sidebar_header.add_css_class("dim-label");
     sidebar_box.append(&sidebar_header);
 
@@ -205,6 +206,7 @@ fn build_palettes_page(
         .build();
 
     let palette_list_box = gtk::ListBox::new();
+    palette_list_box.add_css_class("navigation-sidebar");
     scrolled_sidebar.set_child(Some(&palette_list_box));
     sidebar_box.append(&scrolled_sidebar);
 
@@ -930,10 +932,11 @@ fn build_tokens_page(
     let sidebar_box = gtk::Box::new(gtk::Orientation::Vertical, 0);
 
     let sidebar_header = gtk::Label::new(Some("Token Groups"));
-    sidebar_header.set_margin_top(12);
+    sidebar_header.set_margin_top(18);
     sidebar_header.set_margin_bottom(6);
-    sidebar_header.set_margin_start(12);
+    sidebar_header.set_margin_start(16);
     sidebar_header.set_halign(gtk::Align::Start);
+    sidebar_header.add_css_class("heading");
     sidebar_header.add_css_class("dim-label");
     sidebar_box.append(&sidebar_header);
 
@@ -944,6 +947,7 @@ fn build_tokens_page(
         .build();
 
     let group_list_box = gtk::ListBox::new();
+    group_list_box.add_css_class("navigation-sidebar");
     scrolled_sidebar.set_child(Some(&group_list_box));
     sidebar_box.append(&scrolled_sidebar);
 
