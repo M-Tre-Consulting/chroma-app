@@ -15,8 +15,16 @@ namespace Chroma.Services
         /// <returns>A new <see cref="Rgb"/> object if the string is valid; otherwise, null.</returns>
         public static Rgb? HexToRgb(string hex)
         {
-            // TODO: Parse standard hex code (e.g. "#7c6ff7" or "7c6ff7") into byte R, G, B components
-            return new Rgb { R = 124, G = 111, B = 247 };
+            // Strip hash from hex string
+            hex = hex.TrimStart('#');
+
+            if (hex.Length < 6) return new Rgb { R = 0, G = 0, B = 0 };
+
+            byte r = Convert.ToByte(hex[0..2], 16);
+            byte g = Convert.ToByte(hex[2..4], 16);
+            byte b = Convert.ToByte(hex[4..6], 16);
+
+            return new Rgb { R = r , G = g, B = b };
         }
 
         /// <summary>
