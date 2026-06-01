@@ -269,99 +269,15 @@ fn build_palettes_page(
     apply_widget_css(&picker_panel, ".picker-panel { border-right: 1px solid rgba(0,0,0,0.1); }");
     picker_panel.add_css_class("picker-panel");
 
-    let picker_color_block = gtk::Frame::new(None);
-    picker_color_block.set_size_request(100, 100);
-    picker_color_block.add_css_class("color-preview-block");
-    picker_panel.append(&picker_color_block);
-
-    // Hex and Name entries
-    let entry_hex_box = gtk::Box::new(gtk::Orientation::Horizontal, 6);
-    let hex_prefix = gtk::Label::new(Some("#"));
-    hex_prefix.add_css_class("dim-label");
-    let entry_hex = gtk::Entry::builder()
-        .text("7c6ff7")
-        .hexpand(true)
-        .build();
-    entry_hex.add_css_class("mono-text");
-    entry_hex_box.append(&hex_prefix);
-    entry_hex_box.append(&entry_hex);
-    picker_panel.append(&entry_hex_box);
+    let color_chooser = gtk::ColorChooserWidget::new();
+    color_chooser.set_use_alpha(false);
+    color_chooser.set_size_request(240, 240);
+    picker_panel.append(&color_chooser);
 
     let entry_col_name = gtk::Entry::builder()
         .placeholder_text("Name (optional)")
         .build();
     picker_panel.append(&entry_col_name);
-
-    // HSL Sliders
-    let sliders_lbl_hsl = gtk::Label::new(Some("HSL"));
-    sliders_lbl_hsl.set_halign(gtk::Align::Start);
-    sliders_lbl_hsl.add_css_class("dim-label");
-    picker_panel.append(&sliders_lbl_hsl);
-
-    let scale_h = gtk::Scale::with_range(gtk::Orientation::Horizontal, 0.0, 360.0, 1.0);
-    scale_h.set_value(246.0);
-    scale_h.set_draw_value(false);
-    let scale_s = gtk::Scale::with_range(gtk::Orientation::Horizontal, 0.0, 100.0, 1.0);
-    scale_s.set_value(90.0);
-    scale_s.set_draw_value(false);
-    let scale_l = gtk::Scale::with_range(gtk::Orientation::Horizontal, 0.0, 100.0, 1.0);
-    scale_l.set_value(70.0);
-    scale_l.set_draw_value(false);
-
-    let h_box = gtk::Box::new(gtk::Orientation::Horizontal, 6);
-    let h_lbl = gtk::Label::new(Some("H"));
-    h_lbl.set_width_request(12);
-    h_box.append(&h_lbl);
-    h_box.append(&scale_h);
-    picker_panel.append(&h_box);
-
-    let s_box = gtk::Box::new(gtk::Orientation::Horizontal, 6);
-    let s_lbl = gtk::Label::new(Some("S"));
-    s_lbl.set_width_request(12);
-    s_box.append(&s_lbl);
-    s_box.append(&scale_s);
-    picker_panel.append(&s_box);
-
-    let l_box = gtk::Box::new(gtk::Orientation::Horizontal, 6);
-    let l_lbl = gtk::Label::new(Some("L"));
-    l_lbl.set_width_request(12);
-    l_box.append(&l_lbl);
-    l_box.append(&scale_l);
-    picker_panel.append(&l_box);
-
-    // RGB Sliders
-    let sliders_lbl_rgb = gtk::Label::new(Some("RGB"));
-    sliders_lbl_rgb.set_halign(gtk::Align::Start);
-    sliders_lbl_rgb.add_css_class("dim-label");
-    picker_panel.append(&sliders_lbl_rgb);
-
-    let scale_r = gtk::Scale::with_range(gtk::Orientation::Horizontal, 0.0, 255.0, 1.0);
-    scale_r.set_draw_value(false);
-    let scale_g = gtk::Scale::with_range(gtk::Orientation::Horizontal, 0.0, 255.0, 1.0);
-    scale_g.set_draw_value(false);
-    let scale_b = gtk::Scale::with_range(gtk::Orientation::Horizontal, 0.0, 255.0, 1.0);
-    scale_b.set_draw_value(false);
-
-    let r_box = gtk::Box::new(gtk::Orientation::Horizontal, 6);
-    let r_lbl = gtk::Label::new(Some("R"));
-    r_lbl.set_width_request(12);
-    r_box.append(&r_lbl);
-    r_box.append(&scale_r);
-    picker_panel.append(&r_box);
-
-    let g_box = gtk::Box::new(gtk::Orientation::Horizontal, 6);
-    let g_lbl = gtk::Label::new(Some("G"));
-    g_lbl.set_width_request(12);
-    g_box.append(&g_lbl);
-    g_box.append(&scale_g);
-    picker_panel.append(&g_box);
-
-    let b_box = gtk::Box::new(gtk::Orientation::Horizontal, 6);
-    let b_lbl = gtk::Label::new(Some("B"));
-    b_lbl.set_width_request(12);
-    b_box.append(&b_lbl);
-    b_box.append(&scale_b);
-    picker_panel.append(&b_box);
 
     let btn_add_colour = gtk::Button::builder()
         .label("Add Colour")
@@ -390,92 +306,7 @@ fn build_palettes_page(
 
     // Inter-panel State & Redraw
     let active_palette_id_ref = Rc::new(RefCell::new(None::<String>));
-    let is_updating_sliders = Rc::new(std::cell::Cell::new(false));
 
-    // Shared sync logic helper
-    let sync_sliders = {
-        let is_updating = is_updating_sliders.clone();
-        let color_block = picker_color_block.clone();
-        let scale_h = scale_h.clone();
-        let scale_s = scale_s.clone();
-        let scale_l = scale_l.clone();
-        let scale_r = scale_r.clone();
-        let scale_g = scale_g.clone();
-        let scale_b = scale_b.clone();
-        let entry_hex = entry_hex.clone();
-
-        move |source: &str| {
-            if is_updating.get() { return; }
-            is_updating.set(true);
-
-            if source == "hsl" {
-                let h = scale_h.value() as i32;
-                let s = scale_s.value() as i32;
-                let l = scale_l.value() as i32;
-                let hex = hsl_to_hex(h, s, l);
-                let rgb = hex_to_rgb(&hex);
-
-                scale_r.set_value(rgb.r as f64);
-                scale_g.set_value(rgb.g as f64);
-                scale_b.set_value(rgb.b as f64);
-                entry_hex.set_text(&hex.trim_start_matches('#'));
-                apply_widget_css(&color_block, &format!("* {{ background-color: {}; }}", hex));
-            } else if source == "rgb" {
-                let r = scale_r.value() as u8;
-                let g = scale_g.value() as u8;
-                let b = scale_b.value() as u8;
-                let hsl = rgb_to_hsl(r, g, b);
-                let hex = hsl_to_hex(hsl.h, hsl.s, hsl.l);
-
-                scale_h.set_value(hsl.h as f64);
-                scale_s.set_value(hsl.s as f64);
-                scale_l.set_value(hsl.l as f64);
-                entry_hex.set_text(&hex.trim_start_matches('#'));
-                apply_widget_css(&color_block, &format!("* {{ background-color: {}; }}", hex));
-            } else if source == "hex" {
-                let text = entry_hex.text().to_string();
-                let clean = text.trim_start_matches('#');
-                if clean.len() == 6 {
-                    let hex = format!("#{}", clean);
-                    let rgb = hex_to_rgb(&hex);
-                    let hsl = rgb_to_hsl(rgb.r, rgb.g, rgb.b);
-
-                    scale_r.set_value(rgb.r as f64);
-                    scale_g.set_value(rgb.g as f64);
-                    scale_b.set_value(rgb.b as f64);
-                    scale_h.set_value(hsl.h as f64);
-                    scale_s.set_value(hsl.s as f64);
-                    scale_l.set_value(hsl.l as f64);
-                    apply_widget_css(&color_block, &format!("* {{ background-color: {}; }}", hex));
-                }
-            }
-
-            is_updating.set(false);
-        }
-    };
-
-    // Sliders event connections
-    {
-        let sync = sync_sliders.clone();
-        scale_h.connect_value_changed(move |_| sync("hsl"));
-        let sync = sync_sliders.clone();
-        scale_s.connect_value_changed(move |_| sync("hsl"));
-        let sync = sync_sliders.clone();
-        scale_l.connect_value_changed(move |_| sync("hsl"));
-
-        let sync = sync_sliders.clone();
-        scale_r.connect_value_changed(move |_| sync("rgb"));
-        let sync = sync_sliders.clone();
-        scale_g.connect_value_changed(move |_| sync("rgb"));
-        let sync = sync_sliders.clone();
-        scale_b.connect_value_changed(move |_| sync("rgb"));
-
-        let sync = sync_sliders.clone();
-        entry_hex.connect_changed(move |_| sync("hex"));
-    }
-
-    // Set initial colors
-    sync_sliders("hsl");
 
     // Unified reload logic
     let refresh_all = {
@@ -875,7 +706,7 @@ fn build_palettes_page(
     // Add Colour Connection
     {
         let state = state.clone();
-        let entry_hex = entry_hex.clone();
+        let color_chooser = color_chooser.clone();
         let entry_name = entry_col_name.clone();
         let active_palette_id_ref = active_palette_id_ref.clone();
         let refresh_palettes_inner = refresh_palettes_view.clone();
@@ -885,10 +716,15 @@ fn build_palettes_page(
         btn_add_colour.connect_clicked(move |_| {
             let active_id = active_palette_id_ref.borrow().clone();
             if let Some(palette_id) = active_id {
-                let hex_val = entry_hex.text().to_string();
+                let rgba = color_chooser.rgba();
+                let r = (rgba.red() * 255.0).round() as u8;
+                let g = (rgba.green() * 255.0).round() as u8;
+                let b = (rgba.blue() * 255.0).round() as u8;
+                let hex_val = format!("#{:02x}{:02x}{:02x}", r, g, b);
+
                 let name_val = entry_name.text().to_string();
                 let col_name = if name_val.trim().is_empty() {
-                    format!("#{}", hex_val.trim_start_matches('#').to_uppercase())
+                    hex_val.to_uppercase()
                 } else {
                     name_val.trim().to_string()
                 };
