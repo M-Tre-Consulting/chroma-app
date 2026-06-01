@@ -95,11 +95,19 @@ namespace Chroma.Services
         /// </summary>
         /// <param name="rgb">The source color components.</param>
         /// <returns>The calculated relative luminance value as a float.</returns>
-        public static float RelativeLuminance(Rgb rgb)
+        public static double RelativeLuminance(Rgb rgb)
         {
-            // TODO: Calculate relative luminance of a color using the WCAG formula:
-            // 0.2126 * R_linear + 0.7152 * G_linear + 0.0772 * B_linear
-            return 0.2f;
+            double rs = rgb.R / 255.0;
+            double gs = rgb.G / 255.0;
+            double bs = rgb.B / 255.0;
+
+            static double transform(double s) => s <= 0.03928 ? s / 12.92 : Math.Pow(((s + 0.055) / 1.055), 2.4);
+
+            rs = transform(rs);
+            gs = transform(gs);
+            bs = transform(bs);
+
+            return 0.2126 * rs + 0.7152 * gs + 0.0772 * bs;
         }
 
         /// <summary>
