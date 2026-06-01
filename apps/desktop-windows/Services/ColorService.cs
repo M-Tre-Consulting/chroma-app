@@ -75,8 +75,19 @@ namespace Chroma.Services
         /// <returns>A formatted hex color string starting with a hash (e.g. #7c6ff7).</returns>
         public static string HslToHex(ushort h, byte s, byte l)
         {
-            // TODO: Convert Hue, Saturation, and Lightness values back to a standard Hex string
-            return "#7c6ff7";
+            double sn = s / 100.0;
+            double ln = l / 100.0;
+            double a = sn * Math.Min(ln, 1.0 - ln);
+
+            string f(int n)
+            {
+                int k = (n + h / 30) % 12;
+                double color = ln - a * Math.Max(-1.0, Math.Min(k - 3, Math.Min(9 - k, 1.0)));
+                int val = (int)(color * 255.0);
+                return $"{Math.Clamp(val, 0, 255):x2}";
+            }
+
+            return $"#{f(0)}{f(8)}{f(4)}";
         }
 
         /// <summary>
