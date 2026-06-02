@@ -166,11 +166,11 @@ namespace Chroma.ViewModels
             }
         }
 
-        private ushort _selectedColorH = 246;
+        private int _selectedColorH = 246;
         /// <summary>
         /// Gets or sets the Hue channel (0 to 360) of the selected color.
         /// </summary>
-        public ushort SelectedColorH
+        public int SelectedColorH
         {
             get => _selectedColorH;
             set
@@ -184,11 +184,11 @@ namespace Chroma.ViewModels
             }
         }
 
-        private byte _selectedColorS = 89;
+        private int _selectedColorS = 89;
         /// <summary>
         /// Gets or sets the Saturation channel (0 to 100) of the selected color.
         /// </summary>
-        public byte SelectedColorS
+        public int SelectedColorS
         {
             get => _selectedColorS;
             set
@@ -277,30 +277,12 @@ namespace Chroma.ViewModels
 
         private void SyncFromRgb()
         {
-            if (_isSyncing) return;
-            _isSyncing = true;
-            try
-            {
-                // TODO: Call ColorService to calculate HSL and Hex components from the R, G, B values
-            }
-            finally
-            {
-                _isSyncing = false;
-            }
+            // TODO: implement sync from RGB data.
         }
 
         private void SyncFromHsl()
         {
-            if (_isSyncing) return;
-            _isSyncing = true;
-            try
-            {
-                // TODO: Call ColorService to calculate RGB and Hex components from the H, S, L values
-            }
-            finally
-            {
-                _isSyncing = false;
-            }
+            // TODO: implement syncing from HSL data.
         }
 
         private void SyncFromHex()
