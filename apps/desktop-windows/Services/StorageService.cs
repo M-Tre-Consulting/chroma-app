@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Chroma.Models;
 
 namespace Chroma.Services
