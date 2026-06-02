@@ -155,8 +155,9 @@ namespace Chroma.Services
         /// <returns>A formatted typescript constant code block string.</returns>
         public static string ExportTailwind(List<TokenGroup> groups, List<Palette> palettes)
         {
-            // TODO: Format tokens into a Tailwind CSS config block
-            return "// Tailwind Export\nconst colors = {}";
+            List<ResolvedToken> tokens = ResolveTokens(groups, palettes);
+            List<string> entries = [.. tokens.Select(t => $"  {t.Name}: '{t.Hex}',")];
+            return $"// tailwind.config.ts - paste into the colors key\nconst colors = {{\n{string.Join("\n", entries)}\n}};";
         }
 
         /// <summary>
