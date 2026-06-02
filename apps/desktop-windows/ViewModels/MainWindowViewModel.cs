@@ -252,51 +252,27 @@ namespace Chroma.ViewModels
         /// </summary>
         public MainWindowViewModel()
         {
-            // TODO: Call storage services to load palettes and token groups on startup
-            LoadMockData();
+            LoadDataFromStorage();
             UpdateExportPreview();
         }
 
-        private void LoadMockData()
+        /// <summary>
+        /// Loads data from local JSON storage in the application AppData directory.
+        /// </summary>
+        private void LoadDataFromStorage()
         {
-            // TODO: Replace with native loaded data in your implementation
-            var defaultPalette = new Palette
-            {
-                Id = "default-palette",
-                Name = "Default Palette",
-                Colours = new System.Collections.Generic.List<Colour>
-                {
-                    new Colour { Id = "purple", Name = "Accent Purple", Hex = "#A374F2" },
-                    new Colour { Id = "blue", Name = "Theme Blue", Hex = "#3584E4" }
-                }
-            };
-            Palettes.Add(defaultPalette);
-            ActivePalette = defaultPalette;
+            List<Palette> loadedPalettes = StorageService.LoadPalettes();
+            List<TokenGroup> loadedGroups = StorageService.LoadTokenGroups();
 
-            var defaultGroup = new TokenGroup
-            {
-                Id = "brand-guidelines",
-                Name = "Brand Guidelines",
-                Tokens = new System.Collections.Generic.List<Token>
-                {
-                    new Token 
-                    { 
-                        Id = "brand-primary", 
-                        Name = "color-brand-primary", 
-                        Description = "Primary accent brand color token",
-                        Value = new TokenValue { PaletteId = "default-palette", ColourId = "purple" }
-                    },
-                    new Token 
-                    { 
-                        Id = "brand-secondary", 
-                        Name = "color-brand-secondary", 
-                        Description = "Secondary system brand color token",
-                        Value = new TokenValue { PaletteId = "default-palette", ColourId = "blue" }
-                    }
-                }
-            };
-            TokenGroups.Add(defaultGroup);
-            ActiveTokenGroup = defaultGroup;
+            Palettes = [.. loadedPalettes];
+
+            if (Palettes.Count != 0)
+                ActivePalette = Palettes.First();
+
+            TokenGroups = [.. loadedGroups];
+
+            if (TokenGroups.Count != 0)
+                ActiveTokenGroup = TokenGroups.First();
         }
 
         private void SyncFromRgb()
