@@ -72,8 +72,12 @@ namespace Chroma.Services
         /// <returns>A collection of loaded <see cref="TokenGroup"/> objects, or an empty list if none exist.</returns>
         public static List<TokenGroup> LoadTokenGroups()
         {
-            // TODO: Load and deserialize token groups from native AppData path
-            return new List<TokenGroup>();
+            if (!File.Exists(s_tokenGroupsFile))
+                return [];
+
+            string jsonData = File.ReadAllText(s_tokenGroupsFile);
+            List<TokenGroup>? tokenGroups = JsonSerializer.Deserialize<List<TokenGroup>>(jsonData, s_jsonOptions);
+            return tokenGroups ?? [];
         }
 
         /// <summary>
