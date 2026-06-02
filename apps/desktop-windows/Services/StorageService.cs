@@ -61,7 +61,9 @@ namespace Chroma.Services
         /// <param name="palettes">The collection of palettes to save.</param>
         public static void SavePalettes(List<Palette> palettes)
         {
-            // TODO: Serialize and write palettes to local JSON files
+            Directory.CreateDirectory(s_storagePath);
+            string jsonData = JsonSerializer.Serialize(palettes, s_jsonOptions);
+            File.WriteAllText(s_palettesFile, jsonData);
         }
 
         /// <summary>
