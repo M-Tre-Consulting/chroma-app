@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using Chroma.Models;
+using System.Text.Json;
 
 namespace Chroma.Services
 {
@@ -29,6 +29,16 @@ namespace Chroma.Services
     /// </summary>
     public static class ExportService
     {
+        /// <summary>
+        /// Default JSON serializer options for consistent formatting across JSON export methods.
+        /// </summary>
+        private static readonly JsonSerializerOptions _jsonOptions = new()
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DictionaryKeyPolicy = JsonNamingPolicy.CamelCase
+        };
+
         /// <summary>
         /// Resolves active mappings by matching token identifiers with corresponding color properties inside user palettes.
         /// </summary>
@@ -114,8 +124,27 @@ namespace Chroma.Services
         /// <returns>A formatted JSON string block.</returns>
         public static string ExportJSON(List<TokenGroup> groups, List<Palette> palettes)
         {
-            // TODO: Format tokens into a Style Dictionary compatible JSON string
-            return "{\n  \"color\": {}\n}";
+            var tokens = ResolveTokens(groups, palettes);
+
+            Dictionary<string, Dictionary<string, Dictionary<string, string>>> colorMap = [];
+
+            foreach (ResolvedToken t in tokens)
+            {
+                if (!colorMap.ContainsKey(t.GroupName))
+                    colorMap[t.GroupName] = [];
+
+                colorMap[t.GroupName][t.Name] = new()
+                {
+                    ["value"] = t.Hex
+                };
+            }
+
+            var root = new Dictionary<string, object>
+            {
+                ["color"] = colorMap
+            };
+
+            return JsonSerializer.Serialize(root, _jsonOptions) ?? string.Empty;
         }
 
         /// <summary>
