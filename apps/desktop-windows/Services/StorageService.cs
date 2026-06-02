@@ -1,4 +1,6 @@
 using Chroma.Models;
+using System.IO;
+using System.Text.Json;
 
 namespace Chroma.Services
 {
@@ -7,6 +9,37 @@ namespace Chroma.Services
     /// </summary>
     public static class StorageService
     {
+        /// <summary>
+        /// Application data storage path for Chroma, typically located
+        /// in the user's AppData folder on Windows.
+        /// </summary>
+        private static readonly string s_storagePath = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "Chroma"
+        );
+
+        /// <summary>
+        /// Default file path for storing serialized color palettes in JSON
+        /// format within the native application data directory.
+        /// </summary>
+        private static readonly string s_palettesFile = Path.Combine(s_storagePath, "palettes.json");
+
+        /// <summary>
+        /// Default file path for storing serialized design token groups in JSON
+        /// format within the native application data directory.
+        /// </summary>
+        private static readonly string s_tokenGroupsFile = Path.Combine(s_storagePath, "tokenGroups.json");
+
+        /// <summary>
+        /// Default application-wide JSON serializer options for consistent formatting
+        /// and camelCase property naming across all storage operations.
+        /// </summary>
+        private static readonly JsonSerializerOptions s_jsonOptions = new()
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
         /// <summary>
         /// Reads and deserializes color palettes from native JSON files.
         /// </summary>
