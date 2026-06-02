@@ -168,8 +168,13 @@ namespace Chroma.Services
         /// <returns>A formatted XML document string.</returns>
         public static string ExportAndroidXml(List<TokenGroup> groups, List<Palette> palettes)
         {
-            // TODO: Format tokens into an Android colors.xml resources block
-            return "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n  <!-- TODO: Exporter values -->\n</resources>";
+            List<ResolvedToken> tokens = ResolveTokens(groups, palettes);
+            List<string> entries = [.. tokens.Select(t =>
+            {
+                string snakeName = t.Name.Replace('-', '_');
+                return $"  <color name=\"{snakeName}\">{t.Hex}</color>";
+            })];
+            return $"<?xml version\"1.0\" encoding=\"utf-8\"?>\n<resources>\n{string.Join("\n", entries)}\n</resources>";
         }
     }
 }
