@@ -86,7 +86,9 @@ namespace Chroma.Services
         /// <param name="groups">The collection of token groups to save.</param>
         public static void SaveTokenGroups(List<TokenGroup> groups)
         {
-            // TODO: Serialize and write token groups to local JSON files
+            Directory.CreateDirectory(s_storagePath);
+            string jsonData = JsonSerializer.Serialize(groups, s_jsonOptions);
+            File.WriteAllText(s_tokenGroupsFile, jsonData);
         }
     }
 }
