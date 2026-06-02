@@ -1,4 +1,5 @@
 using Chroma.Models;
+using System.Data.SqlTypes;
 using System.IO;
 using System.Text.Json;
 
@@ -46,8 +47,12 @@ namespace Chroma.Services
         /// <returns>A collection of loaded <see cref="Palette"/> objects, or an empty list if none exist.</returns>
         public static List<Palette> LoadPalettes()
         {
-            // TODO: Load and deserialize palettes from native AppData path
-            return new List<Palette>();
+            if (!File.Exists(s_palettesFile))
+                return [];
+
+            string jsonData = File.ReadAllText(s_palettesFile);
+            List<Palette>? palettes = JsonSerializer.Deserialize<List<Palette>>(jsonData, s_jsonOptions);
+            return palettes ?? [];
         }
 
         /// <summary>
