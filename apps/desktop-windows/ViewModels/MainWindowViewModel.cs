@@ -323,13 +323,25 @@ namespace Chroma.ViewModels
             }
         }
 
+        /// <summary>
+        /// Synchronizes the selected color values from a hexadecimal string representation.
+        /// </summary>
         private void SyncFromHex()
         {
             if (_isSyncing) return;
             _isSyncing = true;
             try
             {
-                // TODO: Call ColorService to parse the Hex string and populate the RGB and HSL values
+                Rgb rgb = ColorService.HexToRgb(SelectedColorHex);
+                Hsl hsl = ColorService.RgbToHsl(rgb);
+
+                SelectedColorR = rgb.R;
+                SelectedColorG = rgb.G;
+                SelectedColorB = rgb.B;
+
+                SelectedColorH = hsl.H;
+                SelectedColorS = hsl.S;
+                SelectedColorL = hsl.L;
             }
             finally
             {
