@@ -1,5 +1,8 @@
 using Chroma.Models;
 using Chroma.Services;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace Chroma.ViewModels
 {
@@ -198,11 +201,11 @@ namespace Chroma.ViewModels
             }
         }
 
-        private byte _selectedColorL = 70;
+        private int _selectedColorL = 70;
         /// <summary>
         /// Gets or sets the Lightness channel (0 to 100) of the selected color.
         /// </summary>
-        public byte SelectedColorL
+        public int SelectedColorL
         {
             get => _selectedColorL;
             set
@@ -305,9 +308,10 @@ namespace Chroma.ViewModels
             _isSyncing = true;
             try
             {
-                Rgb rgb = ColorService.HslToRgb(SelectedColorH, SelectedColorS, SelectedColorL);
+                string hex = ColorService.HslToHex(SelectedColorH, SelectedColorS, SelectedColorL);
+                Rgb? rgb = ColorService.HexToRgb(hex) ?? new();
 
-                SelectedColorHex = ColorService.RgbToHex(rgb.R, rgb.G, rgb.B);
+                SelectedColorHex = hex;
 
                 SelectedColorR = rgb.R;
                 SelectedColorG = rgb.G;
@@ -328,8 +332,8 @@ namespace Chroma.ViewModels
             _isSyncing = true;
             try
             {
-                Rgb rgb = ColorService.HexToRgb(SelectedColorHex);
-                Hsl hsl = ColorService.RgbToHsl(rgb);
+                Rgb? rgb = ColorService.HexToRgb(SelectedColorHex) ?? new();
+                Hsl? hsl = ColorService.RgbToHsl(rgb);
 
                 SelectedColorR = rgb.R;
                 SelectedColorG = rgb.G;
