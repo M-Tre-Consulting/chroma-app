@@ -43,10 +43,10 @@ namespace Chroma.ViewModels
         public Palette? ActivePalette
         {
             get => _activePalette;
-            set 
-            { 
-                _activePalette = value; 
-                OnPropertyChanged(); 
+            set
+            {
+                _activePalette = value;
+                OnPropertyChanged();
                 OnPropertyChanged(nameof(ActivePaletteColoursCountText));
             }
         }
@@ -91,12 +91,12 @@ namespace Chroma.ViewModels
         public string SelectedColorHex
         {
             get => _selectedColorHex;
-            set 
-            { 
+            set
+            {
                 if (_selectedColorHex != value)
                 {
-                    _selectedColorHex = value; 
-                    OnPropertyChanged(); 
+                    _selectedColorHex = value;
+                    OnPropertyChanged();
                     SyncFromHex();
                 }
             }
@@ -227,11 +227,11 @@ namespace Chroma.ViewModels
         public string ExportFormat
         {
             get => _exportFormat;
-            set 
-            { 
-                _exportFormat = value; 
-                OnPropertyChanged(); 
-                UpdateExportPreview(); 
+            set
+            {
+                _exportFormat = value;
+                OnPropertyChanged();
+                UpdateExportPreview();
             }
         }
 
@@ -300,9 +300,27 @@ namespace Chroma.ViewModels
             }
         }
 
+        /// <summary>
+        /// Synchronizes the selected color values from HSL to RGB and updates the corresponding hex representation.
+        /// </summary>
         private void SyncFromHsl()
         {
-            // TODO: implement syncing from HSL data.
+            if (_isSyncing) return;
+            _isSyncing = true;
+            try
+            {
+                Rgb rgb = ColorService.HslToRgb(SelectedColorH, SelectedColorS, SelectedColorL);
+
+                SelectedColorHex = ColorService.RgbToHex(rgb.R, rgb.G, rgb.B);
+
+                SelectedColorR = rgb.R;
+                SelectedColorG = rgb.G;
+                SelectedColorB = rgb.B;
+            }
+            finally
+            {
+                _isSyncing = false;
+            }
         }
 
         private void SyncFromHex()
