@@ -45,14 +45,14 @@ namespace Chroma.Services
             double s = 0.0;
             double l = (max + min) / 2.0;
 
-            if (Math.Abs(max - min) > 1e9)
+            if (Math.Abs(max - min) > 0.0001)
             {
                 double d = max - min;
                 s = l > 0.5 ? d / (2.0 - max - min) : d / (max + min);
 
-                if (Math.Abs(max - rn) < 1e9)
+                if (Math.Abs(max - rn) < 0.0001)
                     h = ((gn - bn) / d + (gn < bn ? 6.0 : 0.0)) / 6.0;
-                else if (Math.Abs(max - gn) < 1e9)
+                else if (Math.Abs(max - gn) < 0.0001)
                     h = ((bn - rn) / d + 2.0) / 6.0;
                 else
                     h = ((rn - gn) / d + 4.0) / 6.0;
