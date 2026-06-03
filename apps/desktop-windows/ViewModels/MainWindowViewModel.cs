@@ -275,9 +275,29 @@ namespace Chroma.ViewModels
                 ActiveTokenGroup = TokenGroups.First();
         }
 
+        /// <summary>
+        /// Syncs current colors from RGB values.
+        /// </summary>
         private void SyncFromRgb()
         {
-            // TODO: implement sync from RGB data.
+            if (_isSyncing) return;
+            _isSyncing = true;
+
+            try
+            {
+                Rgb rgb = new() { R = SelectedColorR, G = SelectedColorG, B = SelectedColorB };
+                Hsl hsl = ColorService.RgbToHsl(rgb);
+
+                SelectedColorHex = ColorService.HslToHex(hsl.H, hsl.S, hsl.L);
+
+                SelectedColorH = hsl.H;
+                SelectedColorS = hsl.S;
+                SelectedColorL = hsl.L;
+            }
+            finally
+            {
+                _isSyncing = false;
+            }
         }
 
         private void SyncFromHsl()
