@@ -33,5 +33,17 @@ target_include_directories(desktop-linux PRIVATE src)
 target_link_libraries(desktop-linux PRIVATE
     PkgConfig::GTK4
     PkgConfig::ADWAITA
-    PkgConfig::JSONCPP
 )
+
+# Attempt to find static jsoncpp for AppImage portability
+find_library(JSONCPP_STATIC_LIB NAMES libjsoncpp.a PATHS ${JSONCPP_LIBRARY_DIRS} /usr/lib /usr/lib/x86_64-linux-gnu /usr/local/lib)
+
+if(JSONCPP_STATIC_LIB)
+    message(STATUS "Found static jsoncpp library: ${JSONCPP_STATIC_LIB}")
+    target_link_libraries(desktop-linux PRIVATE ${JSONCPP_STATIC_LIB})
+    target_include_directories(desktop-linux PRIVATE ${JSONCPP_INCLUDE_DIRS})
+else()
+    message(WARNING "Static jsoncpp library not found. Linking dynamically.")
+    target_link_libraries(desktop-linux PRIVATE PkgConfig::JSONCPP)
+endif()
+
