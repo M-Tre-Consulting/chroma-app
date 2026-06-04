@@ -75,7 +75,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Border x:Name="ColorPreviewBorder" Grid.Column="0" CornerRadius="4" Height="32" Width="32" BorderBrush="#3E3E3E" BorderThickness="1" Background="#7c6ff7" HorizontalAlignment="Left"/>
-                    <TextBox x:Name="TxtHex" Grid.Column="1" Padding="8,6" Background="#1A1A1A" BorderBrush="#3E3E3E" Text="#7C6FF7" FontFamily="Consolas" FontSize="13" TextChanged="TxtHex_TextChanged" MaxLength="7" VerticalAlignment="Center"/>
+                    <TextBox x:Name="TxtHex" Grid.Column="1" Padding="8,6" Text="#7C6FF7" FontFamily="Consolas" FontSize="13" TextChanged="TxtHex_TextChanged" MaxLength="7" VerticalAlignment="Center"/>
                 </Grid>
             </StackPanel>
 
@@ -112,7 +112,7 @@
                                 </LinearGradientBrush>
                             </Slider.Background>
                         </Slider>
-                        <TextBox x:Name="TxtH" Grid.Row="0" Grid.Column="2" Text="246" FontSize="12" Padding="4,2" Background="#1A1A1A" BorderBrush="#3E3E3E" HorizontalContentAlignment="Center" TextChanged="TxtHsl_TextChanged"/>
+                        <TextBox x:Name="TxtH" Grid.Row="0" Grid.Column="2" Text="246" FontSize="12" Padding="4,2" HorizontalContentAlignment="Center" TextChanged="TxtHsl_TextChanged"/>
 
                         <!-- Saturation Slider -->
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="S" VerticalAlignment="Center" FontSize="12" Foreground="#CCCCCC" Margin="0,10,0,0"/>
@@ -124,7 +124,7 @@
                                 </LinearGradientBrush>
                             </Slider.Background>
                         </Slider>
-                        <TextBox x:Name="TxtS" Grid.Row="1" Grid.Column="2" Text="89" FontSize="12" Padding="4,2" Background="#1A1A1A" BorderBrush="#3E3E3E" HorizontalContentAlignment="Center" Margin="0,10,0,0" TextChanged="TxtHsl_TextChanged"/>
+                        <TextBox x:Name="TxtS" Grid.Row="1" Grid.Column="2" Text="89" FontSize="12" Padding="4,2" HorizontalContentAlignment="Center" Margin="0,10,0,0" TextChanged="TxtHsl_TextChanged"/>
 
                         <!-- Lightness Slider -->
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="L" VerticalAlignment="Center" FontSize="12" Foreground="#CCCCCC" Margin="0,10,0,0"/>
@@ -137,7 +137,7 @@
                                 </LinearGradientBrush>
                             </Slider.Background>
                         </Slider>
-                        <TextBox x:Name="TxtL" Grid.Row="2" Grid.Column="2" Text="70" FontSize="12" Padding="4,2" Background="#1A1A1A" BorderBrush="#3E3E3E" HorizontalContentAlignment="Center" Margin="0,10,0,0" TextChanged="TxtHsl_TextChanged"/>
+                        <TextBox x:Name="TxtL" Grid.Row="2" Grid.Column="2" Text="70" FontSize="12" Padding="4,2" HorizontalContentAlignment="Center" Margin="0,10,0,0" TextChanged="TxtHsl_TextChanged"/>
                     </Grid>
 
                     <Separator Background="#3E3E3E" Margin="0,14"/>
@@ -166,7 +166,7 @@
                                 </LinearGradientBrush>
                             </Slider.Background>
                         </Slider>
-                        <TextBox x:Name="TxtR" Grid.Row="0" Grid.Column="2" Text="124" FontSize="12" Padding="4,2" Background="#1A1A1A" BorderBrush="#3E3E3E" HorizontalContentAlignment="Center" TextChanged="TxtRgb_TextChanged"/>
+                        <TextBox x:Name="TxtR" Grid.Row="0" Grid.Column="2" Text="124" FontSize="12" Padding="4,2" HorizontalContentAlignment="Center" TextChanged="TxtRgb_TextChanged"/>
 
                         <!-- Green Slider -->
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="G" VerticalAlignment="Center" FontSize="12" Foreground="#CCCCCC" Margin="0,10,0,0"/>
@@ -178,7 +178,7 @@
                                 </LinearGradientBrush>
                             </Slider.Background>
                         </Slider>
-                        <TextBox x:Name="TxtG" Grid.Row="1" Grid.Column="2" Text="111" FontSize="12" Padding="4,2" Background="#1A1A1A" BorderBrush="#3E3E3E" HorizontalContentAlignment="Center" Margin="0,10,0,0" TextChanged="TxtRgb_TextChanged"/>
+                        <TextBox x:Name="TxtG" Grid.Row="1" Grid.Column="2" Text="111" FontSize="12" Padding="4,2" HorizontalContentAlignment="Center" Margin="0,10,0,0" TextChanged="TxtRgb_TextChanged"/>
 
                         <!-- Blue Slider -->
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="B" VerticalAlignment="Center" FontSize="12" Foreground="#CCCCCC" Margin="0,10,0,0"/>
@@ -190,7 +190,7 @@
                                 </LinearGradientBrush>
                             </Slider.Background>
                         </Slider>
-                        <TextBox x:Name="TxtB" Grid.Row="2" Grid.Column="2" Text="247" FontSize="12" Padding="4,2" Background="#1A1A1A" BorderBrush="#3E3E3E" HorizontalContentAlignment="Center" Margin="0,10,0,0" TextChanged="TxtRgb_TextChanged"/>
+                        <TextBox x:Name="TxtB" Grid.Row="2" Grid.Column="2" Text="247" FontSize="12" Padding="4,2" HorizontalContentAlignment="Center" Margin="0,10,0,0" TextChanged="TxtRgb_TextChanged"/>
                     </Grid>
                 </StackPanel>
             </ScrollViewer>

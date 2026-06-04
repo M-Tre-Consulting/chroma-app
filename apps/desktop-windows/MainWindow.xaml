@@ -145,7 +145,7 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0" x:Name="TxtNewPaletteName" Padding="8,6" Background="{StaticResource BgSunkenBrush}" BorderBrush="{StaticResource BorderBrush}"/>
+                                <TextBox Grid.Column="0" x:Name="TxtNewPaletteName" Padding="8,6"/>
                                 <Button Grid.Column="1" Content="+" Style="{StaticResource ModernButtonStyle}" Width="32" Margin="6,0,0,0" Padding="0" Click="BtnAddPalette_Click"/>
                             </Grid>
                         </Grid>
@@ -172,7 +172,7 @@
                                     <TextBlock Text="{Binding ActivePalette.Name, FallbackValue='No Palette Selected'}" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextBrush}"/>
                                     <TextBlock Text="{Binding ActivePaletteColoursCountText}" FontSize="11" Foreground="{StaticResource TextDimBrush}" Margin="0,2,0,0"/>
                                 </StackPanel>
-                                <Button Grid.Column="1" Content="Delete Palette" Style="{StaticResource ModernButtonStyle}" Foreground="{StaticResource WcagFailBrush}" Padding="12,6" Click="BtnDeletePalette_Click"/>
+                                <Button Grid.Column="1" Content="Delete Palette" Style="{StaticResource DestructiveButtonStyle}" Padding="12,6" Click="BtnDeletePalette_Click"/>
                             </Grid>
                         </Border>
 
@@ -286,7 +286,7 @@
                                                         <Border Grid.Column="1" Width="16" Height="16" CornerRadius="4" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" Margin="0,0,8,0" VerticalAlignment="Center" Background="{Binding ContrastBgHex, FallbackValue=#FFFFFF}"/>
                                                         
                                                         <TextBlock Grid.Column="2" Text="#" VerticalAlignment="Center" Foreground="{StaticResource TextDimBrush}" Margin="0,0,2,0"/>
-                                                        <TextBox Grid.Column="3" Text="{Binding ContrastBgHex, UpdateSourceTrigger=PropertyChanged}" Padding="4,2" FontSize="11" FontFamily="Consolas" MaxLength="7" Background="{StaticResource BgSunkenBrush}"/>
+                                                        <TextBox Grid.Column="3" Text="{Binding ContrastBgHex, UpdateSourceTrigger=PropertyChanged}" Padding="4,2" FontSize="11" FontFamily="Consolas" MaxLength="7"/>
                                                         
                                                         <TextBlock Grid.Column="4" Text="{Binding ContrastRatioText}" HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="Bold" Foreground="{StaticResource TextSecondaryBrush}"/>
                                                     </Grid>
@@ -401,7 +401,7 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0" x:Name="TxtNewGroupName" Padding="8,6" Background="{StaticResource BgSunkenBrush}" BorderBrush="{StaticResource BorderBrush}"/>
+                                <TextBox Grid.Column="0" x:Name="TxtNewGroupName" Padding="8,6"/>
                                 <Button Grid.Column="1" Content="+" Style="{StaticResource ModernButtonStyle}" Width="32" Margin="6,0,0,0" Padding="0" Click="BtnAddTokenGroup_Click"/>
                             </Grid>
                         </Grid>
@@ -429,7 +429,7 @@
                                     <TextBlock Text="{Binding ActiveTokenGroup.Name, FallbackValue='No Token Group'}" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextBrush}"/>
                                     <TextBlock Text="Active Token mapping configurations" FontSize="11" Foreground="{StaticResource TextDimBrush}" Margin="0,2,0,0"/>
                                 </StackPanel>
-                                <Button Grid.Column="1" Content="Remove Group" Style="{StaticResource ModernButtonStyle}" Foreground="{StaticResource WcagFailBrush}" Padding="12,6" Click="BtnDeleteTokenGroup_Click"/>
+                                <Button Grid.Column="1" Content="Remove Group" Style="{StaticResource DestructiveButtonStyle}" Padding="12,6" Click="BtnDeleteTokenGroup_Click"/>
                             </Grid>
                         </Border>
 
@@ -496,8 +496,8 @@
                                     <ColumnDefinition Width="200"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox Grid.Column="0" x:Name="TxtNewTokenName" Padding="8,6" Background="{StaticResource BgRaisedBrush}"/>
-                                <TextBox Grid.Column="1" x:Name="TxtNewTokenDesc" Margin="12,0,0,0" Padding="8,6" Background="{StaticResource BgRaisedBrush}"/>
+                                <TextBox Grid.Column="0" x:Name="TxtNewTokenName" Padding="8,6"/>
+                                <TextBox Grid.Column="1" x:Name="TxtNewTokenDesc" Margin="12,0,0,0" Padding="8,6"/>
                                 <Button Grid.Column="2" Content="Add Token" Style="{StaticResource AccentButtonStyle}" Width="120" Margin="12,0,0,0" Height="32" Click="BtnAddToken_Click"/>
                             </Grid>
                         </Border>
