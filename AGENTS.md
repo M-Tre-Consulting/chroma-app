@@ -20,10 +20,11 @@ dotnet run --project apps/desktop-windows/Chroma.csproj
 # ==========================================
 
 # Build the project
-make -C apps/desktop-linux
+cmake -B apps/desktop-linux/build -S apps/desktop-linux
+cmake --build apps/desktop-linux/build
 
 # Run the project
-./apps/desktop-linux/desktop-linux
+./apps/desktop-linux/build/desktop-linux
 
 # ==========================================
 # 3. ANDROID APP (Kotlin / Jetpack Compose)

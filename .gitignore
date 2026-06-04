@@ -65,3 +65,4 @@ publish/
 
 # C++ binaries
 apps/desktop-linux/desktop-linux
+apps/desktop-linux/build/
