@@ -62,3 +62,6 @@ obj/
 !*.sln
 
 publish/
+
+# C++ binaries
+apps/desktop-linux/desktop-linux

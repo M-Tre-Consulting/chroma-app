@@ -16,14 +16,14 @@ dotnet build apps/desktop-windows/Chroma.csproj
 dotnet run --project apps/desktop-windows/Chroma.csproj
 
 # ==========================================
-# 2. LINUX PORT (Rust / GTK / Relm4)
+# 2. LINUX PORT (C++ / GTK 4 / Libadwaita)
 # ==========================================
 
 # Build the project
-cargo build --manifest-path apps/desktop-linux/Cargo.toml
+make -C apps/desktop-linux
 
 # Run the project
-cargo run --manifest-path apps/desktop-linux/Cargo.toml
+./apps/desktop-linux/desktop-linux
 
 # ==========================================
 # 3. ANDROID APP (Kotlin / Jetpack Compose)
@@ -54,7 +54,7 @@ apps/desktop-windows/    # Native C# (.NET 8 WPF) desktop application for Window
   ├── ViewModels/        # MainWindowViewModel state store (INotifyPropertyChanged)
   └── MainWindow.xaml    # Modern WPF styles & bound UI views
 
-apps/desktop-linux/      # Native Rust + GTK 4 + Relm4 desktop application for Linux
+apps/desktop-linux/      # Native C++ + GTK 4 + Libadwaita desktop application for Linux
 apps/android/            # Native Kotlin + Jetpack Compose mobile application
 apps/ios/                # Native Swift + SwiftUI mobile application
 ```
@@ -69,13 +69,13 @@ Tokens are *assigned* to colours from palettes; they resolve to hex values at ex
 ### State Persistence & Storage
 
 - **Windows Desktop (C#)**: State is managed via `MainWindowViewModel` and serialized natively in `StorageService` to JSON files stored in the user's local application data folder (`AppData/Local/Chroma/`).
-- **Linux Desktop (Rust)**: State is handled via `store.rs` saving configuration/JSON files.
+- **Linux Desktop (C++)**: State is handled via `store.cpp` saving configuration/JSON files.
 - **Mobile (Android/iOS)**: Native state persistence implements equivalent offline data stores (SQLite or standard platform preference storage).
 
 ### Styling & Theme Systems
 
 - **Windows Desktop (C#)**: Fully customized in `App.xaml` using flat, modern brushes, custom templates for rounded buttons, focused textbox layouts, and WCAG rating indicators (AAA, AA, Fail).
-- **Linux Desktop (Rust)**: Handled using native GTK CSS style sheets.
+- **Linux Desktop (C++)**: Handled using native GTK CSS style sheets.
 
 ### Export Pipeline
 
