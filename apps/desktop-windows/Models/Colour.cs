@@ -1,4 +1,7 @@
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
+using Chroma.Services;
 
 namespace Chroma.Models
 {
@@ -53,36 +56,166 @@ namespace Chroma.Models
     /// <summary>
     /// Represents a design color defined by name, hex, and its equivalent RGB and HSL structures.
     /// </summary>
-    public class Colour
+    public class Colour : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private string _id = string.Empty;
         /// <summary>
         /// Gets or sets the unique identifier of the color.
         /// </summary>
         [JsonPropertyName("id")]
-        public string Id { get; set; } = string.Empty;
+        public string Id
+        {
+            get => _id;
+            set { _id = value; OnPropertyChanged(); }
+        }
 
+        private string _name = string.Empty;
         /// <summary>
         /// Gets or sets the display name of the color.
         /// </summary>
         [JsonPropertyName("name")]
-        public string Name { get; set; } = string.Empty;
+        public string Name
+        {
+            get => _name;
+            set { _name = value; OnPropertyChanged(); }
+        }
 
+        private string _hex = string.Empty;
         /// <summary>
         /// Gets or sets the hexadecimal color value string (e.g. #7c6ff7).
         /// </summary>
         [JsonPropertyName("hex")]
-        public string Hex { get; set; } = string.Empty;
+        public string Hex
+        {
+            get => _hex;
+            set { _hex = value; OnPropertyChanged(); TriggerContrastUpdates(); }
+        }
 
+        private Rgb _rgb = new();
         /// <summary>
         /// Gets or sets the RGB representation of the color.
         /// </summary>
         [JsonPropertyName("rgb")]
-        public Rgb Rgb { get; set; } = new();
+        public Rgb Rgb
+        {
+            get => _rgb;
+            set { _rgb = value; OnPropertyChanged(); }
+        }
 
+        private Hsl _hsl = new();
         /// <summary>
         /// Gets or sets the HSL representation of the color.
         /// </summary>
         [JsonPropertyName("hsl")]
-        public Hsl Hsl { get; set; } = new();
+        public Hsl Hsl
+        {
+            get => _hsl;
+            set { _hsl = value; OnPropertyChanged(); }
+        }
+
+        private string _contrastBgHex = "#FFFFFF";
+        /// <summary>
+        /// Gets or sets the contrast background color hex code.
+        /// </summary>
+        [JsonIgnore]
+        public string ContrastBgHex
+        {
+            get => _contrastBgHex;
+            set
+            {
+                if (_contrastBgHex != value)
+                {
+                    _contrastBgHex = value;
+                    OnPropertyChanged();
+                    TriggerContrastUpdates();
+                }
+            }
+        }
+
+        [JsonIgnore]
+        public string ContrastRatioText
+        {
+            get
+            {
+                double? ratio = ColorService.ContrastRatio(Hex, ContrastBgHex);
+                return ratio.HasValue ? $"{ratio.Value:F1}:1" : "1.0:1";
+            }
+        }
+
+        [JsonIgnore]
+        public string WcagRating
+        {
+            get
+            {
+                double? ratio = ColorService.ContrastRatio(Hex, ContrastBgHex);
+                return ratio.HasValue ? ColorService.WcagLevel(ratio.Value) : "Fail";
+            }
+        }
+
+        [JsonIgnore]
+        public bool IsContrastFail
+        {
+            get
+            {
+                string rating = WcagRating;
+                return rating == "Fail" || rating == "AA Large";
+            }
+        }
+
+        [JsonIgnore]
+        public string SuggestedFixHex
+        {
+            get
+            {
+                return ColorService.SuggestFix(Hex, ContrastBgHex);
+            }
+        }
+
+        [JsonIgnore]
+        public string WcagBadgeBrush
+        {
+            get
+            {
+                return WcagRating switch
+                {
+                    "AAA" => "#222EC27E",      // Soft green
+                    "AA" => "#223584E4",       // Soft blue
+                    "AA Large" => "#221C71D8",  // Soft indigo
+                    _ => "#22E01B24"           // Soft red
+                };
+            }
+        }
+
+        [JsonIgnore]
+        public string WcagTextBrush
+        {
+            get
+            {
+                return WcagRating switch
+                {
+                    "AAA" => "#2EC27E",
+                    "AA" => "#3584E4",
+                    "AA Large" => "#1C71D8",
+                    _ => "#E01B24"
+                };
+            }
+        }
+
+        public void TriggerContrastUpdates()
+        {
+            OnPropertyChanged(nameof(ContrastRatioText));
+            OnPropertyChanged(nameof(WcagRating));
+            OnPropertyChanged(nameof(WcagBadgeBrush));
+            OnPropertyChanged(nameof(WcagTextBrush));
+            OnPropertyChanged(nameof(IsContrastFail));
+            OnPropertyChanged(nameof(SuggestedFixHex));
+        }
     }
 }

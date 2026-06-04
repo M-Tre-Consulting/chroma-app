@@ -350,12 +350,71 @@ namespace Chroma.ViewModels
         }
 
         /// <summary>
+        /// Exposes a flat collection of all colors across all palettes as selection options.
+        /// </summary>
+        public System.Collections.Generic.List<ColorMappingOption> MappingOptions
+        {
+            get
+            {
+                var options = new System.Collections.Generic.List<ColorMappingOption>
+                {
+                    new ColorMappingOption { DisplayName = "— none —", ValueKey = "none" }
+                };
+
+                foreach (var p in Palettes)
+                {
+                    foreach (var col in p.Colours)
+                    {
+                        options.Add(new ColorMappingOption
+                        {
+                            DisplayName = $"{p.Name} : {col.Name}",
+                            ValueKey = $"{p.Id}::{col.Id}"
+                        });
+                    }
+                }
+
+                return options;
+            }
+        }
+
+        /// <summary>
+        /// Public utility method to force save the token groups when value key selection changes in UI.
+        /// </summary>
+        public void SaveTokenGroupsState()
+        {
+            StorageService.SaveTokenGroups(new System.Collections.Generic.List<TokenGroup>(TokenGroups));
+            UpdateExportPreview();
+        }
+
+        /// <summary>
+        /// Public utility method to force save the palettes when modified in UI.
+        /// </summary>
+        public void SavePalettesState()
+        {
+            StorageService.SavePalettes(new System.Collections.Generic.List<Palette>(Palettes));
+            UpdateExportPreview();
+        }
+
+        /// <summary>
         /// Adds a new color palette to the collection.
         /// </summary>
         /// <param name="name">The display name of the new palette.</param>
         public void AddPalette(string name)
         {
-            // TODO: Implement adding a palette, generating IDs, and calling StorageService.SavePalettes()
+            var now = System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            var newPalette = new Palette
+            {
+                Id = System.Guid.NewGuid().ToString(),
+                Name = name,
+                Colours = new System.Collections.Generic.List<Colour>(),
+                CreatedAt = now,
+                UpdatedAt = now
+            };
+            Palettes.Add(newPalette);
+            ActivePalette = newPalette;
+            StorageService.SavePalettes(new System.Collections.Generic.List<Palette>(Palettes));
+            OnPropertyChanged(nameof(MappingOptions));
+            UpdateExportPreview();
         }
 
         /// <summary>
@@ -364,7 +423,15 @@ namespace Chroma.ViewModels
         /// <param name="palette">The palette to remove.</param>
         public void RemovePalette(Palette palette)
         {
-            // TODO: Implement removing a palette and calling StorageService.SavePalettes()
+            if (palette == null) return;
+            Palettes.Remove(palette);
+            if (ActivePalette == palette)
+            {
+                ActivePalette = System.Linq.Enumerable.FirstOrDefault(Palettes);
+            }
+            StorageService.SavePalettes(new System.Collections.Generic.List<Palette>(Palettes));
+            OnPropertyChanged(nameof(MappingOptions));
+            UpdateExportPreview();
         }
 
         /// <summary>
@@ -374,7 +441,31 @@ namespace Chroma.ViewModels
         /// <param name="name">The display name of the color.</param>
         public void AddColourToActivePalette(string hex, string name)
         {
-            // TODO: Implement parsing hex and HSL components, adding to Colours list, and updating StorageService.SavePalettes()
+            if (ActivePalette == null) return;
+            
+            var rgb = ColorService.HexToRgb(hex) ?? new Rgb();
+            var hsl = ColorService.RgbToHsl(rgb);
+
+            var newColour = new Colour
+            {
+                Id = System.Guid.NewGuid().ToString(),
+                Name = name,
+                Hex = hex,
+                Rgb = rgb,
+                Hsl = hsl
+            };
+
+            ActivePalette.Colours.Add(newColour);
+            ActivePalette.UpdatedAt = System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            
+            // Force binding refresh for nested collection
+            var temp = ActivePalette;
+            ActivePalette = null;
+            ActivePalette = temp;
+
+            StorageService.SavePalettes(new System.Collections.Generic.List<Palette>(Palettes));
+            OnPropertyChanged(nameof(MappingOptions));
+            UpdateExportPreview();
         }
 
         /// <summary>
@@ -383,7 +474,18 @@ namespace Chroma.ViewModels
         /// <param name="colour">The color to remove.</param>
         public void RemoveColourFromActivePalette(Colour colour)
         {
-            // TODO: Implement removing a colour and calling StorageService.SavePalettes()
+            if (ActivePalette == null || colour == null) return;
+
+            ActivePalette.Colours.Remove(colour);
+            ActivePalette.UpdatedAt = System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+            var temp = ActivePalette;
+            ActivePalette = null;
+            ActivePalette = temp;
+
+            StorageService.SavePalettes(new System.Collections.Generic.List<Palette>(Palettes));
+            OnPropertyChanged(nameof(MappingOptions));
+            UpdateExportPreview();
         }
 
         /// <summary>
@@ -392,7 +494,16 @@ namespace Chroma.ViewModels
         /// <param name="name">The display name of the new group.</param>
         public void AddTokenGroup(string name)
         {
-            // TODO: Implement adding a token group and updating StorageService.SaveTokenGroups()
+            var newGroup = new TokenGroup
+            {
+                Id = System.Guid.NewGuid().ToString(),
+                Name = name,
+                Tokens = new System.Collections.Generic.List<Token>()
+            };
+            TokenGroups.Add(newGroup);
+            ActiveTokenGroup = newGroup;
+            StorageService.SaveTokenGroups(new System.Collections.Generic.List<TokenGroup>(TokenGroups));
+            UpdateExportPreview();
         }
 
         /// <summary>
@@ -401,7 +512,14 @@ namespace Chroma.ViewModels
         /// <param name="group">The token group to remove.</param>
         public void RemoveTokenGroup(TokenGroup group)
         {
-            // TODO: Implement removing a token group and updating StorageService.SaveTokenGroups()
+            if (group == null) return;
+            TokenGroups.Remove(group);
+            if (ActiveTokenGroup == group)
+            {
+                ActiveTokenGroup = System.Linq.Enumerable.FirstOrDefault(TokenGroups);
+            }
+            StorageService.SaveTokenGroups(new System.Collections.Generic.List<TokenGroup>(TokenGroups));
+            UpdateExportPreview();
         }
 
         /// <summary>
@@ -411,7 +529,24 @@ namespace Chroma.ViewModels
         /// <param name="description">The descriptive metadata of the token.</param>
         public void AddTokenToActiveGroup(string name, string description)
         {
-            // TODO: Implement adding a token and updating StorageService.SaveTokenGroups()
+            if (ActiveTokenGroup == null) return;
+
+            var newToken = new Token
+            {
+                Id = System.Guid.NewGuid().ToString(),
+                Name = name,
+                Description = description,
+                Value = new TokenValue() // unassigned
+            };
+
+            ActiveTokenGroup.Tokens.Add(newToken);
+
+            var temp = ActiveTokenGroup;
+            ActiveTokenGroup = null;
+            ActiveTokenGroup = temp;
+
+            StorageService.SaveTokenGroups(new System.Collections.Generic.List<TokenGroup>(TokenGroups));
+            UpdateExportPreview();
         }
 
         /// <summary>
@@ -420,7 +555,16 @@ namespace Chroma.ViewModels
         /// <param name="token">The token to remove.</param>
         public void RemoveTokenFromActiveGroup(Token token)
         {
-            // TODO: Implement removing a token and updating StorageService.SaveTokenGroups()
+            if (ActiveTokenGroup == null || token == null) return;
+
+            ActiveTokenGroup.Tokens.Remove(token);
+
+            var temp = ActiveTokenGroup;
+            ActiveTokenGroup = null;
+            ActiveTokenGroup = temp;
+
+            StorageService.SaveTokenGroups(new System.Collections.Generic.List<TokenGroup>(TokenGroups));
+            UpdateExportPreview();
         }
 
         /// <summary>
@@ -428,7 +572,6 @@ namespace Chroma.ViewModels
         /// </summary>
         public void UpdateExportPreview()
         {
-            // TODO: Implement calling ExportService based on selected ExportFormat
             ExportPreviewText = ExportFormat.ToLower() switch
             {
                 "css" => ExportService.ExportCSS(new System.Collections.Generic.List<TokenGroup>(TokenGroups), new System.Collections.Generic.List<Palette>(Palettes)),
@@ -439,5 +582,14 @@ namespace Chroma.ViewModels
                 _ => string.Empty
             };
         }
+    }
+
+    /// <summary>
+    /// Helper model mapping selected colors to tokens.
+    /// </summary>
+    public class ColorMappingOption
+    {
+        public string DisplayName { get; set; } = string.Empty;
+        public string ValueKey { get; set; } = string.Empty;
     }
 }
