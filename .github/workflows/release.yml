@@ -86,8 +86,58 @@ jobs:
             Chroma-Windows-x64.zip
             publish_installer/ChromaSetup.exe
 
+  desktop-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-4-dev libadwaita-1-dev libjsoncpp-dev uuid-dev
+
+      - name: Configure CMake
+        run: cmake -B apps/desktop-linux/build -S apps/desktop-linux -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build apps/desktop-linux/build
+
+      - name: Package AppImage
+        run: |
+          mkdir -p Chroma.AppDir/usr/bin
+          cp apps/desktop-linux/build/desktop-linux Chroma.AppDir/usr/bin/
+          cp apps/desktop-windows/ic_launcher.png Chroma.AppDir/chroma.png
+          
+          cat << 'EOF' > Chroma.AppDir/chroma.desktop
+          [Desktop Entry]
+          Name=Chroma
+          Exec=desktop-linux
+          Icon=chroma
+          Type=Application
+          Categories=Development;Graphics;
+          Comment=Color palette and design token manager
+          EOF
+          
+          cat << 'EOF' > Chroma.AppDir/AppRun
+          #!/bin/sh
+          SELF=$(readlink -f "$0")
+          HERE=$(dirname "$SELF")
+          exec "$HERE/usr/bin/desktop-linux" "$@"
+          EOF
+          chmod +x Chroma.AppDir/AppRun
+          
+          curl -LO https://github.com/AppImage/AppImageKit/releases/download/13/appimagetool-x86_64.AppImage
+          chmod +x appimagetool-x86_64.AppImage
+          
+          ARCH=x86_64 ./appimagetool-x86_64.AppImage --appimage-extract-and-run Chroma.AppDir Chroma-Linux-x86_64.AppImage
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-linux
+          path: Chroma-Linux-x86_64.AppImage
+
   release:
-    needs: [android, desktop-windows]
+    needs: [android, desktop-windows, desktop-linux]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -105,4 +155,7 @@ jobs:
 
             **Windows** — Download and run `ChromaSetup.exe` to install the app, or download the portable `Chroma-Windows-x64.zip` and run it directly.
 
+            **Linux** — Download the `Chroma-Linux-x86_64.AppImage` executable and run it directly (make sure to set executable permissions: `chmod +x Chroma-Linux-x86_64.AppImage`).
+
             **Android** — Install the APK directly or add this repo to [Obtainium](https://github.com/ImranR98/Obtainium) for automatic updates.
+
