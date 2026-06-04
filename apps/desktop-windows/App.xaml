@@ -3,18 +3,18 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <!-- Modern Theme Color Palette -->
-        <SolidColorBrush x:Key="BgBrush" Color="#1E1E2E"/>
-        <SolidColorBrush x:Key="BgRaisedBrush" Color="#252538"/>
-        <SolidColorBrush x:Key="BgSunkenBrush" Color="#181825"/>
-        <SolidColorBrush x:Key="BorderBrush" Color="#2D2D3F"/>
-        <SolidColorBrush x:Key="BorderStrongBrush" Color="#3D3D5C"/>
-        <SolidColorBrush x:Key="AccentBrush" Color="#A374F2"/>
-        <SolidColorBrush x:Key="AccentHoverBrush" Color="#B894F7"/>
-        <SolidColorBrush x:Key="AccentSoftBrush" Color="#22A374F2"/>
+        <!-- Modern Theme Color Palette (Windows 11 Dark Mode) -->
+        <SolidColorBrush x:Key="BgBrush" Color="#202020"/>
+        <SolidColorBrush x:Key="BgRaisedBrush" Color="#2C2C2C"/>
+        <SolidColorBrush x:Key="BgSunkenBrush" Color="#1A1A1A"/>
+        <SolidColorBrush x:Key="BorderBrush" Color="#3E3E3E"/>
+        <SolidColorBrush x:Key="BorderStrongBrush" Color="#505050"/>
+        <SolidColorBrush x:Key="AccentBrush" Color="#60CDFF"/>
+        <SolidColorBrush x:Key="AccentHoverBrush" Color="#85DAFF"/>
+        <SolidColorBrush x:Key="AccentSoftBrush" Color="#1A60CDFF"/>
         <SolidColorBrush x:Key="TextBrush" Color="#FFFFFF"/>
-        <SolidColorBrush x:Key="TextSecondaryBrush" Color="#A6ADC8"/>
-        <SolidColorBrush x:Key="TextDimBrush" Color="#7F849C"/>
+        <SolidColorBrush x:Key="TextSecondaryBrush" Color="#CCCCCC"/>
+        <SolidColorBrush x:Key="TextDimBrush" Color="#858585"/>
         
         <!-- WCAG Badges -->
         <SolidColorBrush x:Key="WcagAaaBrush" Color="#2EC27E"/>
@@ -54,9 +54,10 @@
             </Setter>
         </Style>
 
-        <!-- Suggested Action Button (Purple accent) -->
+        <!-- Suggested Action Button (Accent blue with dark text for contrast) -->
         <Style x:Key="AccentButtonStyle" TargetType="Button" BasedOn="{StaticResource ModernButtonStyle}">
             <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+            <Setter Property="Foreground" Value="#000000"/>
             <Setter Property="BorderBrush" Value="Transparent"/>
             <Setter Property="Template">
                 <Setter.Value>
@@ -95,7 +96,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#15A374F2"/>
+                                <Setter Property="Background" Value="#0DFFFFFF"/>
                                 <Setter Property="Foreground" Value="{StaticResource TextBrush}"/>
                             </Trigger>
                         </ControlTemplate.Triggers>

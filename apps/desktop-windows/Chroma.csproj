@@ -11,4 +11,8 @@
     <ApplicationIcon />
   </PropertyGroup>
 
+  <ItemGroup>
+    <Resource Include="ic_launcher.png" />
+  </ItemGroup>
+
 </Project>
