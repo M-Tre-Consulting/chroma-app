@@ -149,11 +149,14 @@ GtkWidget* build_palettes_page(
     gtk_box_append(GTK_BOX(workspace_body), cards_panel);
 
     auto active_palette_id_ref = std::make_shared<std::string>("");
+    auto is_updating = std::make_shared<bool>(false);
 
     // Unified reload logic
     auto refresh_all = [state, palette_list_box, content_stack, active_palette_id_ref,
                         lbl_active_name, lbl_active_colours, cards_list_box, active_workspace, empty_status,
-                        refresh_palettes_view, refresh_tokens_view, refresh_export_view]() {
+                        refresh_palettes_view, refresh_tokens_view, refresh_export_view, is_updating]() {
+        if (*is_updating) return;
+        *is_updating = true;
         std::string active_id = *active_palette_id_ref;
         if (active_id.empty()) {
             if (!state->palettes.empty()) {
@@ -481,10 +484,12 @@ GtkWidget* build_palettes_page(
         } else {
             gtk_stack_set_visible_child(GTK_STACK(content_stack), empty_status);
         }
+        *is_updating = false;
     };
 
     // Sidebar: Connect Selection
-    connect_row_selected(palette_list_box, [state, active_palette_id_ref, refresh_all](GtkListBox* lb, GtkListBoxRow* row) {
+    connect_row_selected(palette_list_box, [state, active_palette_id_ref, refresh_all, is_updating](GtkListBox* lb, GtkListBoxRow* row) {
+        if (*is_updating) return;
         if (row) {
             int idx = gtk_list_box_row_get_index(row);
             if (idx >= 0 && idx < static_cast<int>(state->palettes.size())) {
