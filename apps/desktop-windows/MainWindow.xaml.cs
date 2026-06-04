@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using Microsoft.Win32;
 using Chroma.Models;
 using Chroma.ViewModels;
+using Chroma.Services;
 
 namespace Chroma
 {
@@ -200,19 +201,43 @@ namespace Chroma
 
         private void BtnPickNativeColor_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Open your preferred color picker dialog (e.g., standard WinForms ColorDialog, Win32 common dialog, or a custom WPF picker)
-            // Example:
-            // var dialog = new System.Windows.Forms.ColorDialog();
-            // if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK) {
-            //     ViewModel.SelectedColorHex = $"#{dialog.Color.R:X2}{dialog.Color.B:X2}{dialog.Color.G:X2}";
-            // }
+            var picker = new ColorPickerWindow(ViewModel.SelectedColorHex);
+            picker.Owner = this;
+            if (picker.ShowDialog() == true)
+            {
+                ViewModel.SelectedColorHex = picker.SelectedHex;
+            }
+        }
 
-            MessageBox.Show(
-                "TODO: Implement opening your native Color Dialog or Picker in your code-behind here!", 
-                "Native Color Picker Stub", 
-                MessageBoxButton.OK, 
-                MessageBoxImage.Information
-            );
+        private void BtnApplyContrastFix_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button btn && btn.Tag is Colour colour)
+            {
+                string fixedHex = colour.SuggestedFixHex;
+                var rgb = ColorService.HexToRgb(fixedHex) ?? new Rgb();
+                
+                colour.Hex = fixedHex;
+                colour.Rgb = rgb;
+                colour.Hsl = ColorService.RgbToHsl(rgb);
+                
+                ViewModel.SavePalettesState();
+
+                var temp = ViewModel.ActivePalette;
+                ViewModel.ActivePalette = null;
+                ViewModel.ActivePalette = temp;
+            }
+        }
+
+        private void CboTokenColor_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender is ComboBox cbo && cbo.Tag is Token token)
+            {
+                ViewModel.SaveTokenGroupsState();
+
+                var temp = ViewModel.ActiveTokenGroup;
+                ViewModel.ActiveTokenGroup = null;
+                ViewModel.ActiveTokenGroup = temp;
+            }
         }
     }
 }

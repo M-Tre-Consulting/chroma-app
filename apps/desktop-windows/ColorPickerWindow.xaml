@@ -1,0 +1,210 @@
+<Window x:Class="Chroma.ColorPickerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Color Picker" Height="480" Width="660"
+        WindowStartupLocation="CenterOwner"
+        Background="#202020"
+        Foreground="#FFFFFF"
+        ResizeMode="NoResize"
+        BorderBrush="#3E3E3E"
+        BorderThickness="1"
+        Icon="/ic_launcher.png"
+        FontFamily="Segoe UI">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <TextBlock Grid.Row="0" Text="CUSTOM COLOR PICKER" FontSize="14" FontWeight="Bold" Foreground="#60CDFF" Margin="0,0,0,16"/>
+
+        <!-- Main Body -->
+        <Grid Grid.Row="1" Margin="0,0,0,16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="220"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Left Panel: 2D Color Area and Hex -->
+            <StackPanel Grid.Column="0" Margin="0,0,20,0">
+                <!-- 2D HSB Selector Grid -->
+                <Grid x:Name="ColorSquare" Height="200" Width="200" 
+                      ClipToBounds="True" Cursor="Cross" HorizontalAlignment="Left"
+                      MouseDown="ColorSquare_MouseDown" 
+                      MouseMove="ColorSquare_MouseMove" 
+                      MouseUp="ColorSquare_MouseUp">
+                    <!-- Base Hue Color -->
+                    <Border x:Name="HueBackgroundBorder" Background="Red" CornerRadius="4"/>
+                    
+                    <!-- Saturation Overlay (White to Transparent Horizontal) -->
+                    <Border CornerRadius="4">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                <GradientStop Color="#FFFFFF" Offset="0.0"/>
+                                <GradientStop Color="#00FFFFFF" Offset="1.0"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+                    
+                    <!-- Value Overlay (Transparent to Black Vertical) -->
+                    <Border CornerRadius="4">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+                                <GradientStop Color="#00000000" Offset="0.0"/>
+                                <GradientStop Color="#FF000000" Offset="1.0"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+                    
+                    <!-- Selection Marker Canvas -->
+                    <Canvas x:Name="MarkerCanvas" Background="Transparent">
+                        <Ellipse x:Name="ColorMarker" Width="12" Height="12" Stroke="White" StrokeThickness="2" Fill="Transparent" Margin="-6,-6">
+                            <Ellipse.Effect>
+                                <DropShadowEffect BlurRadius="3" Color="Black" ShadowDepth="1" Opacity="0.6"/>
+                            </Ellipse.Effect>
+                        </Ellipse>
+                    </Canvas>
+                </Grid>
+                
+                <!-- Live Color Preview bar and Hex Entry -->
+                <Grid Margin="0,16,0,0" Width="200" HorizontalAlignment="Left">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Border x:Name="ColorPreviewBorder" Grid.Column="0" CornerRadius="4" Height="32" Width="32" BorderBrush="#3E3E3E" BorderThickness="1" Background="#7c6ff7" HorizontalAlignment="Left"/>
+                    <TextBox x:Name="TxtHex" Grid.Column="1" Padding="8,6" Background="#1A1A1A" BorderBrush="#3E3E3E" Text="#7C6FF7" FontFamily="Consolas" FontSize="13" TextChanged="TxtHex_TextChanged" MaxLength="7" VerticalAlignment="Center"/>
+                </Grid>
+            </StackPanel>
+
+            <!-- Right Panel: Channels/Sliders -->
+            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <!-- HSL SLIDERS -->
+                    <TextBlock Text="HSL CHANNELS" FontSize="11" FontWeight="Bold" Foreground="#858585" Margin="0,0,0,10"/>
+                    
+                    <Grid Margin="0,0,0,8">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="40"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Hue Slider -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="H" VerticalAlignment="Center" FontSize="12" Foreground="#CCCCCC"/>
+                        <Slider x:Name="SliderH" Grid.Row="0" Grid.Column="1" Minimum="0" Maximum="360" Value="246" Margin="8,0" VerticalAlignment="Center" ValueChanged="SliderHsl_ValueChanged">
+                            <Slider.Background>
+                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                    <GradientStop Color="#FF0000" Offset="0.0"/>
+                                    <GradientStop Color="#FFFF00" Offset="0.167"/>
+                                    <GradientStop Color="#00FF00" Offset="0.333"/>
+                                    <GradientStop Color="#00FFFF" Offset="0.5"/>
+                                    <GradientStop Color="#0000FF" Offset="0.667"/>
+                                    <GradientStop Color="#FF00FF" Offset="0.833"/>
+                                    <GradientStop Color="#FF0000" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Slider.Background>
+                        </Slider>
+                        <TextBox x:Name="TxtH" Grid.Row="0" Grid.Column="2" Text="246" FontSize="12" Padding="4,2" Background="#1A1A1A" BorderBrush="#3E3E3E" HorizontalContentAlignment="Center" TextChanged="TxtHsl_TextChanged"/>
+
+                        <!-- Saturation Slider -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="S" VerticalAlignment="Center" FontSize="12" Foreground="#CCCCCC" Margin="0,10,0,0"/>
+                        <Slider x:Name="SliderS" Grid.Row="1" Grid.Column="1" Minimum="0" Maximum="100" Value="89" Margin="8,10,8,0" VerticalAlignment="Center" ValueChanged="SliderHsl_ValueChanged">
+                            <Slider.Background>
+                                <LinearGradientBrush x:Name="BrushS" StartPoint="0,0.5" EndPoint="1,0.5">
+                                    <GradientStop Color="#808080" Offset="0.0"/>
+                                    <GradientStop Color="#7C6FF7" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Slider.Background>
+                        </Slider>
+                        <TextBox x:Name="TxtS" Grid.Row="1" Grid.Column="2" Text="89" FontSize="12" Padding="4,2" Background="#1A1A1A" BorderBrush="#3E3E3E" HorizontalContentAlignment="Center" Margin="0,10,0,0" TextChanged="TxtHsl_TextChanged"/>
+
+                        <!-- Lightness Slider -->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="L" VerticalAlignment="Center" FontSize="12" Foreground="#CCCCCC" Margin="0,10,0,0"/>
+                        <Slider x:Name="SliderL" Grid.Row="2" Grid.Column="1" Minimum="0" Maximum="100" Value="70" Margin="8,10,8,0" VerticalAlignment="Center" ValueChanged="SliderHsl_ValueChanged">
+                            <Slider.Background>
+                                <LinearGradientBrush x:Name="BrushL" StartPoint="0,0.5" EndPoint="1,0.5">
+                                    <GradientStop Color="#000000" Offset="0.0"/>
+                                    <GradientStop Color="#7C6FF7" Offset="0.5"/>
+                                    <GradientStop Color="#FFFFFF" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Slider.Background>
+                        </Slider>
+                        <TextBox x:Name="TxtL" Grid.Row="2" Grid.Column="2" Text="70" FontSize="12" Padding="4,2" Background="#1A1A1A" BorderBrush="#3E3E3E" HorizontalContentAlignment="Center" Margin="0,10,0,0" TextChanged="TxtHsl_TextChanged"/>
+                    </Grid>
+
+                    <Separator Background="#3E3E3E" Margin="0,14"/>
+
+                    <!-- RGB SLIDERS -->
+                    <TextBlock Text="RGB CHANNELS" FontSize="11" FontWeight="Bold" Foreground="#858585" Margin="0,0,0,10"/>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="40"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Red Slider -->
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="R" VerticalAlignment="Center" FontSize="12" Foreground="#CCCCCC"/>
+                        <Slider x:Name="SliderR" Grid.Row="0" Grid.Column="1" Minimum="0" Maximum="255" Value="124" Margin="8,0" VerticalAlignment="Center" ValueChanged="SliderRgb_ValueChanged">
+                            <Slider.Background>
+                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                    <GradientStop Color="#FF000000" Offset="0.0"/>
+                                    <GradientStop Color="#FFFF0000" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Slider.Background>
+                        </Slider>
+                        <TextBox x:Name="TxtR" Grid.Row="0" Grid.Column="2" Text="124" FontSize="12" Padding="4,2" Background="#1A1A1A" BorderBrush="#3E3E3E" HorizontalContentAlignment="Center" TextChanged="TxtRgb_TextChanged"/>
+
+                        <!-- Green Slider -->
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="G" VerticalAlignment="Center" FontSize="12" Foreground="#CCCCCC" Margin="0,10,0,0"/>
+                        <Slider x:Name="SliderG" Grid.Row="1" Grid.Column="1" Minimum="0" Maximum="255" Value="111" Margin="8,10,8,0" VerticalAlignment="Center" ValueChanged="SliderRgb_ValueChanged">
+                            <Slider.Background>
+                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                    <GradientStop Color="#FF000000" Offset="0.0"/>
+                                    <GradientStop Color="#FF00FF00" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Slider.Background>
+                        </Slider>
+                        <TextBox x:Name="TxtG" Grid.Row="1" Grid.Column="2" Text="111" FontSize="12" Padding="4,2" Background="#1A1A1A" BorderBrush="#3E3E3E" HorizontalContentAlignment="Center" Margin="0,10,0,0" TextChanged="TxtRgb_TextChanged"/>
+
+                        <!-- Blue Slider -->
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="B" VerticalAlignment="Center" FontSize="12" Foreground="#CCCCCC" Margin="0,10,0,0"/>
+                        <Slider x:Name="SliderB" Grid.Row="2" Grid.Column="1" Minimum="0" Maximum="255" Value="247" Margin="8,10,8,0" VerticalAlignment="Center" ValueChanged="SliderRgb_ValueChanged">
+                            <Slider.Background>
+                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                    <GradientStop Color="#FF000000" Offset="0.0"/>
+                                    <GradientStop Color="#FF0000FF" Offset="1.0"/>
+                                </LinearGradientBrush>
+                            </Slider.Background>
+                        </Slider>
+                        <TextBox x:Name="TxtB" Grid.Row="2" Grid.Column="2" Text="247" FontSize="12" Padding="4,2" Background="#1A1A1A" BorderBrush="#3E3E3E" HorizontalContentAlignment="Center" Margin="0,10,0,0" TextChanged="TxtRgb_TextChanged"/>
+                    </Grid>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+
+        <!-- Actions Footer -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="1" Content="Cancel" Style="{StaticResource ModernButtonStyle}" Width="100" Margin="0,0,10,0" Click="BtnCancel_Click"/>
+            <Button Grid.Column="2" Content="Select Color" Style="{StaticResource AccentButtonStyle}" Width="130" Click="BtnOk_Click"/>
+        </Grid>
+    </Grid>
+</Window>
