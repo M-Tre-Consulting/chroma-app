@@ -60,3 +60,5 @@ obj/
 .vs/
 *.user
 !*.sln
+
+publish/
