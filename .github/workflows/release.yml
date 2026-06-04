@@ -58,8 +58,29 @@ jobs:
           name: android-release
           path: apps/android/app/build/outputs/apk/release/*.apk
 
+  desktop-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Publish Windows Port (Self-Contained x64)
+        run: dotnet publish apps/desktop-windows/Chroma.csproj -c Release -r win-x64 --self-contained true -o publish/
+
+      - name: Compress Release Build
+        run: Compress-Archive -Path publish/* -DestinationPath Chroma-Windows-x64.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-windows
+          path: Chroma-Windows-x64.zip
+
   release:
-    needs: [android]
+    needs: [android, desktop-windows]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -74,5 +95,7 @@ jobs:
           generate_release_notes: true
           body: |
             ## Installation
+
+            **Windows** — Download the `.zip` file, extract it, and run `Chroma.exe`.
 
             **Android** — Install the APK directly or add this repo to [Obtainium](https://github.com/ImranR98/Obtainium) for automatic updates.
