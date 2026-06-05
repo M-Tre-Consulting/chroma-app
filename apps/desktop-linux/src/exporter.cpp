@@ -1,8 +1,19 @@
+/**
+ * @file exporter.cpp
+ * @brief Implementation of token resolution and formatting generators for different exporter configurations.
+ */
+
 #include "exporter.h"
 #include <map>
 #include <algorithm>
 #include <sstream>
 
+/**
+ * @brief Resolves active tokens by matching their IDs to palettes and color elements.
+ * 
+ * Traverses all tokens in all groups, matches the assigned palette and color ID, 
+ * and stores the resulting name, resolved hex value, and group name in the resolved array.
+ */
 std::vector<ResolvedToken> resolve_tokens(const std::vector<TokenGroup>& groups, const std::vector<Palette>& palettes) {
     std::vector<ResolvedToken> resolved;
     for (const auto& g : groups) {
@@ -34,6 +45,9 @@ std::vector<ResolvedToken> resolve_tokens(const std::vector<TokenGroup>& groups,
     return resolved;
 }
 
+/**
+ * @brief Formats resolved tokens into standard CSS Custom Properties.
+ */
 std::string export_css(const std::vector<TokenGroup>& groups, const std::vector<Palette>& palettes) {
     auto tokens = resolve_tokens(groups, palettes);
     std::stringstream ss;
@@ -45,6 +59,9 @@ std::string export_css(const std::vector<TokenGroup>& groups, const std::vector<
     return ss.str();
 }
 
+/**
+ * @brief Groups resolved tokens by their group name and formats them as SCSS variables.
+ */
 std::string export_scss(const std::vector<TokenGroup>& groups, const std::vector<Palette>& palettes) {
     auto tokens = resolve_tokens(groups, palettes);
     std::map<std::string, std::vector<const ResolvedToken*>> grouped;
@@ -67,6 +84,9 @@ std::string export_scss(const std::vector<TokenGroup>& groups, const std::vector
     return ss.str();
 }
 
+/**
+ * @brief Builds a hierarchical Json object for resolved tokens, compatible with Style Dictionary.
+ */
 std::string export_json(const std::vector<TokenGroup>& groups, const std::vector<Palette>& palettes) {
     auto tokens = resolve_tokens(groups, palettes);
     Json::Value root(Json::objectValue);
@@ -88,6 +108,9 @@ std::string export_json(const std::vector<TokenGroup>& groups, const std::vector
     return Json::writeString(builder, root);
 }
 
+/**
+ * @brief Formats resolved tokens as a TypeScript/JavaScript config export block.
+ */
 std::string export_tailwind(const std::vector<TokenGroup>& groups, const std::vector<Palette>& palettes) {
     auto tokens = resolve_tokens(groups, palettes);
     std::stringstream ss;
@@ -99,6 +122,9 @@ std::string export_tailwind(const std::vector<TokenGroup>& groups, const std::ve
     return ss.str();
 }
 
+/**
+ * @brief Generates Android resources XML, converting token names from kebab-case/hyphens to snake_case.
+ */
 std::string export_android_xml(const std::vector<TokenGroup>& groups, const std::vector<Palette>& palettes) {
     auto tokens = resolve_tokens(groups, palettes);
     std::stringstream ss;

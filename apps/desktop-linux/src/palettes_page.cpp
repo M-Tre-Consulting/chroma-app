@@ -1,3 +1,8 @@
+/**
+ * @file palettes_page.cpp
+ * @brief Implementation of the UI structure, event handlers, and data sync for the color palettes page.
+ */
+
 #include "palettes_page.h"
 #include "colour_math.h"
 #include "store.h"
@@ -10,6 +15,12 @@
 #include <iostream>
 #include <cctype>
 
+/**
+ * @brief Constructs the palettes page split view and active workspace panels.
+ * 
+ * Registers sidebar list controls, picker dialogs, and expandable color card rows 
+ * containing dynamic contrast checker widgets.
+ */
 GtkWidget* build_palettes_page(
     std::shared_ptr<AppState> state,
     std::shared_ptr<std::function<void()>> refresh_palettes_view,
@@ -151,7 +162,12 @@ GtkWidget* build_palettes_page(
     auto active_palette_id_ref = std::make_shared<std::string>("");
     auto is_updating = std::make_shared<bool>(false);
 
-    // Unified reload logic
+    /**
+     * @brief Dynamic visual reload handler.
+     * 
+     * Rebuilds the sidebar elements and populates the grid of swatches for the active 
+     * palette. Automatically computes and updates WCAG contrast readings.
+     */
     auto refresh_all = [state, palette_list_box, content_stack, active_palette_id_ref,
                         lbl_active_name, lbl_active_colours, cards_list_box, active_workspace, empty_status,
                         refresh_palettes_view, refresh_tokens_view, refresh_export_view, is_updating]() {
@@ -387,6 +403,13 @@ GtkWidget* build_palettes_page(
 
                 auto active_fix = std::make_shared<std::string>("");
 
+                /**
+                 * @brief Local closure evaluating background input adjustments.
+                 * 
+                 * Calculates relative contrast for the card's active color against the 
+                 * manually keyed background hex. Invokes WCAG repair suggest algorithms 
+                 * if the score yields a Fail.
+                 */
                 auto update_fix_ui = [col_hex = col.hex, bg_indicator, test_lbl, lbl_contrast_ratio,
                                       fix_box, fix_indicator, fix_hex_lbl, state, palette_id, colour_id, active_fix](const std::string& bg_text) {
                     std::string clean = bg_text;
@@ -421,7 +444,7 @@ GtkWidget* build_palettes_page(
 
                 // Connect apply click
                 connect_clicked(btn_apply_fix, [state, palette_id, colour_id, active_fix,
-                                                refresh_palettes_view, refresh_tokens_view, refresh_export_view](GtkButton* btn) {
+                                                 refresh_palettes_view, refresh_tokens_view, refresh_export_view](GtkButton* btn) {
                     std::string fixed_val = *active_fix;
                     if (!fixed_val.empty()) {
                         for (auto& pal : state->palettes) {

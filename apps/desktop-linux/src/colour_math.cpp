@@ -1,3 +1,8 @@
+/**
+ * @file colour_math.cpp
+ * @brief Implementation of color calculation, conversion, and WCAG contrast adjustment utilities.
+ */
+
 #include "colour_math.h"
 #include <algorithm>
 #include <cmath>
@@ -5,6 +10,11 @@
 #include <iomanip>
 #include <iostream>
 
+/**
+ * @brief Parses hex values from a string to form RGB channels.
+ * 
+ * Supports strips of leading '#' if present, then extracts three 2-character hexadecimal substrings.
+ */
 Rgb hex_to_rgb(const std::string& hex) {
     std::string clean = hex;
     if (!clean.empty() && clean[0] == '#') {
@@ -26,6 +36,13 @@ Rgb hex_to_rgb(const std::string& hex) {
     return Rgb{r, g, b};
 }
 
+/**
+ * @brief Converts Red, Green, Blue intensity [0, 255] into HSL components.
+ * 
+ * Uses the standard algorithm: normalization, min/max analysis, and division.
+ * Lightness (L) is the mid-point of extremes. Saturation (S) depends on chroma and lightness.
+ * Hue (H) is derived from which color component is dominant.
+ */
 Hsl rgb_to_hsl(uint8_t r, uint8_t g, uint8_t b) {
     double rn = r / 255.0;
     double gn = g / 255.0;
@@ -58,11 +75,18 @@ Hsl rgb_to_hsl(uint8_t r, uint8_t g, uint8_t b) {
     };
 }
 
+/**
+ * @brief Converts HSL values into hexadecimal color string.
+ * 
+ * Implements the HSL-to-RGB formula that calculates fractional color values,
+ * maps them to 0-255 scale, and formats them as a hex code.
+ */
 std::string hsl_to_hex(int h, int s, int l) {
     double sn = s / 100.0;
     double ln = l / 100.0;
     double a = sn * std::min(ln, 1.0 - ln);
 
+    // Lambda to compute RGB channel based on parameters
     auto f = [h, ln, a](int n) {
         int k = (n + h / 30) % 12;
         double color = ln - a * std::max(-1.0, std::min({static_cast<double>(k - 3), static_cast<double>(9 - k), 1.0}));
@@ -76,6 +100,9 @@ std::string hsl_to_hex(int h, int s, int l) {
     return "#" + f(0) + f(8) + f(4);
 }
 
+/**
+ * @brief Instantiates a Colour struct, determining its rgb, hsl, and a fresh UUID.
+ */
 Colour hex_to_colour(const std::string& hex, const std::string& name) {
     std::string normalized_hex = hex;
     if (normalized_hex.empty() || normalized_hex[0] != '#') {
@@ -92,13 +119,21 @@ Colour hex_to_colour(const std::string& hex, const std::string& name) {
     };
 }
 
+/**
+ * @brief Computes WCAG contrast ratio.
+ * 
+ * Relative luminance is calculated for both colors: L = 0.2126 * R + 0.7152 * G + 0.0772 * B.
+ * Components are linear values matching standard sRGB gammas.
+ */
 double contrast_ratio(const std::string& hex1, const std::string& hex2) {
+    // Calculates the relative luminance of a color
     auto luminance = [](const std::string& hex) {
         Rgb rgb = hex_to_rgb(hex);
         double r_s = rgb.r / 255.0;
         double g_s = rgb.g / 255.0;
         double b_s = rgb.b / 255.0;
 
+        // Transforms an sRGB channel to a linear space value
         auto transform = [](double s) {
             if (s <= 0.03928) {
                 return s / 12.92;
@@ -123,6 +158,9 @@ double contrast_ratio(const std::string& hex1, const std::string& hex2) {
     return std::round(((lighter + 0.05) / (darker + 0.05)) * 100.0) / 100.0;
 }
 
+/**
+ * @brief Maps contrast ratio numbers to corresponding WCAG levels.
+ */
 std::string wcag_level(double ratio) {
     if (ratio >= 7.0) {
         return "AAA";
@@ -135,6 +173,12 @@ std::string wcag_level(double ratio) {
     }
 }
 
+/**
+ * @brief Iteratively searches HSL space for a color that achieves contrast.
+ * 
+ * Steps outwards from original Lightness (L) in HSL coordinate space.
+ * Checks both lighter and darker offsets for suitability.
+ */
 std::string suggest_fix(const std::string& hex, const std::string& background, double target) {
     Rgb rgb = hex_to_rgb(hex);
     Hsl hsl = rgb_to_hsl(rgb.r, rgb.g, rgb.b);

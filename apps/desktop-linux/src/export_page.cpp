@@ -1,9 +1,19 @@
+/**
+ * @file export_page.cpp
+ * @brief Implementation of the UI structure and event logic for the Chroma export page.
+ */
+
 #include "export_page.h"
 #include "exporter.h"
 #include "ui_helpers.h"
 #include <fstream>
 #include <iostream>
 
+/**
+ * @brief Constructs the export page layout, binding active data formats to preview generation.
+ * 
+ * Registers format toggle buttons, clipboard copy operations, and a file save dialog.
+ */
 GtkWidget* build_export_page(
     std::shared_ptr<AppState> state,
     std::shared_ptr<std::function<void()>> refresh_export_view
@@ -46,10 +56,15 @@ GtkWidget* build_export_page(
     gtk_box_append(GTK_BOX(actions_box), btn_save);
     gtk_box_append(GTK_BOX(main_box), actions_box);
 
+    /**
+     * @struct FormatInfo
+     * @brief Simple metadata container mapping an export format key to its UI button label.
+     */
     struct FormatInfo {
-        const char* id;
-        const char* label;
+        const char* id;      /**< Format identifier (e.g., "css", "json"). */
+        const char* label;   /**< Human-readable label for the UI button. */
     };
+    
     FormatInfo formats[] = {
         {"css", "CSS vars"},
         {"scss", "SCSS vars"},
@@ -58,7 +73,13 @@ GtkWidget* build_export_page(
         {"android", "Android XML"}
     };
 
-    // Redraw logic
+    /**
+     * @brief Local lambda to regenerate the export text buffer.
+     * 
+     * Reads current token definitions from state, routes to the matching exporter 
+     * function, and outputs the result in the preview panel. Disables controls if 
+     * there are no active tokens.
+     */
     auto refresh_all = [state, current_format, text_view, main_box]() {
         bool is_empty = state->token_groups.empty();
         if (!is_empty) {
@@ -118,6 +139,10 @@ GtkWidget* build_export_page(
 
         gtk_button_set_label(btn, "Copied!");
         
+        /**
+         * @struct TimeoutData
+         * @brief Container keeping button pointer alive for timed UI reset thread.
+         */
         struct TimeoutData {
             GtkButton* btn;
         };
@@ -149,6 +174,10 @@ GtkWidget* build_export_page(
         gtk_file_dialog_set_title(dialog, "Save Exported Tokens");
         gtk_file_dialog_set_initial_name(dialog, file_name.c_str());
 
+        /**
+         * @struct SaveData
+         * @brief Wraps the export text payload for transfer into the file system write thread callback.
+         */
         struct SaveData {
             std::string text;
         };

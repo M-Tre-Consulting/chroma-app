@@ -1,5 +1,13 @@
+/**
+ * @file ui_helpers.cpp
+ * @brief Implementation of GTK UI styling and layout helpers.
+ */
+
 #include "ui_helpers.h"
 
+/**
+ * @brief Instantiates a CSS provider, compiles CSS rules, and binds it to the widget context.
+ */
 void apply_widget_css(GtkWidget* widget, const char* css) {
     GtkCssProvider* provider = gtk_css_provider_new();
     gtk_css_provider_load_from_string(provider, css);
@@ -9,6 +17,9 @@ void apply_widget_css(GtkWidget* widget, const char* css) {
     g_object_unref(provider);
 }
 
+/**
+ * @brief Sets matching margins on start, end, top, and bottom borders of a widget.
+ */
 void set_margin_all(GtkWidget* widget, int margin) {
     gtk_widget_set_margin_start(widget, margin);
     gtk_widget_set_margin_end(widget, margin);

@@ -1,3 +1,8 @@
+/**
+ * @file main.cpp
+ * @brief Main entry point and application initialization for the Linux (Libadwaita / GTK4) version of Chroma.
+ */
+
 #include <gtk/gtk.h>
 #include <adwaita.h>
 #include <memory>
@@ -8,6 +13,15 @@
 #include "tokens_page.h"
 #include "export_page.h"
 
+/**
+ * @brief Constructs the application shell view and initializes global style themes.
+ * 
+ * Registers custom CSS styling classes for UI elements (colors dots, preview blocks, contrast level badges).
+ * Instantiates the sidebar view, page stack controllers, and links page updates via mutual callbacks.
+ * 
+ * @param app The parent AdwApplication object.
+ * @param user_data Optional parameter pointer.
+ */
 static void build_ui(AdwApplication* app, gpointer user_data) {
     auto store = std::make_shared<Store>();
     auto state = std::make_shared<AppState>(store->load());
@@ -138,6 +152,12 @@ static void build_ui(AdwApplication* app, gpointer user_data) {
     }
 }
 
+/**
+ * @brief Application entry point.
+ * 
+ * Sets up GApplication lifecycle, connects activation signal, runs the loop, 
+ * and handles clean shutdown.
+ */
 int main(int argc, char* argv[]) {
     AdwApplication* app = adw_application_new("com.chroma.app", G_APPLICATION_DEFAULT_FLAGS);
     g_signal_connect(app, "activate", G_CALLBACK(build_ui), NULL);

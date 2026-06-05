@@ -1,3 +1,8 @@
+/**
+ * @file tokens_page.cpp
+ * @brief Implementation of the UI structure, data binding, and callbacks for the semantic design tokens management page.
+ */
+
 #include "tokens_page.h"
 #include "ui_helpers.h"
 #include "store.h"
@@ -5,6 +10,13 @@
 #include <algorithm>
 #include <cctype>
 
+/**
+ * @brief Constructs the tokens page UI layout.
+ * 
+ * Sets up a two-pane layout with a Sidebar on the left (showing Token Groups list 
+ * and allowing group creation) and a Content Area on the right (showing active tokens in 
+ * the selected group, color dropdown mappings, and token creation).
+ */
 GtkWidget* build_tokens_page(
     std::shared_ptr<AppState> state,
     std::shared_ptr<std::function<void()>> refresh_tokens_view,
@@ -113,7 +125,12 @@ GtkWidget* build_tokens_page(
     auto active_group_id_ref = std::make_shared<std::string>("");
     auto is_updating = std::make_shared<bool>(false);
 
-    // Reload UI trigger
+    /**
+     * @brief Refreshes and redrafts the token list elements.
+     * 
+     * Rebuilds the sidebar of token groups, constructs action row selectors for 
+     * mapping color swatches to individual tokens, and displays preview color circles.
+     */
     auto refresh_all = [state, group_list_box, content_stack, active_group_id_ref,
                         lbl_active_group_name, token_list_box, active_group_workspace, empty_status,
                         refresh_tokens_view, refresh_export_view, is_updating]() {
@@ -380,6 +397,7 @@ GtkWidget* build_tokens_page(
                 }).base(), s.end());
             };
             trim(name);
+            
 
             if (!name.empty()) {
                 for (auto& grp : state->token_groups) {
