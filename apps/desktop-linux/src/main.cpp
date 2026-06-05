@@ -43,7 +43,7 @@ static void on_about_clicked(GSimpleAction* action, GVariant* parameter, gpointe
         "developers", developers,
         "copyright", "© 2026 M-Tre Consulting",
         "license-type", GTK_LICENSE_GPL_2_0,
-        "application-icon", "preferences-desktop-color",
+        "application-icon", "chroma",
         "website", "https://github.com/M-Tre-Consulting/chroma-app",
         "comments", "A local-first color palette and design token manager. Create color systems, map them to design tokens, and export to CSS, SCSS, JSON, Tailwind, or Android XML.",
         NULL
@@ -62,6 +62,15 @@ static void on_about_clicked(GSimpleAction* action, GVariant* parameter, gpointe
 static void build_ui(AdwApplication* app, gpointer user_data) {
     auto store = std::make_shared<Store>();
     auto state = std::make_shared<AppState>(store->load());
+
+    // Add AppImage icon search path if running under AppImage
+    const char* appdir = g_getenv("APPDIR");
+    if (appdir) {
+        GtkIconTheme* icon_theme = gtk_icon_theme_get_for_display(gdk_display_get_default());
+        char* icon_path = g_build_filename(appdir, "usr", "share", "icons", NULL);
+        gtk_icon_theme_add_search_path(icon_theme, icon_path);
+        g_free(icon_path);
+    }
 
     // Custom global styling
     GtkCssProvider* provider = gtk_css_provider_new();
