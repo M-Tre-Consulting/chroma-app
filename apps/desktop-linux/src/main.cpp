@@ -13,6 +13,43 @@
 #include "tokens_page.h"
 #include "export_page.h"
 
+#ifndef CHROMA_VERSION
+#define CHROMA_VERSION "1.0.0"
+#endif
+
+
+/**
+ * @brief Constructs the application shell view and initializes global style themes.
+ * 
+ * Registers custom CSS styling classes for UI elements (colors dots, preview blocks, contrast level badges).
+ * Instantiates the sidebar view, page stack controllers, and links page updates via mutual callbacks.
+ * 
+ * @param app The parent AdwApplication object.
+ * @param user_data Optional parameter pointer.
+ */
+static void on_about_clicked(GSimpleAction* action, GVariant* parameter, gpointer user_data) {
+    GtkWindow* parent = GTK_WINDOW(user_data);
+
+    const char* const developers[] = {
+        "M-Tre Consulting",
+        NULL
+    };
+
+    adw_show_about_dialog(
+        GTK_WIDGET(parent),
+        "application-name", "Chroma",
+        "version", CHROMA_VERSION,
+        "developer-name", "M-Tre Consulting",
+        "developers", developers,
+        "copyright", "© 2026 M-Tre Consulting",
+        "license-type", GTK_LICENSE_GPL_2_0,
+        "application-icon", "preferences-desktop-color",
+        "website", "https://github.com/M-Tre-Consulting/chroma-app",
+        "comments", "A local-first color palette and design token manager. Create color systems, map them to design tokens, and export to CSS, SCSS, JSON, Tailwind, or Android XML.",
+        NULL
+    );
+}
+
 /**
  * @brief Constructs the application shell view and initializes global style themes.
  * 
@@ -111,6 +148,22 @@ static void build_ui(AdwApplication* app, gpointer user_data) {
     GtkWidget* view_switcher = adw_view_switcher_new();
     adw_view_switcher_set_stack(ADW_VIEW_SWITCHER(view_switcher), ADW_VIEW_STACK(view_stack));
     adw_header_bar_set_title_widget(ADW_HEADER_BAR(header_bar), view_switcher);
+
+    // Setup Application Action for About window
+    GSimpleAction* about_action = g_simple_action_new("about", NULL);
+    g_signal_connect(about_action, "activate", G_CALLBACK(on_about_clicked), window);
+    g_action_map_add_action(G_ACTION_MAP(app), G_ACTION(about_action));
+
+    // Create primary menu popover
+    GMenu* menu = g_menu_new();
+    g_menu_append(menu, "About Chroma", "app.about");
+
+    GtkWidget* menu_button = gtk_menu_button_new();
+    gtk_menu_button_set_icon_name(GTK_MENU_BUTTON(menu_button), "open-menu-symbolic");
+    gtk_menu_button_set_menu_model(GTK_MENU_BUTTON(menu_button), G_MENU_MODEL(menu));
+    g_object_unref(menu);
+
+    adw_header_bar_pack_end(ADW_HEADER_BAR(header_bar), menu_button);
 
     // Shared visual refresh callbacks
     auto refresh_palettes_view = std::make_shared<std::function<void()>>();

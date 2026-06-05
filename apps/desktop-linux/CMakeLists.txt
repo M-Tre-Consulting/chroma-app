@@ -4,6 +4,26 @@ project(Chroma LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Get version from Git tag, fallback to 1.0.0
+find_package(Git QUIET)
+if(GIT_FOUND)
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} describe --tags --always --dirty
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        OUTPUT_VARIABLE APP_VERSION
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET
+    )
+endif()
+
+if(NOT APP_VERSION)
+    set(APP_VERSION "1.0.0")
+endif()
+
+message(STATUS "Chroma Application Version: ${APP_VERSION}")
+add_compile_definitions(CHROMA_VERSION="${APP_VERSION}")
+
+
 # Find dependencies using PkgConfig
 find_package(PkgConfig REQUIRED)
 
