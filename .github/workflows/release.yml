@@ -79,12 +79,17 @@ jobs:
       - name: Compress Portable Build
         run: Compress-Archive -Path publish/Chroma.exe,publish/Chroma.pdb -DestinationPath Chroma-Windows-x64.zip
 
+      - name: Stage Windows Artifacts
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path windows_artifacts
+          Copy-Item -Path Chroma-Windows-x64.zip -Destination windows_artifacts/
+          Copy-Item -Path publish_installer/ChromaSetup.exe -Destination windows_artifacts/
+
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-windows
-          path: |
-            Chroma-Windows-x64.zip
-            publish_installer/ChromaSetup.exe
+          path: windows_artifacts/
 
   desktop-linux:
     runs-on: ubuntu-latest
@@ -109,6 +114,8 @@ jobs:
           mkdir -p Chroma.AppDir/usr/bin
           cp apps/desktop-linux/build/desktop-linux Chroma.AppDir/usr/bin/
           cp apps/desktop-windows/ic_launcher.png Chroma.AppDir/chroma.png
+          mkdir -p Chroma.AppDir/usr/share/icons/hicolor/256x256/apps
+          cp apps/desktop-windows/ic_launcher.png Chroma.AppDir/usr/share/icons/hicolor/256x256/apps/chroma.png
           
           cat << 'EOF' > Chroma.AppDir/chroma.desktop
           [Desktop Entry]
