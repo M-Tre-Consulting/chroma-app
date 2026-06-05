@@ -63,10 +63,13 @@ static void build_ui(AdwApplication* app, gpointer user_data) {
     auto store = std::make_shared<Store>();
     auto state = std::make_shared<AppState>(store->load());
 
+    // Register GResource path with GtkIconTheme for embedded compile-time icons
+    GtkIconTheme* icon_theme = gtk_icon_theme_get_for_display(gdk_display_get_default());
+    gtk_icon_theme_add_resource_path(icon_theme, "/com/chroma/app/icons");
+
     // Add AppImage icon search path if running under AppImage
     const char* appdir = g_getenv("APPDIR");
     if (appdir) {
-        GtkIconTheme* icon_theme = gtk_icon_theme_get_for_display(gdk_display_get_default());
         char* icon_path = g_build_filename(appdir, "usr", "share", "icons", NULL);
         gtk_icon_theme_add_search_path(icon_theme, icon_path);
         g_free(icon_path);
@@ -144,6 +147,7 @@ static void build_ui(AdwApplication* app, gpointer user_data) {
 
     GtkWidget* window = adw_application_window_new(GTK_APPLICATION(app));
     gtk_window_set_title(GTK_WINDOW(window), "Chroma");
+    gtk_window_set_icon_name(GTK_WINDOW(window), "chroma");
     gtk_window_set_default_size(GTK_WINDOW(window), 1024, 700);
 
     GtkWidget* main_layout = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);

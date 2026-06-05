@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+  <gresource prefix="/com/chroma/app/icons">
+    <file alias="512x512/apps/chroma.png">../ios/Chroma/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png</file>
+    <file alias="256x256/apps/chroma.png">../ios/Chroma/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png</file>
+    <file alias="128x128/apps/chroma.png">../desktop-windows/ic_launcher.png</file>
+    <file alias="48x48/apps/chroma.png">../android/app/src/main/res/mipmap-mdpi/ic_launcher.png</file>
+  </gresource>
+</gresources>

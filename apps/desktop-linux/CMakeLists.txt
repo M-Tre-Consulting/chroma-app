@@ -31,6 +31,25 @@ pkg_check_modules(GTK4 REQUIRED IMPORTED_TARGET gtk4)
 pkg_check_modules(ADWAITA REQUIRED IMPORTED_TARGET libadwaita-1)
 pkg_check_modules(JSONCPP REQUIRED IMPORTED_TARGET jsoncpp)
 
+# Compile resources
+find_program(GLIB_COMPILE_RESOURCES NAMES glib-compile-resources REQUIRED)
+set(GRESOURCE_XML ${CMAKE_CURRENT_SOURCE_DIR}/resources.gresource.xml)
+set(GRESOURCE_SRC ${CMAKE_CURRENT_BINARY_DIR}/resources.c)
+
+add_custom_command(
+    OUTPUT ${GRESOURCE_SRC}
+    COMMAND ${GLIB_COMPILE_RESOURCES}
+            --target=${GRESOURCE_SRC}
+            --sourcedir=${CMAKE_CURRENT_SOURCE_DIR}
+            --generate-source
+            ${GRESOURCE_XML}
+    DEPENDS ${GRESOURCE_XML}
+            ${CMAKE_CURRENT_SOURCE_DIR}/../ios/Chroma/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png
+            ${CMAKE_CURRENT_SOURCE_DIR}/../desktop-windows/ic_launcher.png
+            ${CMAKE_CURRENT_SOURCE_DIR}/../android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+    VERBATIM
+)
+
 # Define sources
 set(SOURCES
     src/main.cpp
@@ -41,6 +60,7 @@ set(SOURCES
     src/palettes_page.cpp
     src/tokens_page.cpp
     src/export_page.cpp
+    ${GRESOURCE_SRC}
 )
 
 # Output target name matching original binary
