@@ -25,6 +25,13 @@ struct PalettesView: View {
                     }
                 }
             }
+
+            Section {
+                BrandFooter {
+                    showAbout = true
+                }
+                .listRowBackground(Color.clear)
+            }
         }
         .navigationTitle("Chroma")
         .navigationDestination(for: String.self) { id in
@@ -63,8 +70,7 @@ struct PalettesView: View {
             Button("Cancel", role: .cancel) { newName = "" }
         }
         .sheet(isPresented: $showAbout) {
-            AboutView()
-                .presentationDetents([.medium])
+            LegalView(appName: "Chroma")
         }
     }
 }
@@ -99,33 +105,5 @@ private struct PaletteRow: View {
             }
         }
         .padding(.vertical, 4)
-    }
-}
-
-private struct AboutView: View {
-    var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    Text("A local-first color palette and design token manager. Create color systems, map them to design tokens, and export to CSS, SCSS, JSON, Tailwind, or Android XML.")
-                        .font(.callout)
-                        .foregroundStyle(.secondary)
-                }
-                Section("Details") {
-                    LabeledContent("Storage", value: "Local only — no cloud, no account")
-                    LabeledContent("Data format", value: "JSON via UserDefaults")
-                    LabeledContent("Exports", value: "CSS · SCSS · JSON · Tailwind · Android XML")
-                    LabeledContent("WCAG", value: "Contrast ratio AA / AAA checking")
-                }
-                Section {
-                    Text("Built with Swift · SwiftUI")
-                        .font(.caption)
-                        .foregroundStyle(.tertiary)
-                        .listRowBackground(Color.clear)
-                }
-            }
-            .navigationTitle("Chroma")
-            .navigationBarTitleDisplayMode(.large)
-        }
     }
 }

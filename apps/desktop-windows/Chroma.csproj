@@ -9,10 +9,15 @@
     <RootNamespace>Chroma</RootNamespace>
     <AssemblyName>Chroma</AssemblyName>
     <ApplicationIcon />
+    <Company>M-Tre Consulting</Company>
+    <Product>Chroma</Product>
+    <Copyright>© 2026 M-Tre Consulting. All rights reserved.</Copyright>
+    <Version>1.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <Resource Include="ic_launcher.png" />
+    <Resource Include="mtre-logo.png" />
   </ItemGroup>
 
 </Project>

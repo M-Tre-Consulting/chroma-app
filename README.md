@@ -147,4 +147,6 @@ Archive and distribute through Xcode: **Product → Archive**, then use the Orga
 
 ## License
 
-See [LICENSE](LICENSE) for details.
+This project is licensed under the GNU General Public License v2.0 — see the [LICENSE](LICENSE) file for details.
+
+Developed and maintained by [M-Tre Consulting](https://mtre-consulting.it).

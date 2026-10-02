@@ -46,6 +46,53 @@
                 </StackPanel>
 
                 <Separator Grid.Row="1" VerticalAlignment="Bottom" Background="{StaticResource BorderBrush}"/>
+
+                <!-- Brand Footer (always visible) -->
+                <Border Grid.Row="3" Margin="0,16,0,0" Padding="0,10,0,0" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Left: M-Tre Logo + Name (opens site) -->
+                        <Button Grid.Column="0" Click="BtnBrandSite_Click" Cursor="Hand" ToolTip="https://mtre-consulting.it">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="Transparent" Padding="0,2">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Image Source="/mtre-logo.png" Width="16" Height="16" Margin="0,0,6,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+                                            <TextBlock Text="M-Tre Consulting" FontSize="11" FontWeight="Medium" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Opacity" Value="0.75"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <!-- Right: Copyright Year (opens LegalWindow) -->
+                        <Button Grid.Column="2" Click="BtnBrandLegal_Click" Cursor="Hand" ToolTip="Privacy, licenza e contatti">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="Transparent" Padding="0,2">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Opacity" Value="0.75"/>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Button.Template>
+                            <TextBlock x:Name="TxtBrandCopyright" Text="© 2026" FontSize="11" FontWeight="Medium" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center"/>
+                        </Button>
+                    </Grid>
+                </Border>
             </Grid>
         </Border>
 

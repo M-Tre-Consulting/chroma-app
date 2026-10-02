@@ -55,6 +55,30 @@ namespace Chroma
 
             // Set initial active tab
             MainViewStack.SelectedIndex = 0;
+
+            // Runtime dynamic brand copyright year
+            TxtBrandCopyright.Text = $"© {DateTime.Now.Year}";
+        }
+
+        private void BtnBrandSite_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("https://mtre-consulting.it") { UseShellExecute = true });
+            }
+            catch
+            {
+                // Fallback gracefully if process fails to start
+            }
+        }
+
+        private void BtnBrandLegal_Click(object sender, RoutedEventArgs e)
+        {
+            var legalWindow = new LegalWindow
+            {
+                Owner = this
+            };
+            legalWindow.ShowDialog();
         }
 
         private void BtnNav_Click(object sender, RoutedEventArgs e)

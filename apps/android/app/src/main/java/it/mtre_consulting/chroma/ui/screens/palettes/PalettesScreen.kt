@@ -38,6 +38,13 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import it.mtre_consulting.chroma.R
+import it.mtre_consulting.chroma.util.MTre
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -184,6 +191,10 @@ fun PalettesScreen(vm: AppViewModel, onSelectPalette: (String) -> Unit) {
                     }
                 }
             }
+
+            item {
+                BrandFooter(onInfoClick = { showAbout = true })
+            }
         }
 
         // Floating add bar — palette cards scroll behind gradient scrim
@@ -248,74 +259,135 @@ fun PalettesScreen(vm: AppViewModel, onSelectPalette: (String) -> Unit) {
 
 @Composable
 private fun AboutContent() {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp)
             .padding(bottom = 40.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        // App identity
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-            Box(
+        // App identity with M-Tre Logo
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(14.dp),
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_mtre_logo),
+                contentDescription = MTre.NAME,
                 modifier = Modifier
-                    .size(52.dp)
-                    .clip(RoundedCornerShape(14.dp))
-                    .background(Color(0xFF1E1E4A)),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text("◉", fontSize = 24.sp, color = Primary)
-            }
+                    .size(48.dp)
+                    .clip(RoundedCornerShape(12.dp)),
+            )
             Column {
                 Text("Chroma", fontSize = 20.sp, fontWeight = FontWeight.SemiBold, color = OnSurface)
-                Text("Version ${BuildConfig.VERSION_NAME}", fontSize = 13.sp, color = TextSecondary)
+                Text("Versione ${BuildConfig.VERSION_NAME}", fontSize = 13.sp, color = TextSecondary)
+                Text("${MTre.copyright}. Tutti i diritti riservati.", fontSize = 12.sp, color = TextSecondary)
             }
         }
 
+        HorizontalDivider(color = Outline, thickness = 0.5.dp)
+
+        // Privacy Policy
+        Text("Informativa sulla privacy", fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Primary)
         Text(
-            "A local-first color palette and design token manager. Create color systems, map them to design tokens, and export to CSS, SCSS, JSON, Tailwind, or Android XML.",
-            fontSize = 14.sp,
+            "Chroma non raccoglie dati personali. Palette, colori e token restano esclusivamente su questo dispositivo: niente server, account utente, pubblicità, statistiche o tracciamento.",
+            fontSize = 13.sp,
             color = TextSecondary,
-            lineHeight = 20.sp,
+            lineHeight = 18.sp,
+        )
+        Text(
+            "L'applicazione funziona interamente offline e non effettua alcuna chiamata di rete. Puoi chiederci informazioni ed esercitare i tuoi diritti previsti dal GDPR (Regolamento UE 2016/679) scrivendo a ${MTre.EMAIL}. Eliminare l'applicazione cancella tutti i dati memorizzati.",
+            fontSize = 13.sp,
+            color = TextSecondary,
+            lineHeight = 18.sp,
         )
 
         HorizontalDivider(color = Outline, thickness = 0.5.dp)
 
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            AboutRow(label = "Storage", value = "Local only — no cloud, no account")
-            AboutRow(label = "Data format", value = "JSON via DataStore Preferences")
-            AboutRow(label = "Export targets", value = "CSS · SCSS · JSON · Tailwind · Android XML")
-            AboutRow(label = "WCAG support", value = "Contrast ratio 2.0 AA / AAA checking")
+        // Titolare
+        Text("Titolare", fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Primary)
+        Text("${MTre.NAME}, Savona, Italia", fontSize = 13.sp, color = OnSurface, fontWeight = FontWeight.Medium)
+        MTre.OWNERS.forEach { owner ->
+            Text(owner, fontSize = 12.sp, color = TextSecondary)
         }
 
         HorizontalDivider(color = Outline, thickness = 0.5.dp)
 
+        // Licenza
+        Text("Licenza", fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Primary)
         Text(
-            "Built with Kotlin · Jetpack Compose · Material 3 Expressive",
-            fontSize = 12.sp,
+            "Chroma è un software libero rilasciato sotto licenza GNU General Public License v2.0 (GPL-2.0). I calcoli di contrasto WCAG seguono le specifiche W3C WCAG 2.0 / 2.1.",
+            fontSize = 13.sp,
+            color = TextSecondary,
+            lineHeight = 18.sp,
+        )
+
+        HorizontalDivider(color = Outline, thickness = 0.5.dp)
+
+        // Contatti
+        Text("Contatti", fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = Primary)
+        Text(
+            text = MTre.SITE_URL,
+            fontSize = 13.sp,
+            color = Primary,
+            modifier = Modifier.clickable { MTre.openWebsite(context) },
+        )
+        Text(
+            text = MTre.EMAIL,
+            fontSize = 13.sp,
+            color = Primary,
+            modifier = Modifier.clickable { MTre.sendEmail(context) },
+        )
+        Text(
+            text = MTre.REPO_URL,
+            fontSize = 13.sp,
+            color = Primary,
+            modifier = Modifier.clickable { MTre.openRepo(context) },
+        )
+
+        Text(
+            "Aggiornata il 2 ottobre 2026.",
+            fontSize = 11.sp,
             color = TextDisabled,
         )
     }
 }
 
 @Composable
-private fun AboutRow(label: String, value: String) {
+fun BrandFooter(onInfoClick: () -> Unit, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.Top,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
+        Row(
+            modifier = Modifier.clickable { MTre.openWebsite(context) },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_mtre_logo),
+                contentDescription = MTre.NAME,
+                modifier = Modifier.size(16.dp),
+            )
+            Text(
+                text = MTre.NAME,
+                fontSize = 11.sp,
+                fontWeight = FontWeight.Medium,
+                color = TextSecondary,
+            )
+        }
         Text(
-            text = label,
-            fontSize = 13.sp,
-            color = TextSecondary,
-            modifier = Modifier.width(116.dp),
-        )
-        Text(
-            text = value,
-            fontSize = 13.sp,
-            color = OnSurface,
+            text = "© ${MTre.currentYear}",
+            fontSize = 11.sp,
             fontWeight = FontWeight.Medium,
-            modifier = Modifier.weight(1f),
+            color = TextSecondary,
+            modifier = Modifier.clickable { onInfoClick() },
         )
     }
 }

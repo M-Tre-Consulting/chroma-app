@@ -29,6 +29,7 @@ src-tauri/gen/android/keystore.properties
 
 # Claude resume files
 claude.txt
+.claude/
 
 # Xcode
 xcuserdata/
@@ -62,6 +63,9 @@ obj/
 !*.sln
 
 publish/
+
+# Internal branding and distribution assets
+brand/
 
 # C++ binaries
 apps/desktop-linux/desktop-linux

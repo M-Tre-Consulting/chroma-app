@@ -1,0 +1,96 @@
+<Window x:Class="Chroma.LegalWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Privacy, licenza e contatti"
+        Height="620" Width="520"
+        Background="{StaticResource BgBrush}"
+        Foreground="{StaticResource TextBrush}"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        FontFamily="Segoe UI">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" Margin="0,0,0,16">
+            <StackPanel Margin="0,0,12,0">
+                <!-- Header: Logo, Name, Version, Copyright -->
+                <Grid Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Image Grid.Column="0" Source="/mtre-logo.png" Width="44" Height="44" Margin="0,0,14,0" VerticalAlignment="Center" RenderOptions.BitmapScalingMode="HighQuality"/>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Chroma" FontSize="18" FontWeight="Bold" Foreground="{StaticResource TextBrush}"/>
+                        <TextBlock x:Name="TxtAppVersion" Text="Versione 1.0.0" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                        <TextBlock x:Name="TxtHeaderCopyright" Text="© 2026 M-Tre Consulting. Tutti i diritti riservati." FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Grid>
+
+                <Separator Background="{StaticResource BorderBrush}" Margin="0,0,0,16"/>
+
+                <!-- Privacy Policy -->
+                <TextBlock Text="Informativa sulla privacy" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" Margin="0,0,0,8"/>
+                <TextBlock Text="Chroma non raccoglie dati personali. Palette, colori e token restano esclusivamente sul tuo computer, memorizzati in locale nella cartella dell'applicazione: niente cloud, server, account utente, pubblicità, statistiche o tracciamento."
+                           TextWrapping="Wrap" LineHeight="18" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,8"/>
+                <TextBlock Text="L'applicazione funziona interamente offline e non effettua alcuna connessione di rete."
+                           TextWrapping="Wrap" LineHeight="18" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,8"/>
+                <TextBlock Text="Puoi chiederci informazioni ed esercitare i tuoi diritti previsti dal GDPR (Regolamento UE 2016/679) scrivendo a info@mtre-consulting.it. Poiché non conserviamo i tuoi dati su server esterni, eliminare l'applicazione e i suoi file locali cancella tutto immediatamente."
+                           TextWrapping="Wrap" LineHeight="18" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,16"/>
+
+                <!-- Data Controller -->
+                <TextBlock Text="Titolare" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" Margin="0,0,0,8"/>
+                <TextBlock Text="M-Tre Consulting, Savona, Italia" FontWeight="Medium" FontSize="12" Foreground="{StaticResource TextBrush}" Margin="0,0,0,4"/>
+                <TextBlock Text="Simone Rolando – P.IVA 01866720095" FontSize="12" Foreground="{StaticResource TextDimBrush}" Margin="0,0,0,2"/>
+                <TextBlock Text="Nicolò Perri – P.IVA 01949510091" FontSize="12" Foreground="{StaticResource TextDimBrush}" Margin="0,0,0,2"/>
+                <TextBlock Text="Emad Alaa Soliman Mohamed Soliman – P.IVA 01949520090" FontSize="12" Foreground="{StaticResource TextDimBrush}" Margin="0,0,0,16"/>
+
+                <!-- License -->
+                <TextBlock Text="Licenza" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" Margin="0,0,0,8"/>
+                <TextBlock Text="Chroma è un software libero rilasciato sotto licenza GNU General Public License v2.0 (GPL-2.0)."
+                           TextWrapping="Wrap" LineHeight="18" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,6"/>
+                <TextBlock Text="I calcoli di contrasto WCAG seguono le specifiche W3C Web Content Accessibility Guidelines 2.0 / 2.1."
+                           TextWrapping="Wrap" LineHeight="18" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,0,0,16"/>
+
+                <!-- Contacts -->
+                <TextBlock Text="Contatti" FontSize="14" FontWeight="SemiBold" Foreground="{StaticResource AccentBrush}" Margin="0,0,0,8"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                    <TextBlock Text="Sito web: " FontSize="12" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock FontSize="12">
+                        <Hyperlink NavigateUri="https://mtre-consulting.it" RequestNavigate="Hyperlink_RequestNavigate" Foreground="{StaticResource AccentBrush}">
+                            https://mtre-consulting.it
+                        </Hyperlink>
+                    </TextBlock>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                    <TextBlock Text="Email: " FontSize="12" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock FontSize="12">
+                        <Hyperlink NavigateUri="mailto:info@mtre-consulting.it" RequestNavigate="Hyperlink_RequestNavigate" Foreground="{StaticResource AccentBrush}">
+                            info@mtre-consulting.it
+                        </Hyperlink>
+                    </TextBlock>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+                    <TextBlock Text="Repository GitHub: " FontSize="12" Foreground="{StaticResource TextSecondaryBrush}"/>
+                    <TextBlock FontSize="12">
+                        <Hyperlink NavigateUri="https://github.com/M-Tre-Consulting/chroma-app" RequestNavigate="Hyperlink_RequestNavigate" Foreground="{StaticResource AccentBrush}">
+                            M-Tre-Consulting/chroma-app
+                        </Hyperlink>
+                    </TextBlock>
+                </StackPanel>
+
+                <!-- Date -->
+                <TextBlock Text="Aggiornata il 2 ottobre 2026." FontSize="11" Foreground="{StaticResource TextDimBrush}" Margin="0,4,0,0"/>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer: Close Button -->
+        <Button Grid.Row="1" Content="Chiudi" Style="{StaticResource ModernButtonStyle}" Width="90" HorizontalAlignment="Right" Click="BtnClose_Click"/>
+    </Grid>
+</Window>
